@@ -59,7 +59,6 @@
 
     <el-table v-loading="loading" :data="recipeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-<!--      <el-table-column label="食谱id" align="center" prop="recipeId" />-->
       <el-table-column label="食品名称" align="center" prop="recipeName" />
       <el-table-column label="食谱简介" align="center" prop="recipeDescription" />
       <el-table-column label="图片" align="center" prop="recipeImage" width="100">
@@ -69,6 +68,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
+          <el-button link type="primary" icon="el-icon-more" @click="select(scope.row)">查看</el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:recipe:remove']">删除</el-button>
         </template>
@@ -86,9 +86,6 @@
     <!-- 添加或修改食谱对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form ref="recipeRef" :model="form" :rules="rules" label-width="80px">
-<!--        <el-form-item label="用户id" prop="userId">-->
-<!--          <el-input v-model="form.userId" placeholder="请输入用户id" />-->
-<!--        </el-form-item>-->
         <el-form-item label="食品名称" prop="recipeName">
           <el-input v-model="form.recipeName" placeholder="请输入食品名称" />
         </el-form-item>
@@ -98,15 +95,6 @@
         <el-form-item label="图片" prop="recipeImage">
           <image-upload v-model="form.recipeImage"/>
         </el-form-item>
-<!--        <el-form-item label="审核状态" prop="state">-->
-<!--          <el-radio-group v-model="form.state">-->
-<!--            <el-radio-->
-<!--              v-for="dict in recipe_state"-->
-<!--              :key="dict.value"-->
-<!--              :label="parseInt(dict.value)"-->
-<!--            >{{dict.label}}</el-radio>-->
-<!--          </el-radio-group>-->
-<!--        </el-form-item>-->
         <el-divider content-position="center">步骤信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -119,11 +107,6 @@
         <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
-<!--          <el-table-column label="步骤的顺序" prop="stepNumber" width="150">-->
-<!--            <template #default="scope">-->
-<!--              <el-input v-model="scope.row.stepNumber" placeholder="请输入记录步骤的顺序" />-->
-<!--            </template>-->
-<!--          </el-table-column>-->
           <el-table-column label="操作内容" prop="stepDescription" width="235">
             <template #default="scope">
               <el-input type="textarea" :rows="5" v-model="scope.row.stepDescription" placeholder="请输入该步骤的操作内容" />
@@ -142,6 +125,36 @@
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
+    </el-dialog>
+
+    <!-- 查看食谱对话框 -->
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form ref="recipeRef" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="食品名称" prop="recipeName">
+          <el-input :disabled="true" v-model="form.recipeName" placeholder="请输入食品名称" />
+        </el-form-item>
+        <el-form-item label="食谱简介" prop="recipeDescription">
+          <el-input v-model="form.recipeDescription" placeholder="请输入食谱简介" />
+        </el-form-item>
+        <el-form-item label="图片" prop="recipeImage">
+          <image-upload v-model="form.recipeImage"/>
+        </el-form-item>
+        <el-divider content-position="center">步骤信息</el-divider>
+        <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="操作内容" prop="stepDescription" width="235">
+            <template #default="scope">
+              <el-input type="textarea" :rows="5" v-model="scope.row.stepDescription" placeholder="请输入该步骤的操作内容" />
+            </template>
+          </el-table-column>
+          <el-table-column label="图片" prop="stepImage" width="235">
+            <template #default="scope">
+              <image-upload v-model="scope.row.stepImage"/>
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-form>
     </el-dialog>
   </div>
 </template>
@@ -240,13 +253,25 @@ function handleAdd() {
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  reset();
+  // reset();
   const _recipeId = row.recipeId || ids.value
   getRecipe(_recipeId).then(response => {
     form.value = response.data;
     stepList.value = response.data.stepList;
     open.value = true;
     title.value = "修改食谱";
+  });
+}
+
+/** 查看按钮操作 */
+function select(row) {
+  reset();
+  const _recipeId = row.recipeId || ids.value
+  getRecipe(_recipeId).then(response => {
+    form.value = response.data;
+    stepList.value = response.data.stepList;
+    open.value = true;
+    title.value = "查看食谱";
   });
 }
 
