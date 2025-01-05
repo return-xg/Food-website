@@ -68,7 +68,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button link type="primary" icon="el-icon-more" @click="select(scope.row)">查看</el-button>
+          <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">查看</el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:recipe:remove']">删除</el-button>
         </template>
@@ -106,7 +106,7 @@
         </el-row>
         <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="步骤" align="center" prop="index" width="50"/>
           <el-table-column label="操作内容" prop="stepDescription" width="235">
             <template #default="scope">
               <el-input type="textarea" :rows="5" v-model="scope.row.stepDescription" placeholder="请输入该步骤的操作内容" />
@@ -127,30 +127,29 @@
       </template>
     </el-dialog>
 
-    <!-- 查看食谱对话框 -->
-    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
-      <el-form ref="recipeRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="食品名称" prop="recipeName">
-          <el-input :disabled="true" v-model="form.recipeName" placeholder="请输入食品名称" />
+    <!-- 查看菜谱对话框 -->
+    <el-dialog :title="viewTitle" v-model="viewOpen" width="600px" append-to-body>
+      <el-form ref="recipeRef" :model="form" label-width="80px">
+        <el-form-item label="食品名称" prop="viewRecipeName">
+          <el-input :disabled="true" v-model="form.recipeName"/>
         </el-form-item>
-        <el-form-item label="食谱简介" prop="recipeDescription">
-          <el-input v-model="form.recipeDescription" placeholder="请输入食谱简介" />
+        <el-form-item label="食谱简介" prop="viewRecipeDescription">
+          <el-input :disabled="true" v-model="form.recipeDescription"/>
         </el-form-item>
-        <el-form-item label="图片" prop="recipeImage">
-          <image-upload v-model="form.recipeImage"/>
+        <el-form-item label="图片" prop="viewRecipeImage">
+          <image-preview :src="form.recipeImage" :width="150" :height="150"/>
         </el-form-item>
         <el-divider content-position="center">步骤信息</el-divider>
         <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="操作内容" prop="stepDescription" width="235">
+          <el-table-column label="步骤" align="center" prop="index" width="60"/>
+          <el-table-column label="操作内容" prop="stepDescription" width="260">
             <template #default="scope">
-              <el-input type="textarea" :rows="5" v-model="scope.row.stepDescription" placeholder="请输入该步骤的操作内容" />
+              <el-input :disabled="true" type="textarea" :rows="5" v-model="scope.row.stepDescription" placeholder="请输入该步骤的操作内容" />
             </template>
           </el-table-column>
-          <el-table-column label="图片" prop="stepImage" width="235">
+          <el-table-column label="图片" prop="stepImage" width="260">
             <template #default="scope">
-              <image-upload v-model="scope.row.stepImage"/>
+              <image-preview :src="scope.row.stepImage" :width="150" :height="150"/>
             </template>
           </el-table-column>
         </el-table>
@@ -176,6 +175,14 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+
+const viewOpen = ref(false); // 新增对话框的显示状态
+const viewTitle = ref("查看食谱"); // 新增对话框的标题
+const viewForm = ref({
+  viewRecipeName: null,
+  viewRecipeDescription: null,
+  viewRecipeImage: null
+}); // 新增对话框展示的数据
 
 const data = reactive({
   form: {},
@@ -264,13 +271,12 @@ function handleUpdate(row) {
 }
 
 /** 查看按钮操作 */
-function select(row) {
-  reset();
+function handleViewData(row) {
   const _recipeId = row.recipeId || ids.value
   getRecipe(_recipeId).then(response => {
     form.value = response.data;
     stepList.value = response.data.stepList;
-    open.value = true;
+    viewOpen.value = true;
     title.value = "查看食谱";
   });
 }
