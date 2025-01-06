@@ -37,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="recipeName != null  and recipeName != ''"> and recipe_name like concat('%', #{recipeName}, '%')</if>
             <if test="variety != null  and variety != ''"> and variety = #{variety}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
         </where>
     </select>
     
