@@ -40,6 +40,10 @@ public class Recipe extends BaseEntity
     /** 步骤信息 */
     private List<Step> stepList;
 
+    /** 菜系 */
+    @Excel(name = "菜系")
+    private String variety;
+
     public void setRecipeId(Long recipeId) 
     {
         this.recipeId = recipeId;
@@ -105,6 +109,14 @@ public class Recipe extends BaseEntity
         this.stepList = stepList;
     }
 
+    public String getVariety() {
+        return variety;
+    }
+
+    public void setVariety(String variety) {
+        this.variety = variety;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -117,6 +129,7 @@ public class Recipe extends BaseEntity
             .append("createTime", getCreateTime())
             .append("updateTime", getUpdateTime())
             .append("stepList", getStepList())
+            .append("variety", getVariety())
             .toString();
     }
 }

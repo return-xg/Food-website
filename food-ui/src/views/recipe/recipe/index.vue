@@ -9,6 +9,16 @@
           @keyup.enter="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="菜系" prop="variety">
+        <el-select v-model="queryParams.variety" placeholder="请选择菜系" clearable>
+          <el-option
+              v-for="dict in variety"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -60,6 +70,11 @@
     <el-table v-loading="loading" :data="recipeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="食品名称" align="center" prop="recipeName" />
+      <el-table-column label="菜系" align="center" prop="variety">
+        <template #default="scope">
+          <dict-tag :options="variety" :value="scope.row.variety"/>
+        </template>
+      </el-table-column>
       <el-table-column label="食谱简介" align="center" prop="recipeDescription" />
       <el-table-column label="图片" align="center" prop="recipeImage" width="100">
         <template #default="scope">
@@ -88,6 +103,16 @@
       <el-form ref="recipeRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="食品名称" prop="recipeName">
           <el-input v-model="form.recipeName" placeholder="请输入食品名称" />
+        </el-form-item>
+        <el-form-item label="菜系" prop="variety">
+          <el-select v-model="form.variety" placeholder="请选择菜系">
+            <el-option
+                v-for="dict in variety"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="食谱简介" prop="recipeDescription">
           <el-input v-model="form.recipeDescription" placeholder="请输入食谱简介" />
@@ -133,6 +158,16 @@
         <el-form-item label="食品名称" prop="viewRecipeName">
           <el-input :disabled="true" v-model="form.recipeName"/>
         </el-form-item>
+        <el-form-item label="菜系" prop="variety">
+          <el-select v-model="form.variety" placeholder="请选择菜系" disabled>
+            <el-option
+                v-for="dict in variety"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            ></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="食谱简介" prop="viewRecipeDescription">
           <el-input :disabled="true" v-model="form.recipeDescription"/>
         </el-form-item>
@@ -162,7 +197,7 @@
 import { listRecipe, getRecipe, delRecipe, addRecipe, updateRecipe } from "@/api/recipe/recipe";
 
 const { proxy } = getCurrentInstance();
-const { recipe_state } = proxy.useDict('recipe_state');
+const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
 
 const recipeList = ref([]);
 const stepList = ref([]);
@@ -190,6 +225,7 @@ const data = reactive({
     pageNum: 1,
     pageSize: 10,
     recipeName: null,
+    variety: null
   },
   rules: {
     recipeName: [
@@ -226,7 +262,8 @@ function reset() {
     recipeImage: null,
     state: null,
     createTime: null,
-    updateTime: null
+    updateTime: null,
+    variety: null
   };
   stepList.value = [];
   proxy.resetForm("recipeRef");
@@ -260,7 +297,7 @@ function handleAdd() {
 
 /** 修改按钮操作 */
 function handleUpdate(row) {
-  // reset();
+  reset();
   const _recipeId = row.recipeId || ids.value
   getRecipe(_recipeId).then(response => {
     form.value = response.data;
