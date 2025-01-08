@@ -156,7 +156,7 @@ export default {
       div {
         margin-left: 20px;
         h3 {
-          font-style: 700;
+          font-weight: 700;
           font-size: 1.2rem;
           padding: 3px 0 10px 0;
           &:hover {

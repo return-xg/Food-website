@@ -57,7 +57,7 @@ export default {
   mounted() {
     console.log(this.sos);
     let url = `http://8.136.145.197:3000/menu/name`;
-      
+
       let params=`mname=${this.sos}`
     this.axios.post(url,params).then((res) => {
       this.data = res.data;
@@ -119,7 +119,7 @@ export default {
       div {
         margin-left: 20px;
         a {
-          font-style: 700;
+          font-weight: 700;
           font-size: 1.2rem;
           padding: 3px 0 10px 0;
           &:hover {
