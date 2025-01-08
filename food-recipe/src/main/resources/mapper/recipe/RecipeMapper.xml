@@ -28,6 +28,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="stepImage"    column="step_image"    />
     </resultMap>
 
+    <resultMap id="RecipeIngredientResult" type="Recipe" extends="RecipeResult">
+        <collection property="ingredientList" ofType="Ingredient" column="recipe_id" select="selectIngredientList" />
+    </resultMap>
+
+    <resultMap type="Ingredient" id="IngredientResult">
+        <result property="ingredientId"    column="ingredient_id"    />
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="ingredientName"    column="ingredient_name"    />
+        <result property="ingredientQuantity"    column="ingredient_quantity"    />
+    </resultMap>
+
     <sql id="selectRecipeVo">
         select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety from recipe
     </sql>
@@ -118,6 +129,24 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into step( step_id, recipe_id, step_number, step_description, step_image) values
         <foreach item="item" index="index" collection="list" separator=",">
             ( #{item.stepId}, #{item.recipeId}, #{item.stepNumber}, #{item.stepDescription}, #{item.stepImage})
+        </foreach>
+    </insert>
+
+    <delete id="deleteIngredientByRecipeIds" parameterType="String">
+        delete from ingredient where recipe_id in
+        <foreach item="recipeId" collection="array" open="(" separator="," close=")">
+            #{recipeId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteIngredientByRecipeId" parameterType="Long">
+        delete from ingredient where recipe_id = #{recipeId}
+    </delete>
+
+    <insert id="batchIngredient">
+        insert into ingredient( ingredient_id, recipe_id, ingredient_name, ingredient_quantity) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.ingredientId}, #{item.recipeId}, #{item.ingredientName}, #{item.ingredientQuantity})
         </foreach>
     </insert>
 </mapper>

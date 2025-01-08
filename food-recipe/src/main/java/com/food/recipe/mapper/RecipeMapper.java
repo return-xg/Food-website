@@ -1,6 +1,8 @@
 package com.food.recipe.mapper;
 
 import java.util.List;
+
+import com.food.recipe.domain.Ingredient;
 import com.food.recipe.domain.Recipe;
 import com.food.recipe.domain.Step;
 
@@ -84,4 +86,29 @@ public interface RecipeMapper
      * @return 结果
      */
     public int deleteStepByRecipeId(Long recipeId);
+
+    /**
+     * 批量删除食材
+     *
+     * @param recipeIds 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteIngredientByRecipeIds(Long[] recipeIds);
+
+    /**
+     * 批量新增食材
+     *
+     * @param ingredientList 食材列表
+     * @return 结果
+     */
+    public int batchIngredient(List<Ingredient> ingredientList);
+
+
+    /**
+     * 通过食谱主键删除食材信息
+     *
+     * @param recipeId 食谱ID
+     * @return 结果
+     */
+    public int deleteIngredientByRecipeId(Long recipeId);
 }

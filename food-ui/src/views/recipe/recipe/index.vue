@@ -114,12 +114,29 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="食谱简介" prop="recipeDescription">
-          <el-input v-model="form.recipeDescription" placeholder="请输入食谱简介" />
-        </el-form-item>
-        <el-form-item label="图片" prop="recipeImage">
-          <image-upload v-model="form.recipeImage"/>
-        </el-form-item>
+        <el-divider content-position="center">食材信息</el-divider>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="Plus" @click="handleAddIngredient">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="Delete" @click="handleDeleteIngredient">删除</el-button>
+          </el-col>
+        </el-row>
+        <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="存储食材的名称" prop="ingredientName" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.ingredientName" placeholder="请输入存储食材的名称" />
+            </template>
+          </el-table-column>
+          <el-table-column label="记录食材的用量" prop="ingredientQuantity" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.ingredientQuantity" placeholder="请输入记录食材的用量" />
+            </template>
+          </el-table-column>
+        </el-table>
         <el-divider content-position="center">步骤信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -174,6 +191,20 @@
         <el-form-item label="图片" prop="viewRecipeImage">
           <image-preview :src="form.recipeImage" :width="150" :height="150"/>
         </el-form-item>
+        <el-divider content-position="center">食材信息</el-divider>
+        <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+          <el-table-column label="存储食材的名称" prop="ingredientName" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.ingredientName" placeholder="请输入存储食材的名称" />
+            </template>
+          </el-table-column>
+          <el-table-column label="记录食材的用量" prop="ingredientQuantity" width="150">
+            <template #default="scope">
+              <el-input v-model="scope.row.ingredientQuantity" placeholder="请输入记录食材的用量" />
+            </template>
+          </el-table-column>
+        </el-table>
         <el-divider content-position="center">步骤信息</el-divider>
         <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
           <el-table-column label="步骤" align="center" prop="index" width="60"/>
@@ -200,11 +231,13 @@ const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
 
 const recipeList = ref([]);
+const ingredientList = ref([]);
 const stepList = ref([]);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
+const checkedIngredient = ref([]);
 const checkedStep = ref([]);
 const single = ref(true);
 const multiple = ref(true);
@@ -213,11 +246,6 @@ const title = ref("");
 
 const viewOpen = ref(false); // 新增对话框的显示状态
 const viewTitle = ref("查看食谱"); // 新增对话框的标题
-const viewForm = ref({
-  viewRecipeName: null,
-  viewRecipeDescription: null,
-  viewRecipeImage: null
-}); // 新增对话框展示的数据
 
 const data = reactive({
   form: {},
@@ -265,6 +293,7 @@ function reset() {
     updateTime: null,
     variety: null
   };
+  ingredientList.value = [];
   stepList.value = [];
   proxy.resetForm("recipeRef");
 }
@@ -301,6 +330,7 @@ function handleUpdate(row) {
   const _recipeId = row.recipeId || ids.value
   getRecipe(_recipeId).then(response => {
     form.value = response.data;
+    ingredientList.value = response.data.ingredientList;
     stepList.value = response.data.stepList;
     open.value = true;
     title.value = "修改食谱";
@@ -312,6 +342,7 @@ function handleViewData(row) {
   const _recipeId = row.recipeId || ids.value
   getRecipe(_recipeId).then(response => {
     form.value = response.data;
+    ingredientList.value = response.data.ingredientList;
     stepList.value = response.data.stepList;
     viewOpen.value = true;
     title.value = "查看食谱";
@@ -322,6 +353,7 @@ function handleViewData(row) {
 function submitForm() {
   proxy.$refs["recipeRef"].validate(valid => {
     if (valid) {
+      form.value.ingredientList = ingredientList.value;
       form.value.stepList = stepList.value;
       if (form.value.recipeId != null) {
         updateRecipe(form.value).then(response => {
@@ -376,6 +408,37 @@ function handleDeleteStep() {
       return checkedSteps.indexOf(item.index) == -1
     });
   }
+}
+
+/** 食材序号 */
+function rowIngredientIndex({ row, rowIndex }) {
+  row.index = rowIndex + 1;
+}
+
+/** 食材添加按钮操作 */
+function handleAddIngredient() {
+  let obj = {};
+  obj.ingredientName = "";
+  obj.ingredientQuantity = "";
+  ingredientList.value.push(obj);
+}
+
+/** 食材删除按钮操作 */
+function handleDeleteIngredient() {
+  if (checkedIngredient.value.length == 0) {
+    proxy.$modal.msgError("请先选择要删除的食材数据");
+  } else {
+    const ingredients = ingredientList.value;
+    const checkedIngredients = checkedIngredient.value;
+    ingredientList.value = ingredients.filter(function(item) {
+      return checkedIngredients.indexOf(item.index) == -1
+    });
+  }
+}
+
+/** 复选框选中数据 */
+function handleIngredientSelectionChange(selection) {
+  checkedIngredient.value = selection.map(item => item.index)
 }
 
 /** 复选框选中数据 */

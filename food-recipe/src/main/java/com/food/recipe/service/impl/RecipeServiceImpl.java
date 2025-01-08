@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import com.food.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import com.food.recipe.domain.Step;
+import com.food.recipe.domain.Ingredient;
 import com.food.recipe.mapper.RecipeMapper;
 import com.food.recipe.domain.Recipe;
 import com.food.recipe.service.IRecipeService;
@@ -64,6 +65,7 @@ public class RecipeServiceImpl implements IRecipeService
         recipe.setState(0L);
         recipe.setCreateTime(DateUtils.getNowDate());
         int rows = recipeMapper.insertRecipe(recipe);
+        insertIngredient(recipe);
         insertStep(recipe);
         return rows;
     }
@@ -81,6 +83,7 @@ public class RecipeServiceImpl implements IRecipeService
         recipe.setState(0L);
         recipe.setUpdateTime(DateUtils.getNowDate());
         recipeMapper.deleteStepByRecipeId(recipe.getRecipeId());
+        insertIngredient(recipe);
         insertStep(recipe);
         return recipeMapper.updateRecipe(recipe);
     }
@@ -137,6 +140,30 @@ public class RecipeServiceImpl implements IRecipeService
             if (list.size() > 0)
             {
                 recipeMapper.batchStep(list);
+            }
+        }
+    }
+
+    /**
+     * 新增食材信息
+     *
+     * @param recipe 食谱对象
+     */
+    public void insertIngredient(Recipe recipe)
+    {
+        List<Ingredient> ingredientList = recipe.getIngredientList();
+        Long recipeId = recipe.getRecipeId();
+        if (StringUtils.isNotNull(ingredientList))
+        {
+            List<Ingredient> list = new ArrayList<Ingredient>();
+            for (Ingredient ingredient : ingredientList)
+            {
+                ingredient.setRecipeId(recipeId);
+                list.add(ingredient);
+            }
+            if (list.size() > 0)
+            {
+                recipeMapper.batchIngredient(list);
             }
         }
     }
