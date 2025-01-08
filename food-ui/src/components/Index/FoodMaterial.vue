@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -38,14 +40,11 @@ export default {
   mounted() {
     this.shicai();
   },
-
   methods: {
     //食材接口连接http://8.136.145.197:3000/ingredient
     shicai() {
       const url = "http://8.136.145.197:3000/ingredient";
-      this.axios.get(url).then((res) => {
-        // this.data = res.data.data;
-        // console.log(this.data);
+      axios.get(url).then((res) => {
         let arr = [];
         res.data.data.forEach(function (item, index) {
           if (item.iid < 15) {
@@ -53,6 +52,8 @@ export default {
           }
         });
         this.data = arr;
+      }).catch((error) => {
+        console.error("请求失败:", error);
       });
     },
   },

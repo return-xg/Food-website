@@ -349,35 +349,24 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
-      // 轮播图片
       imgs: [],
-      // 侧边栏展开项
       index: "",
-      // 轮播设置
       swiperOptions: {
-        //effect: "cube", // 方块特效
-        effect: "fade", // 淡入
-        //effect: "coverflow",  //3D流
-        //effect: "flip",   // 3D翻转
-        //effect: "cards", // 卡片式
-
-        loop: true, //无限循环
-
-        //个性化
+        effect: "fade",
+        loop: true,
         autoplay: {
-          delay: 5000, //时间 单位毫秒
-          disableOnInteraction: false, //操作swiper后是否禁用滚动
+          delay: 5000,
+          disableOnInteraction: false,
         },
-
-        //分页器
         pagination: {
           el: ".swiper-pagination",
           clickable: true,
         },
-        //左右箭头
         navigation: {
           nextEl: ".swiper-button-next",
           prevEl: ".swiper-button-prev",
@@ -389,20 +378,19 @@ export default {
     this.getBanner();
   },
   methods: {
-    // 轮播图鼠标进入时停止
     stopSwiper() {
       this.$refs.swiper.$swiper.autoplay.stop();
     },
-    // 轮播图鼠标离开时继续
     startSwiper() {
       this.$refs.swiper.$swiper.autoplay.start();
     },
-    // 获取轮播图片
     getBanner() {
-      let url = "http://8.136.145.197:3000/banner";
-      this.axios.get(url).then((res) => {
+      const url = "http://8.136.145.197:3000/banner";
+      axios.get(url).then((res) => {
         console.log(res.data.data);
         this.imgs = res.data.data;
+      }).catch(error => {
+        console.error("There was an error fetching the banner images!", error);
       });
     },
   },

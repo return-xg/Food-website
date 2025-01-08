@@ -30,13 +30,6 @@
           <a href="https://www.258jituan.com/" target="_blank">企业服务平台</a>
           <a href="http://www.cy8.com.cn/" target="_blank">餐饮杰</a>
         </div>
-        <div class="foot4">
-          <span>
-            版权所有 © 2004-2022美食天下 保留所有权利-
-            <img src="/image/beian.png" alt="">
-            </span>
-            <img class="jing" src="../../assets/LoginTu/cyberpolice.gif" alt="">
-        </div>
       </div>
     </div>
   </div>
@@ -44,7 +37,7 @@
 
 <script>
   export default {
-    
+
   }
 </script>
 

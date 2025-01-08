@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   data() {
     return {
@@ -39,7 +41,7 @@ export default {
   methods: {
     getData() {
       let url = "http://8.136.145.197:3000/menu/all";
-      this.axios.get(url).then((res) => {
+      axios.get(url).then((res) => {
         console.log("食谱列表", res.data);
         // 随机获取20条食谱
         var temp_arr = res.data;
@@ -55,6 +57,8 @@ export default {
         }
         console.log("随机:", return_arr);
         this.data = return_arr;
+      }).catch((error) => {
+        console.error("请求失败:", error);
       });
     },
   },
@@ -121,7 +125,7 @@ export default {
           overflow: hidden;
           text-align: center;
           // border: 1px solid red;
-          
+
           img {
             // position: absolute;
             // width: 100%;
