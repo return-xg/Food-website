@@ -1,0 +1,148 @@
+<template>
+  <div class="food-header">
+    <div class="header">
+      <div class="logo">
+        <router-link to="/"> <img src="../assets/loge.jpg" /></router-link>
+        <span>菜谱</span>
+      </div>
+      <div class="header-center">
+        <router-link
+          to="/yuanliao"
+          :class="{ active: $route.name == 'yuanliao' }"
+          >菜谱分类</router-link
+        >
+        <router-link
+          to="/yingyang"
+          :class="{ active: $route.name == 'yingyang' }"
+          >菜谱排行</router-link
+        >
+      </div>
+      <div class="header-right">
+        <el-input
+          class="input-with-select"
+          @keyup.13.native="(mname = input), (input = '')"
+          placeholder="请输入内容"
+          v-model="input"
+        >
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+            type="info"
+            @click="(mname = input), (input = '')"
+            >搜索</el-button
+          >
+        </el-input>
+      </div>
+    </div>
+    <div class="header2">
+      <router-link to="" @click.native="data = 1" :class="{ active: data == 1 }"
+        >默认排序</router-link
+      >
+      <router-link to="" @click.native="data = 2" :class="{ active: data == 2 }"
+        >按时间发布</router-link
+      >
+      <router-link to="" @click.native="data = 3" :class="{ active: data == 3 }"
+        >按热度</router-link
+      >
+      <router-link to="" @click.native="data = 4" :class="{ active: data == 4 }"
+        >按人气</router-link
+      >
+    </div>
+    <seniority :aaa="mname" />
+  </div>
+</template>
+
+<script>
+import Seniority from "../components/Index/Seniority.vue";
+export default {
+  components: { Seniority },
+  data() {
+    return {
+      mname: "",
+      input: "",
+      data: 1,
+    };
+  },
+  mounted() {
+    console.log(this.$route.name);
+  },
+};
+</script>
+
+<style lang="scss" scoped></style>
+<style>
+.food-header {
+  user-select: none;
+}
+.el-input__inner {
+  height: 25px !important;
+}
+
+.header {
+  width: 990px;
+  height: 60px;
+  margin: 0 auto;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.logo {
+  width: 160px;
+  height: 50px;
+}
+.logo img {
+  width: 80px;
+  height: 45px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.logo > span {
+  display: inline-block;
+  width: 40px;
+  line-height: 20px;
+  border-radius: 4px;
+  background-color: #ff838b;
+  color: #fff;
+  text-align: center;
+  font-weight: 800;
+}
+
+.header-center {
+  width: 280px;
+  line-height: 45px;
+  text-align: center;
+  margin-left: 200px;
+}
+.header-center > a {
+  margin: 0 10px;
+  color: #464746;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.header-right {
+  width: 250px;
+  height: 30px;
+  margin-top: 10px;
+}
+.header-center > a.active {
+  color: #ff8da6;
+}
+.header2 {
+  width: 950px;
+  height: 15px;
+  border-top: 1px solid red;
+  border-bottom: 1px solid red;
+  margin: 5px auto 0;
+  padding: 10px 20px;
+}
+.header2 > a {
+  color: #333;
+  font-size: 14px;
+  margin: 0 10px;
+  text-decoration: none;
+}
+.header2 > a.active {
+  color: #ff8da6;
+}
+</style>
