@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.food.recipe.mapper.LikesMapper">
+    
+    <resultMap type="Likes" id="LikesResult">
+        <result property="likeId"    column="like_id"    />
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="userId"    column="user_id"    />
+    </resultMap>
+
+    <sql id="selectLikesVo">
+        select like_id, recipe_id, user_id from likes
+    </sql>
+
+    <select id="selectLikesList" parameterType="Likes" resultMap="LikesResult">
+        <include refid="selectLikesVo"/>
+        <where>  
+            <if test="recipeId != null "> and recipe_id = #{recipeId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+        </where>
+    </select>
+    
+    <select id="selectLikesByLikeId" parameterType="Long" resultMap="LikesResult">
+        <include refid="selectLikesVo"/>
+        where like_id = #{likeId}
+    </select>
+
+    <insert id="insertLikes" parameterType="Likes">
+        insert into likes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="likeId != null">like_id,</if>
+            <if test="recipeId != null">recipe_id,</if>
+            <if test="userId != null">user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="likeId != null">#{likeId},</if>
+            <if test="recipeId != null">#{recipeId},</if>
+            <if test="userId != null">#{userId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateLikes" parameterType="Likes">
+        update likes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id = #{recipeId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+        </trim>
+        where like_id = #{likeId}
+    </update>
+
+    <delete id="deleteLikesByLikeId" parameterType="Long">
+        delete from likes where like_id = #{likeId}
+    </delete>
+
+    <delete id="deleteLikesByLikeIds" parameterType="String">
+        delete from likes where like_id in 
+        <foreach item="likeId" collection="array" open="(" separator="," close=")">
+            #{likeId}
+        </foreach>
+    </delete>
+</mapper>

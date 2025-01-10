@@ -86,6 +86,7 @@
       <el-table-column label="评论数" align="center" prop="review" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
+          <el-button class="heart" @click="star(scope.row)"></el-button>
           <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">查看</el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:recipe:remove']">删除</el-button>
@@ -229,6 +230,7 @@
 
 <script setup name="Recipe">
 import { listRecipe, getRecipe, delRecipe, addRecipe, updateRecipe } from "@/api/recipe/recipe";
+import {addLikes} from "@/api/recipe/likes.js";
 
 const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
@@ -355,6 +357,14 @@ function handleViewData(row) {
   });
 }
 
+/** 收藏按钮操作 */
+function star(row) {
+  const _recipeIds = row.recipeId || ids.value;
+  const likesData = { recipeId: _recipeIds };
+  return addLikes(likesData);
+  getList();
+}
+
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs["recipeRef"].validate(valid => {
@@ -461,3 +471,15 @@ function handleExport() {
 
 getList();
 </script>
+
+<style>.heart {
+  background: url(../../../../public/image/heart.png);
+  background-position: center; /* 可以根据需要调整 */
+  background-repeat: no-repeat;
+  background-size: contain; /* 确保图片完整显示 */
+  height: 20px; /* 根据需要调整 */
+  width: 20px; /* 根据需要调整 */
+  border: none; /* 去掉边框 */
+  padding: 0;
+}
+</style>
