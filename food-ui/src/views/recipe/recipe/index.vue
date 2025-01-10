@@ -81,6 +81,9 @@
           <image-preview :src="scope.row.recipeImage" :width="50" :height="50"/>
         </template>
       </el-table-column>
+      <el-table-column label="点赞数" align="center" prop="likes" />
+      <el-table-column label="收藏数" align="center" prop="collect" />
+      <el-table-column label="评论数" align="center" prop="review" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">查看</el-button>
@@ -291,7 +294,10 @@ function reset() {
     state: null,
     createTime: null,
     updateTime: null,
-    variety: null
+    variety: null,
+    likes: null,
+    collect: null,
+    review: null
   };
   ingredientList.value = [];
   stepList.value = [];

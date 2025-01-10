@@ -44,6 +44,18 @@ public class Recipe extends BaseEntity
     @Excel(name = "菜系")
     private String variety;
 
+    /** 点赞数 */
+    @Excel(name = "点赞数")
+    private Long likes;
+
+    /** 收藏数 */
+    @Excel(name = "收藏数")
+    private Long collect;
+
+    /** 评论数 */
+    @Excel(name = "评论数")
+    private Long review;
+
     /** 食材信息 */
     private List<Ingredient> ingredientList;
 
@@ -128,6 +140,30 @@ public class Recipe extends BaseEntity
         this.ingredientList = ingredientList;
     }
 
+    public Long getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
+    public Long getCollect() {
+        return collect;
+    }
+
+    public void setCollect(Long collect) {
+        this.collect = collect;
+    }
+
+    public Long getReview() {
+        return review;
+    }
+
+    public void setReview(Long review) {
+        this.review = review;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -141,6 +177,9 @@ public class Recipe extends BaseEntity
             .append("updateTime", getUpdateTime())
             .append("stepList", getStepList())
             .append("variety", getVariety())
+            .append("likes", getLikes())
+            .append("collect", getCollect())
+            .append("review", getReview())
             .append("ingredientList", getIngredientList())
             .toString();
     }

@@ -14,6 +14,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createTime"    column="create_time"    />
         <result property="updateTime"    column="update_time"    />
         <result property="variety"    column="variety"    />
+        <result property="likes"    column="likes"    />
+        <result property="collect"    column="collect"    />
+        <result property="review"    column="review"    />
     </resultMap>
 
     <resultMap id="RecipeStepResult" type="Recipe" extends="RecipeResult">
@@ -40,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectRecipeVo">
-        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety from recipe
+        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review from recipe
     </sql>
 
     <select id="selectRecipeList" parameterType="Recipe" resultMap="RecipeResult">
@@ -53,7 +56,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     
     <select id="selectRecipeByRecipeId" parameterType="Long" resultMap="RecipeStepResult">
-        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety
+        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review
         from recipe
         where recipe_id = #{recipeId}
     </select>
@@ -75,6 +78,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="variety != null">variety,</if>
+            <if test="likes != null">likes,</if>
+            <if test="collect != null">collect,</if>
+            <if test="review != null">review,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="userId != null">#{userId},</if>
@@ -85,6 +91,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">#{createTime},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="variety != null">#{variety},</if>
+            <if test="likes != null">#{likes},</if>
+            <if test="collect != null">#{collect},</if>
+            <if test="review != null">#{review},</if>
          </trim>
     </insert>
 
@@ -99,6 +108,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createTime != null">create_time = #{createTime},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="variety != null">variety = #{variety},</if>
+            <if test="likes != null">likes = #{likes},</if>
+            <if test="collect != null">collect = #{collect},</if>
+            <if test="review != null">review = #{review},</if>
         </trim>
         where recipe_id = #{recipeId}
     </update>

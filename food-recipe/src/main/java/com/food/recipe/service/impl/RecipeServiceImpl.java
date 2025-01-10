@@ -64,6 +64,9 @@ public class RecipeServiceImpl implements IRecipeService
         recipe.setUserId(getUserId());
         recipe.setState(0L);
         recipe.setCreateTime(DateUtils.getNowDate());
+        recipe.setLikes(0L);
+        recipe.setCollect(0L);
+        recipe.setReview(0L);
         int rows = recipeMapper.insertRecipe(recipe);
         insertIngredient(recipe);
         insertStep(recipe);
