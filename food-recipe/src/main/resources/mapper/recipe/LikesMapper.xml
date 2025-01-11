@@ -10,6 +10,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="userId"    column="user_id"    />
     </resultMap>
 
+    <resultMap type="Recipe" id="RecipeResult">
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="recipeName"    column="recipe_name"    />
+        <result property="recipeDescription"    column="recipe_description"    />
+        <result property="recipeImage"    column="recipe_image"    />
+        <result property="variety"    column="variety"    />
+        <result property="likes"    column="likes"    />
+        <result property="collect"    column="collect"    />
+        <result property="review"    column="review"    />
+    </resultMap>
+
     <sql id="selectLikesVo">
         select like_id, recipe_id, user_id from likes
     </sql>
@@ -33,6 +45,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from likes
         where user_id = #{userId} and recipe_id = #{recipeId}
     </select>
+<!--    根据用户ID查询喜欢列表-->
+    <select id="listUserId" resultType="com.food.recipe.domain.Recipe">
+        SELECT
+            r.recipe_id,
+            r.user_id,
+            r.recipe_name,
+            r.recipe_description,
+            r.recipe_image,
+            r.variety,
+            r.likes,
+            r.collect,
+            r.review
+        FROM
+            Recipe r
+                LEFT JOIN
+            Likes l ON r.recipe_id = l.recipe_id
+                LEFT JOIN
+            Collect c ON r.recipe_id = c.recipe_id
+                LEFT JOIN
+            Review re ON r.recipe_id = re.recipe_id
+        WHERE
+            l.user_id = #{userId}
+        GROUP BY
+            r.recipe_id,
+            r.user_id,
+            r.recipe_name,
+            r.recipe_description,
+            r.recipe_image,
+            r.variety
+    </select>
 
     <!--    点赞-->
     <insert id="insertLikes" parameterType="Likes">
@@ -48,6 +90,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">#{userId},</if>
          </trim>
     </insert>
+
+    <!-- 更新recipe表中的likes字段 -->
+    <update id="updateRecipeLikes">
+        UPDATE recipe
+            LEFT JOIN (
+            SELECT recipe_id, COUNT(recipe_id) AS like_count
+            FROM likes
+            GROUP BY recipe_id
+            ) AS subquery ON recipe.recipe_id = subquery.recipe_id
+            SET recipe.likes = IFNULL(subquery.like_count, 0);
+    </update>
 
 <!--    取消点赞-->
     <delete id="delete">

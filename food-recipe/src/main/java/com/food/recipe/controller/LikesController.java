@@ -2,6 +2,8 @@ package com.food.recipe.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.food.recipe.domain.Recipe;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,17 @@ public class LikesController extends BaseController
 {
     @Autowired
     private ILikesService likesService;
+
+    /**
+     * 根据用户ID查询用户喜欢列表
+     * @return
+     */
+    @GetMapping("/userId")
+    public TableDataInfo listUserId(){
+        startPage();
+        List<Recipe> list = likesService.listUserId();
+        return getDataTable(list);
+    }
 
     /**
      * 查询点赞列表
@@ -65,7 +78,6 @@ public class LikesController extends BaseController
     /**
      * 新增点赞
      */
-    @PreAuthorize("@ss.hasPermi('recipe:likes:add')")
     @Log(title = "点赞", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Likes likes)

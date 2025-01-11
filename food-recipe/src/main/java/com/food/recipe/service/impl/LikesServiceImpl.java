@@ -1,6 +1,8 @@
 package com.food.recipe.service.impl;
 
 import java.util.List;
+
+import com.food.recipe.domain.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.food.recipe.mapper.LikesMapper;
@@ -55,7 +57,8 @@ public class LikesServiceImpl implements ILikesService
     public int insertLikes(Likes likes)
     {
         likes.setUserId(getUserId());
-        return likesMapper.insertLikes(likes);
+        likesMapper.insertLikes(likes);
+        return likesMapper.updateRecipeLikes();
     }
 
     /**
@@ -68,7 +71,8 @@ public class LikesServiceImpl implements ILikesService
     public int delete(Likes likes)
     {
         likes.setUserId(getUserId());
-        return likesMapper.delete(likes);
+        likesMapper.delete(likes);
+        return likesMapper.updateRecipeLikes();
     }
 
     /**
@@ -82,6 +86,15 @@ public class LikesServiceImpl implements ILikesService
 
         Long userId = getUserId();
         return likesMapper.likeSelect(userId,recipeId) > 0;
+    }
+
+    /**
+     * 根据用户ID查询用户喜欢列表
+     * @return
+     */
+    @Override
+    public List<Recipe> listUserId() {
+        return likesMapper.listUserId(getUserId());
     }
 
     /**

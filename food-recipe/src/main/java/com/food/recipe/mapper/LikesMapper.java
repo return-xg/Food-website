@@ -2,6 +2,7 @@ package com.food.recipe.mapper;
 
 import java.util.List;
 import com.food.recipe.domain.Likes;
+import com.food.recipe.domain.Recipe;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -35,6 +36,12 @@ public interface LikesMapper
      * @return 结果
      */
     public int insertLikes(Likes likes);
+
+    /**
+     * 更新点赞数
+     * @return
+     */
+    public int updateRecipeLikes();
 
     /**
      * 取消点赞
@@ -75,4 +82,11 @@ public interface LikesMapper
      * @return 结果
      */
     public int deleteLikesByLikeIds(Long[] likeIds);
+
+    /**
+     * 根据用户ID查询用户喜欢列表
+     * @param userId
+     * @return
+     */
+    public List<Recipe> listUserId(Long userId);
 }

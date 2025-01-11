@@ -2,6 +2,7 @@ package com.food.recipe.service;
 
 import java.util.List;
 import com.food.recipe.domain.Likes;
+import com.food.recipe.domain.Recipe;
 
 /**
  * 点赞Service接口
@@ -74,4 +75,10 @@ public interface ILikesService
      * @return
      */
     public Boolean likeSelect(Long recipeId);
+
+    /**
+     * 根据用户ID查询用户喜欢列表
+     * @return
+     */
+    public List<Recipe> listUserId();
 }
