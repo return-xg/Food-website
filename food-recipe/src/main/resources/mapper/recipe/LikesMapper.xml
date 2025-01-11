@@ -27,6 +27,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where like_id = #{likeId}
     </select>
 
+<!--    点赞-->
     <insert id="insertLikes" parameterType="Likes">
         insert into likes
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -40,6 +41,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="userId != null">#{userId},</if>
          </trim>
     </insert>
+
+<!--    取消点赞-->
+    <delete id="delete">
+        delete from likes where recipe_id = #{recipeId} and user_id = #{userId}
+    </delete>
 
     <update id="updateLikes" parameterType="Likes">
         update likes

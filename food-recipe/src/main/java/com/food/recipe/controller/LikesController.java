@@ -81,6 +81,16 @@ public class LikesController extends BaseController
     }
 
     /**
+     * 取消点赞
+     */
+    @Log(title = "点赞", businessType = BusinessType.DELETE)
+    @DeleteMapping("/likedelete")
+    public AjaxResult delete(@RequestBody Likes likes)
+    {
+        return toAjax(likesService.delete(likes));
+    }
+
+    /**
      * 修改点赞
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:edit')")

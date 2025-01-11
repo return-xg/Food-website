@@ -36,6 +36,14 @@ public interface LikesMapper
     public int insertLikes(Likes likes);
 
     /**
+     * 取消点赞
+     *
+     * @param likes
+     * @return
+     */
+    public int delete(Likes likes);
+
+    /**
      * 修改点赞
      * 
      * @param likes 点赞

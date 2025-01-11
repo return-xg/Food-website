@@ -59,6 +59,18 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
+     * 取消点赞
+     *
+     * @param likes
+     * @return
+     */
+    @Override
+    public int delete(Likes likes)
+    {
+        return likesMapper.delete(likes);
+    }
+
+    /**
      * 修改点赞
      * 
      * @param likes 点赞

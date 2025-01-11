@@ -58,4 +58,12 @@ public interface ILikesService
      * @return 结果
      */
     public int deleteLikesByLikeId(Long likeId);
+
+    /**
+     * 取消点赞
+     *
+     * @param likes
+     * @return
+     */
+    public int delete(Likes likes);
 }
