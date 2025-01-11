@@ -84,7 +84,7 @@ public class LikesController extends BaseController
      * 取消点赞
      */
     @Log(title = "点赞", businessType = BusinessType.DELETE)
-    @DeleteMapping("/likedelete")
+    @DeleteMapping("/likeDelete")
     public AjaxResult delete(@RequestBody Likes likes)
     {
         return toAjax(likesService.delete(likes));

@@ -67,6 +67,7 @@ public class LikesServiceImpl implements ILikesService
     @Override
     public int delete(Likes likes)
     {
+        likes.setUserId(getUserId());
         return likesMapper.delete(likes);
     }
 

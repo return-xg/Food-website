@@ -26,6 +26,15 @@ export function addLikes(data) {
   })
 }
 
+// 取消点赞
+export function likeDelete(data) {
+  return request({
+    url: '/recipe/likes/likeDelete',
+    method: 'delete',
+    data: data
+  })
+}
+
 // 修改点赞
 export function updateLikes(data) {
   return request({

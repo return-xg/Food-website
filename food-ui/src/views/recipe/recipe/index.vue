@@ -230,7 +230,7 @@
 
 <script setup name="Recipe">
 import { listRecipe, getRecipe, delRecipe, addRecipe, updateRecipe } from "@/api/recipe/recipe";
-import {addLikes} from "@/api/recipe/likes.js";
+import {addLikes, likeDelete} from "@/api/recipe/likes.js";
 
 const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
@@ -358,11 +358,33 @@ function handleViewData(row) {
 }
 
 /** 收藏按钮操作 */
-function star(row) {
+async function star(row) {
   const _recipeIds = row.recipeId || ids.value;
-  const likesData = { recipeId: _recipeIds };
-  return addLikes(likesData);
+  const likesData = {recipeId: _recipeIds};
+
+  // 假设你有一个方法来检查用户是否已经点赞了该菜谱
+  const isLiked = await checkIfUserLiked(_recipeIds);
+
+  if (isLiked) {
+    // 如果已经点赞，则取消点赞
+    return likeDelete(likesData);
+  } else {
+    // 如果没有点赞，则进行点赞
+    return addLikes(likesData);
+  }
   getList();
+}
+
+// 假设的检查用户是否点赞的方法
+async function checkIfUserLiked(recipeId) {
+  // 这里需要调用一个API来检查用户是否已经点赞了该菜谱
+  // 返回一个布尔值，表示用户是否已经点赞
+  // 例如：
+  const response = await request({
+    url: `/recipe/likes/check/${recipeId}`,
+    method: 'get'
+  });
+  return response.data.isLiked;
 }
 
 /** 提交按钮 */
