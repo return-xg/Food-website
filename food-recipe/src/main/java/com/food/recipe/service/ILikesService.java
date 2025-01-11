@@ -66,4 +66,12 @@ public interface ILikesService
      * @return
      */
     public int delete(Likes likes);
+
+    /**
+     * 查询用户是否已经点赞
+     *
+     * @param likes
+     * @return
+     */
+    public Boolean likeSelect(Likes likes);
 }

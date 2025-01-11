@@ -27,7 +27,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where like_id = #{likeId}
     </select>
 
-<!--    点赞-->
+<!--    查询是否已经点赞-->
+    <select id="likeSelect">
+        select COUNT(*)
+        from likes
+        where user_id = #{userId} and recipe_id = #{recipeId}
+    </select>
+
+    <!--    点赞-->
     <insert id="insertLikes" parameterType="Likes">
         insert into likes
         <trim prefix="(" suffix=")" suffixOverrides=",">

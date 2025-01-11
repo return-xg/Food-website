@@ -91,6 +91,15 @@ public class LikesController extends BaseController
     }
 
     /**
+     * 查询用户是否已经点赞
+     */
+    @GetMapping("/likeSelect")
+    public Boolean likeSelect(@RequestBody Likes likes)
+    {
+        return likesService.likeSelect(likes);
+    }
+
+    /**
      * 修改点赞
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:edit')")

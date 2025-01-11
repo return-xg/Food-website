@@ -72,6 +72,19 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
+     * 查询用户是否已经点赞
+     *
+     * @param likes
+     * @return
+     */
+    @Override
+    public Boolean likeSelect(Likes likes) {
+
+        likes.setUserId(getUserId());
+        return likesMapper.likeSelect(likes) > 0;
+    }
+
+    /**
      * 修改点赞
      * 
      * @param likes 点赞

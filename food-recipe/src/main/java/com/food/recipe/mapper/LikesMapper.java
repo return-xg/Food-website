@@ -44,6 +44,14 @@ public interface LikesMapper
     public int delete(Likes likes);
 
     /**
+     * 查询用户是否已经点赞
+     *
+     * @param likes
+     * @return
+     */
+    public int likeSelect(Likes likes);
+
+    /**
      * 修改点赞
      * 
      * @param likes 点赞
