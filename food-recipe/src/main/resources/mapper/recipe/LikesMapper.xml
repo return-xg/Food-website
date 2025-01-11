@@ -46,7 +46,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where user_id = #{userId} and recipe_id = #{recipeId}
     </select>
 <!--    根据用户ID查询喜欢列表-->
-    <select id="listUserId" resultType="com.food.recipe.domain.Recipe">
+    <select id="listUserId" resultMap="RecipeResult">
         SELECT
             r.recipe_id,
             r.user_id,
