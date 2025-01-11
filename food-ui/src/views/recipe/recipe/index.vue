@@ -86,7 +86,7 @@
       <el-table-column label="评论数" align="center" prop="review" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button class="heart" @click="star(scope.row)"></el-button>
+          <el-button class="heart" :class="{'starred': scope.row.starred}" @click="star(scope.row)"></el-button>
           <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">查看</el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:recipe:remove']">删除</el-button>
@@ -230,7 +230,7 @@
 
 <script setup name="Recipe">
 import { listRecipe, getRecipe, delRecipe, addRecipe, updateRecipe } from "@/api/recipe/recipe";
-import {addLikes, likeDelete} from "@/api/recipe/likes.js";
+import {addLikes, getLikes, likeDelete, likeSelect} from "@/api/recipe/likes.js";
 
 const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
@@ -258,7 +258,7 @@ const data = reactive({
     pageNum: 1,
     pageSize: 10,
     recipeName: null,
-    variety: null
+    variety: null,
   },
   rules: {
     recipeName: [
@@ -270,13 +270,21 @@ const data = reactive({
 const { queryParams, form, rules } = toRefs(data);
 
 /** 查询食谱列表 */
-function getList() {
+async function getList() {
   loading.value = true;
-  listRecipe(queryParams.value).then(response => {
-    recipeList.value = response.rows;
-    total.value = response.total;
+  try {
+    const response = await listRecipe(queryParams.value);
+    const recipeIds = response.rows.map(row => row.recipeId);
+    const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
+    recipeList.value = response.rows.map((row, index) => {
+      row.starred = likesResponses[index];
+      return row;
+    });
+  } catch (error) {
+    console.error(error);
+  } finally {
     loading.value = false;
-  });
+  }
 }
 
 // 取消按钮
@@ -357,34 +365,30 @@ function handleViewData(row) {
   });
 }
 
-/** 收藏按钮操作 */
-async function star(row) {
+/** 点赞按钮操作 */
+function star(row) {
   const _recipeIds = row.recipeId || ids.value;
-  const likesData = {recipeId: _recipeIds};
+  const likesData = { recipeId: _recipeIds };
 
-  // 假设你有一个方法来检查用户是否已经点赞了该菜谱
-  const isLiked = await checkIfUserLiked(_recipeIds);
+  likeSelect(_recipeIds).then(response => {
+    // 检查用户是否已经点赞了该菜谱
+    const isLiked = response;
 
-  if (isLiked) {
-    // 如果已经点赞，则取消点赞
-    return likeDelete(likesData);
-  } else {
-    // 如果没有点赞，则进行点赞
-    return addLikes(likesData);
-  }
-  getList();
-}
+    if (isLiked) {
+      // 如果已经点赞，则取消点赞
+      likeDelete(likesData);
+      // 移除 starred 类
+      row.starred = false;
+    } else {
+      // 如果没有点赞，则进行点赞
+      addLikes(likesData);
+      // 添加 starred 类
+      row.starred = true;
+    }
 
-// 假设的检查用户是否点赞的方法
-async function checkIfUserLiked(recipeId) {
-  // 这里需要调用一个API来检查用户是否已经点赞了该菜谱
-  // 返回一个布尔值，表示用户是否已经点赞
-  // 例如：
-  const response = await request({
-    url: `/recipe/likes/check/${recipeId}`,
-    method: 'get'
+    // 重新获取列表以更新点赞状态
+    getList();
   });
-  return response.data.isLiked;
 }
 
 /** 提交按钮 */
@@ -494,7 +498,20 @@ function handleExport() {
 getList();
 </script>
 
-<style>.heart {
+<style>
+/* 未点赞样式 */
+.heart {
+  background: url(../../../../public/image/starred-heart.png);
+  background-position: center; /* 可以根据需要调整 */
+  background-repeat: no-repeat;
+  background-size: contain; /* 确保图片完整显示 */
+  height: 20px; /* 根据需要调整 */
+  width: 20px; /* 根据需要调整 */
+  border: none; /* 去掉边框 */
+  padding: 0;
+}
+/* 已点赞样式 */
+.heart.starred {
   background: url(../../../../public/image/heart.png);
   background-position: center; /* 可以根据需要调整 */
   background-repeat: no-repeat;

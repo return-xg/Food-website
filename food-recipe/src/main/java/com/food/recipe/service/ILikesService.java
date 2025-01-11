@@ -70,8 +70,8 @@ public interface ILikesService
     /**
      * 查询用户是否已经点赞
      *
-     * @param likes
+     * @param recipeId
      * @return
      */
-    public Boolean likeSelect(Likes likes);
+    public Boolean likeSelect(Long recipeId);
 }

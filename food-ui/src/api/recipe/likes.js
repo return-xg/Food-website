@@ -35,6 +35,14 @@ export function likeDelete(data) {
   })
 }
 
+// 查询用户是否已经点赞
+export function likeSelect(recipeId) {
+  return request({
+    url: `/recipe/likes/likeSelect?recipeId=${recipeId}`,
+    method: 'get'
+  })
+}
+
 // 修改点赞
 export function updateLikes(data) {
   return request({

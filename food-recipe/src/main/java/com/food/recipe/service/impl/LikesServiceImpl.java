@@ -74,14 +74,14 @@ public class LikesServiceImpl implements ILikesService
     /**
      * 查询用户是否已经点赞
      *
-     * @param likes
+     * @param recipeId
      * @return
      */
     @Override
-    public Boolean likeSelect(Likes likes) {
+    public Boolean likeSelect(Long recipeId) {
 
-        likes.setUserId(getUserId());
-        return likesMapper.likeSelect(likes) > 0;
+        Long userId = getUserId();
+        return likesMapper.likeSelect(userId,recipeId) > 0;
     }
 
     /**

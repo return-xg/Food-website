@@ -2,6 +2,7 @@ package com.food.recipe.mapper;
 
 import java.util.List;
 import com.food.recipe.domain.Likes;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 点赞Mapper接口
@@ -45,11 +46,11 @@ public interface LikesMapper
 
     /**
      * 查询用户是否已经点赞
-     *
-     * @param likes
+     * @param userId
+     * @param recipeId
      * @return
      */
-    public int likeSelect(Likes likes);
+    public int likeSelect(@Param("userId") Long userId, @Param("recipeId") Long recipeId);
 
     /**
      * 修改点赞
