@@ -66,6 +66,7 @@ public class RecipeController extends BaseController
     @GetMapping(value = "/{recipeId}")
     public AjaxResult getInfo(@PathVariable("recipeId") Long recipeId)
     {
+        System.out.println(recipeService.selectRecipeByRecipeId(recipeId));
         return success(recipeService.selectRecipeByRecipeId(recipeId));
     }
 

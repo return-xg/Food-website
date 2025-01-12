@@ -42,6 +42,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="ingredientQuantity"    column="ingredient_quantity"    />
     </resultMap>
 
+    <resultMap id="RecipeStepAndIngredientResult" type="Recipe" extends="RecipeResult">
+        <collection property="stepList" ofType="Step" column="recipe_id" select="selectStepList" />
+        <collection property="ingredientList" ofType="Ingredient" column="recipe_id" select="selectIngredientList" />
+    </resultMap>
+
     <sql id="selectRecipeVo">
         select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review from recipe
     </sql>
@@ -55,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
     
-    <select id="selectRecipeByRecipeId" parameterType="Long" resultMap="RecipeStepResult">
+    <select id="selectRecipeByRecipeId" parameterType="Long" resultMap="RecipeStepAndIngredientResult">
         select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review
         from recipe
         where recipe_id = #{recipeId}
@@ -64,6 +69,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectStepList" resultMap="StepResult">
         select step_id, recipe_id, step_number, step_description, step_image
         from step
+        where recipe_id = #{recipe_id}
+    </select>
+
+    <select id="selectIngredientList" resultMap="IngredientResult">
+        select ingredient_id, recipe_id, ingredient_name, ingredient_quantity
+        from ingredient
         where recipe_id = #{recipe_id}
     </select>
 
@@ -125,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{recipeId}
         </foreach>
     </delete>
-    
+<!--    批量删除步骤-->
     <delete id="deleteStepByRecipeIds" parameterType="String">
         delete from step where recipe_id in 
         <foreach item="recipeId" collection="array" open="(" separator="," close=")">
@@ -133,10 +144,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+<!--    通过食谱主键删除步骤信息-->
     <delete id="deleteStepByRecipeId" parameterType="Long">
         delete from step where recipe_id = #{recipeId}
     </delete>
 
+<!--    批量新增步骤-->
     <insert id="batchStep">
         insert into step( step_id, recipe_id, step_number, step_description, step_image) values
         <foreach item="item" index="index" collection="list" separator=",">
@@ -144,6 +157,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </insert>
 
+<!--    批量删除食材-->
     <delete id="deleteIngredientByRecipeIds" parameterType="String">
         delete from ingredient where recipe_id in
         <foreach item="recipeId" collection="array" open="(" separator="," close=")">
@@ -151,10 +165,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
+<!--    通过食谱主键删除食材信息-->
     <delete id="deleteIngredientByRecipeId" parameterType="Long">
         delete from ingredient where recipe_id = #{recipeId}
     </delete>
 
+<!--    批量新增食材-->
     <insert id="batchIngredient">
         insert into ingredient( ingredient_id, recipe_id, ingredient_name, ingredient_quantity) values
         <foreach item="item" index="index" collection="list" separator=",">

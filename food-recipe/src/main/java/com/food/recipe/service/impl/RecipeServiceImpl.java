@@ -161,8 +161,10 @@ public class RecipeServiceImpl implements IRecipeService
             List<Ingredient> list = new ArrayList<Ingredient>();
             for (Ingredient ingredient : ingredientList)
             {
-                ingredient.setRecipeId(recipeId);
-                list.add(ingredient);
+                if (StringUtils.isNotBlank(ingredient.getIngredientName()) || StringUtils.isNotBlank(ingredient.getIngredientQuantity())) {
+                    ingredient.setRecipeId(recipeId);
+                    list.add(ingredient);
+                }
             }
             if (list.size() > 0)
             {

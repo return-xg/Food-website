@@ -130,14 +130,14 @@
         <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="存储食材的名称" prop="ingredientName" width="150">
+          <el-table-column label="食材名称" prop="ingredientName" width="235">
             <template #default="scope">
-              <el-input v-model="scope.row.ingredientName" placeholder="请输入存储食材的名称" />
+              <el-input v-model="scope.row.ingredientName" placeholder="请输入食材的名称" />
             </template>
           </el-table-column>
-          <el-table-column label="记录食材的用量" prop="ingredientQuantity" width="150">
+          <el-table-column label="食材用量" prop="ingredientQuantity" width="235">
             <template #default="scope">
-              <el-input v-model="scope.row.ingredientQuantity" placeholder="请输入记录食材的用量" />
+              <el-input v-model="scope.row.ingredientQuantity" placeholder="请输入食材的用量" />
             </template>
           </el-table-column>
         </el-table>
@@ -180,7 +180,7 @@
           <el-input :disabled="true" v-model="form.recipeName"/>
         </el-form-item>
         <el-form-item label="菜系" prop="variety">
-          <el-select v-model="form.variety" placeholder="请选择菜系" disabled>
+          <el-select v-model="form.variety" disabled>
             <el-option
                 v-for="dict in variety"
                 :key="dict.value"
@@ -197,15 +197,15 @@
         </el-form-item>
         <el-divider content-position="center">食材信息</el-divider>
         <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
-          <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="存储食材的名称" prop="ingredientName" width="150">
+          <el-table-column label="序号" align="center" prop="index" width="60"/>
+          <el-table-column label="存储食材的名称" prop="ingredientName" width="260">
             <template #default="scope">
-              <el-input v-model="scope.row.ingredientName" placeholder="请输入存储食材的名称" />
+              <el-input :disabled="true" v-model="scope.row.ingredientName"/>
             </template>
           </el-table-column>
-          <el-table-column label="记录食材的用量" prop="ingredientQuantity" width="150">
+          <el-table-column label="记录食材的用量" prop="ingredientQuantity" width="260">
             <template #default="scope">
-              <el-input v-model="scope.row.ingredientQuantity" placeholder="请输入记录食材的用量" />
+              <el-input :disabled="true" v-model="scope.row.ingredientQuantity"/>
             </template>
           </el-table-column>
         </el-table>
@@ -214,7 +214,7 @@
           <el-table-column label="步骤" align="center" prop="index" width="60"/>
           <el-table-column label="操作内容" prop="stepDescription" width="260">
             <template #default="scope">
-              <el-input :disabled="true" type="textarea" :rows="5" v-model="scope.row.stepDescription" placeholder="请输入该步骤的操作内容" />
+              <el-input :disabled="true" type="textarea" :rows="5" v-model="scope.row.stepDescription"/>
             </template>
           </el-table-column>
           <el-table-column label="图片" prop="stepImage" width="260">
@@ -274,6 +274,7 @@ async function getList() {
   loading.value = true;
   try {
     const response = await listRecipe(queryParams.value);
+    total.value = response.total;
     const recipeIds = response.rows.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
     recipeList.value = response.rows.map((row, index) => {
