@@ -1,7 +1,7 @@
 <template>
   <div class="my-header">
     <div class="left-header">
-      <span><router-link to="/">logo 首页</router-link></span>
+      <span><router-link to="/index">首页</router-link></span>
       <span><a>菜谱</a></span>
       <span><a>食材</a></span>
       <span><a>健康</a></span>

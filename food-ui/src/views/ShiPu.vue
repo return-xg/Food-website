@@ -2,37 +2,36 @@
   <div class="food-header">
     <div class="header">
       <div class="logo">
-        <router-link to="/"> <img src="../assets/loge.jpg" /></router-link>
+        <router-link to="/index"> <img src="../assets/loge.jpg" /></router-link>
         <span>菜谱</span>
       </div>
-      <div class="header-center">
-        <router-link
-          to="/yuanliao"
-          :class="{ active: $route.name == 'yuanliao' }"
-          >菜谱分类</router-link
-        >
-        <router-link
-          to="/yingyang"
-          :class="{ active: $route.name == 'yingyang' }"
-          >菜谱排行</router-link
-        >
-      </div>
-      <div class="header-right">
-        <el-input
-          class="input-with-select"
-          @keyup.13.native="(mname = input), (input = '')"
-          placeholder="请输入内容"
-          v-model="input"
-        >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-            type="info"
-            @click="(mname = input), (input = '')"
-            >搜索</el-button
-          >
-        </el-input>
-      </div>
+<!--      <div class="header-center">-->
+<!--        <router-link-->
+<!--          to="/yuanliao"-->
+<!--          :class="{ active: $route.name == 'yuanliao' }"-->
+<!--          >菜谱分类</router-link-->
+<!--        >-->
+<!--        <router-link-->
+<!--          to="/yingyang"-->
+<!--          :class="{ active: $route.name == 'yingyang' }"-->
+<!--          >菜谱排行</router-link-->
+<!--        >-->
+<!--      </div>-->
+<!--      <div class="header-right">-->
+<!--        <el-input-->
+<!--          class="input-with-select"-->
+<!--          @keyup.13.native="(mname = input), (input = '')"-->
+<!--          placeholder="请输入内容"-->
+<!--          v-model="input">-->
+<!--        </el-input>-->
+<!--        <el-button-->
+<!--          class="button"-->
+<!--          slot="append"-->
+<!--          icon="el-icon-search"-->
+<!--          type="info"-->
+<!--          @click="(mname = input), (input = '')"-->
+<!--        >搜索</el-button>-->
+<!--      </div>-->
     </div>
     <div class="header2">
       <router-link to="" @click.native="data = 1" :class="{ active: data == 1 }"
@@ -54,6 +53,7 @@
 
 <script>
 import Seniority from "../components/Index/Seniority.vue";
+
 export default {
   components: { Seniority },
   data() {
@@ -91,7 +91,7 @@ export default {
   height: 50px;
 }
 .logo img {
-  width: 80px;
+  width: 50px;
   height: 45px;
   vertical-align: middle;
   margin-right: 10px;
@@ -124,13 +124,15 @@ export default {
   width: 250px;
   height: 30px;
   margin-top: 10px;
+  display: flex;
+  align-items: center; /* 垂直居中对齐 */
 }
 .header-center > a.active {
   color: #ff8da6;
 }
 .header2 {
-  width: 950px;
-  height: 15px;
+  width: 1000px;
+  height: 40px;
   border-top: 1px solid red;
   border-bottom: 1px solid red;
   margin: 5px auto 0;
@@ -144,5 +146,12 @@ export default {
 }
 .header2 > a.active {
   color: #ff8da6;
+}
+.input-with-select {
+  height: 30px;
+  right: 10px;
+}
+.button {
+  height: 30px;
 }
 </style>

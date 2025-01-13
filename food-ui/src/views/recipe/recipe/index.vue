@@ -25,6 +25,7 @@
       </el-form-item>
     </el-form>
 
+<!--    搜索-->
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -118,6 +119,12 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="食谱简介" prop="recipeDescription">
+          <el-input v-model="form.recipeDescription" placeholder="请输入食谱简介" />
+        </el-form-item>
+        <el-form-item label="成品图片" prop="recipeImage">
+          <image-upload v-model="form.recipeImage"/>
+        </el-form-item>
         <el-divider content-position="center">食材信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
@@ -177,20 +184,13 @@
     <el-dialog :title="viewTitle" v-model="viewOpen" width="600px" append-to-body>
       <el-form ref="recipeRef" :model="form" label-width="80px">
         <el-form-item label="食品名称" prop="viewRecipeName">
-          <el-input :disabled="true" v-model="form.recipeName"/>
+          <span>{{ form.recipeName }}</span>
         </el-form-item>
         <el-form-item label="菜系" prop="variety">
-          <el-select v-model="form.variety" disabled>
-            <el-option
-                v-for="dict in variety"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
+          <span>{{ form.variety }}</span>
         </el-form-item>
         <el-form-item label="食谱简介" prop="viewRecipeDescription">
-          <el-input :disabled="true" v-model="form.recipeDescription"/>
+          <span>{{ form.recipeDescription }}</span>
         </el-form-item>
         <el-form-item label="图片" prop="viewRecipeImage">
           <image-preview :src="form.recipeImage" :width="150" :height="150"/>
@@ -198,14 +198,14 @@
         <el-divider content-position="center">食材信息</el-divider>
         <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
           <el-table-column label="序号" align="center" prop="index" width="60"/>
-          <el-table-column label="存储食材的名称" prop="ingredientName" width="260">
+          <el-table-column label="食材名称" prop="ingredientName" width="260">
             <template #default="scope">
-              <el-input :disabled="true" v-model="scope.row.ingredientName"/>
+              {{ scope.row.ingredientName }}
             </template>
           </el-table-column>
-          <el-table-column label="记录食材的用量" prop="ingredientQuantity" width="260">
+          <el-table-column label="食材用量" prop="ingredientQuantity" width="260">
             <template #default="scope">
-              <el-input :disabled="true" v-model="scope.row.ingredientQuantity"/>
+              {{ scope.row.ingredientQuantity }}
             </template>
           </el-table-column>
         </el-table>
@@ -214,7 +214,7 @@
           <el-table-column label="步骤" align="center" prop="index" width="60"/>
           <el-table-column label="操作内容" prop="stepDescription" width="260">
             <template #default="scope">
-              <el-input :disabled="true" type="textarea" :rows="5" v-model="scope.row.stepDescription"/>
+              <div style="white-space: pre-wrap;">{{ scope.row.stepDescription }}</div>
             </template>
           </el-table-column>
           <el-table-column label="图片" prop="stepImage" width="260">

@@ -3,22 +3,22 @@
     <!-- 顶部导航 -->
 <!--    <my-header />-->
     <my-nav/>
-    <!-- MyBanner.vue -->
+
+<!--    轮播图-->
     <my-banner />
 
-    <!-- MyMain.vue -->
     <my-main />
 
-    <!-- MyFood.Vue -->
+<!--    今日推荐-->
     <my-food />
 
-    <!-- FoodMaterial.Vue -->
+<!--    时令食材-->
     <food-material />
 
-    <!-- HotNote.Vue -->
+<!--    笔记-->
     <hot-note />
 
-    <!-- MyFooter.vue    -->
+<!--    底部-->
     <my-footer />
   </div>
 </template>
