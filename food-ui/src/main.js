@@ -42,6 +42,7 @@ import ImageUpload from "@/components/ImageUpload"
 import ImagePreview from "@/components/ImagePreview"
 // 字典标签组件
 import DictTag from '@/components/DictTag'
+import useAppStore from "@/store/modules/app.js";
 
 const app = createApp(App)
 
@@ -78,5 +79,9 @@ app.use(ElementPlus, {
   // 支持 large、default、small
   size: Cookies.get('size') || 'default'
 })
+
+// // 初始化 store 并设置 sidebar.opened 为 false
+// const appStore = useAppStore()
+// appStore.closeSideBar({ withoutAnimation: true })
 
 app.mount('#app')

@@ -17,8 +17,14 @@ const isWhiteList = (path) => {
   return whiteList.some(pattern => isPathMatch(pattern, path))
 }
 
+let initialRedirectDone = false // 新增标志位
+
 router.beforeEach((to, from, next) => {
   NProgress.start()
+
+  console.log('Current path:', to.path)
+  console.log('User roles:', useUserStore().roles)
+
   if (getToken()) {
     to.meta.title && useSettingsStore().setTitle(to.meta.title)
     /* has token*/
@@ -40,7 +46,17 @@ router.beforeEach((to, from, next) => {
                 router.addRoute(route) // 动态添加可访问路由表
               }
             })
-            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+            // 判断用户角色是否为common，如果是，并且是首次登录，则重定向到common/index.vue
+            if (useUserStore().roles.includes('common') && !initialRedirectDone) {
+              initialRedirectDone = true // 设置标志位
+              next({ path: '/common/index', replace: true })
+            } else {
+              if (to.path !== '/') {
+                next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+              } else {
+                next()
+              }
+            }
           })
         }).catch(err => {
           useUserStore().logOut().then(() => {
@@ -49,7 +65,11 @@ router.beforeEach((to, from, next) => {
           })
         })
       } else {
-        next()
+          if (to.path !== '/') {
+            next()
+          } else {
+            next()
+        }
       }
     }
   } else {

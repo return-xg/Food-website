@@ -134,6 +134,19 @@ export const constantRoutes = [
 //       },
 //     ]
 //   },
+  {
+    path: '/common',
+    hidden: true,
+    redirect: '/common/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/common/index'),
+        name: 'CommonIndex',
+        meta: { title: '用户首页', icon: 'dashboard', affix: true }
+      }
+    ]
+  }
 ]
 
 // 动态路由，基于用户权限动态去加载
