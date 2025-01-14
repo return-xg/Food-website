@@ -19,7 +19,7 @@
           to="/shipu"
           :class="{ active: index == 2 }"
           @click.native="index = 2"
-          >菜谱</router-link
+          >食谱</router-link
         >
       </el-col>
       <el-col :span="4">

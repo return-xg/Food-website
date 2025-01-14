@@ -2,10 +2,10 @@
   <div class="app-container">
     <!--    搜索-->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px" style="margin-left: 440px;">
-      <el-form-item label="食品名称" prop="recipeName">
+      <el-form-item label="食谱" prop="recipeName">
         <el-input
             v-model="queryParams.recipeName"
-            placeholder="请输入食品名称"
+            placeholder="请输入食谱名称"
             clearable
             @keyup.enter="handleQuery"
         />
@@ -328,5 +328,19 @@ getList();
 .card-header {
   font-weight: bold;
   margin-bottom: 10px; /* 标题和其他内容之间添加间距 */
+}
+
+.el-form-item__label {
+  font-size: 16px;
+  color: #333;
+}
+
+.el-select {
+  width: 200px; /* 调整下拉框宽度 */
+}
+
+.el-input__inner {
+  height: 40px; /* 调整输入框高度 */
+  line-height: 40px; /* 调整输入框行高 */
 }
 </style>

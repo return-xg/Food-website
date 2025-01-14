@@ -28,7 +28,7 @@
       <div class="column-left">
         <div @mouseover="index = 1" :class="{ active: index == 1 }">
           <div class="el-icon-s-order column-left-item">
-            <span>菜谱大全</span>
+            <span>食谱大全</span>
           </div>
           <i class="el-icon-arrow-right"></i>
         </div>
@@ -375,7 +375,7 @@ export default {
     };
   },
   mounted() {
-    this.getBanner();
+    // this.getBanner();
   },
   methods: {
     stopSwiper() {

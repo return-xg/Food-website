@@ -1,37 +1,11 @@
 <template>
   <div class="food-header">
+    <my-header />
     <div class="header">
       <div class="logo">
-        <router-link to="/index"> <img src="../assets/loge.jpg" /></router-link>
-        <span>菜谱</span>
+        <router-link to="/common/index"> <img src="../assets/loge.jpg" /></router-link>
+        <span>食谱</span>
       </div>
-<!--      <div class="header-center">-->
-<!--        <router-link-->
-<!--          to="/yuanliao"-->
-<!--          :class="{ active: $route.name == 'yuanliao' }"-->
-<!--          >菜谱分类</router-link-->
-<!--        >-->
-<!--        <router-link-->
-<!--          to="/yingyang"-->
-<!--          :class="{ active: $route.name == 'yingyang' }"-->
-<!--          >菜谱排行</router-link-->
-<!--        >-->
-<!--      </div>-->
-<!--      <div class="header-right">-->
-<!--        <el-input-->
-<!--          class="input-with-select"-->
-<!--          @keyup.13.native="(mname = input), (input = '')"-->
-<!--          placeholder="请输入内容"-->
-<!--          v-model="input">-->
-<!--        </el-input>-->
-<!--        <el-button-->
-<!--          class="button"-->
-<!--          slot="append"-->
-<!--          icon="el-icon-search"-->
-<!--          type="info"-->
-<!--          @click="(mname = input), (input = '')"-->
-<!--        >搜索</el-button>-->
-<!--      </div>-->
     </div>
     <div class="header2">
       <router-link to="" @click.native="data = 1" :class="{ active: data == 1 }"
@@ -53,9 +27,10 @@
 
 <script>
 import Seniority from "../components/Index/Seniority.vue";
+import MyHeader from "@/components/Index/MyHeader.vue";
 
 export default {
-  components: { Seniority },
+  components: {MyHeader, Seniority },
   data() {
     return {
       mname: "",

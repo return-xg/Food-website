@@ -90,7 +90,7 @@
           <div class="cao3">
             <div v-for="(item, i) in step" :key="i">
               <div class="step-item">
-               
+
                 <div>
                   <div class="step-text">{{ item }}</div>
                 </div>
@@ -185,7 +185,7 @@ export default {
     };
   },
   mounted() {
-    this.getData();
+    // this.getData();
     console.log(this.mname)
   },
   methods: {

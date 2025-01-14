@@ -8,8 +8,8 @@
       <a>主食</a>
       <a>小吃</a>
       <a>饮品</a>
-      <a>家常菜谱</a>
-      <a>菜谱首页</a>
+      <a>家常食谱</a>
+      <router-link to="/ShiPu">食谱首页</router-link>
     </div>
     <!-- </div> -->
     <hr />
@@ -36,7 +36,7 @@ export default {
     };
   },
   mounted() {
-    this.getData();
+    // this.getData();
   },
   methods: {
     getData() {

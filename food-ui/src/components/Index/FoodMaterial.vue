@@ -38,7 +38,7 @@ export default {
     };
   },
   mounted() {
-    this.shicai();
+    // this.shicai();
   },
   methods: {
     //食材接口连接http://8.136.145.197:3000/ingredient

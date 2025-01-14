@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 顶部导航 -->
-    <!--    <my-header />-->
+    <my-header />
     <my-nav/>
 
     <!--    轮播图-->
