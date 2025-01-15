@@ -1,5 +1,7 @@
 package com.food.recipe.mapper;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import com.food.recipe.domain.Likes;
 import com.food.recipe.domain.Recipe;
@@ -89,4 +91,6 @@ public interface LikesMapper
      * @return
      */
     public List<Recipe> listUserId(Long userId);
+
+    public List<Recipe> threeLikes(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }

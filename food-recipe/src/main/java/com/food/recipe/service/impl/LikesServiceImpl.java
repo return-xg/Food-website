@@ -1,7 +1,10 @@
 package com.food.recipe.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
+import com.food.common.utils.DateUtils;
 import com.food.recipe.domain.Recipe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +59,7 @@ public class LikesServiceImpl implements ILikesService
     @Override
     public int insertLikes(Likes likes)
     {
+        likes.setCreateTime(DateUtils.getNowDate());
         likes.setUserId(getUserId());
         likesMapper.insertLikes(likes);
         return likesMapper.updateRecipeLikes();
@@ -131,5 +135,17 @@ public class LikesServiceImpl implements ILikesService
     public int deleteLikesByLikeId(Long likeId)
     {
         return likesMapper.deleteLikesByLikeId(likeId);
+    }
+
+    /**
+     * 统计一周以来点赞量最高的前三名食谱
+     * @return
+     */
+    @Override
+    public List<Recipe> threeLike() {
+
+        LocalDateTime endTime = LocalDateTime.now();
+        LocalDateTime startTime = endTime.minusWeeks(1);
+        return likesMapper.threeLikes(startTime,endTime);
     }
 }

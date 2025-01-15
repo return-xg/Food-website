@@ -78,7 +78,13 @@
           <dict-tag :options="variety" :value="scope.row.variety"/>
         </template>
       </el-table-column>
-      <el-table-column label="食谱简介" align="center" prop="recipeDescription" />
+      <el-table-column label="食谱简介" align="center">
+        <template #default="scope">
+          <el-tooltip effect="dark" :content="scope.row.recipeDescription" placement="top" popper-class="custom-tooltip">
+            <span>{{ scope.row.recipeDescription.slice(0, 10) + '...' }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="图片" align="center" prop="recipeImage" width="100">
         <template #default="scope">
           <image-preview :src="scope.row.recipeImage" :width="50" :height="50"/>
@@ -94,9 +100,9 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button class="heart" :class="{'starred': scope.row.starred}" @click="star(scope.row)"></el-button>
+<!--          <el-button class="heart" :class="{'starred': scope.row.starred}" @click="star(scope.row)"></el-button>-->
           <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">审核</el-button>
-<!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>-->
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:recipe:remove']">删除</el-button>
         </template>
       </el-table-column>
@@ -134,14 +140,6 @@
           <image-upload v-model="form.recipeImage"/>
         </el-form-item>
         <el-divider content-position="center">食材信息</el-divider>
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" icon="Plus" @click="handleAddIngredient">添加</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" icon="Delete" @click="handleDeleteIngredient">删除</el-button>
-          </el-col>
-        </el-row>
         <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
@@ -156,15 +154,15 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-divider content-position="center">步骤信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" icon="Plus" @click="handleAddStep">添加</el-button>
+            <el-button type="primary" icon="Plus" @click="handleAddIngredient">添加</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" icon="Delete" @click="handleDeleteStep">删除</el-button>
+            <el-button type="danger" icon="Delete" @click="handleDeleteIngredient">删除</el-button>
           </el-col>
         </el-row>
+        <el-divider content-position="center">步骤信息</el-divider>
         <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="步骤" align="center" prop="index" width="50"/>
@@ -179,16 +177,14 @@
             </template>
           </el-table-column>
         </el-table>
-<!--        <el-form-item label="审核状态" prop="state">-->
-<!--          <el-select v-model="form.state" placeholder="请选择审核状态">-->
-<!--            <el-option-->
-<!--                v-for="dict in recipe_state"-->
-<!--                :key="dict.value"-->
-<!--                :label="dict.label"-->
-<!--                :value="parseInt(dict.value)"-->
-<!--            ></el-option>-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="Plus" @click="handleAddStep">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="Delete" @click="handleDeleteStep">删除</el-button>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -205,7 +201,7 @@
           <span>{{ form.recipeName }}</span>
         </el-form-item>
         <el-form-item label="菜系" prop="variety">
-          <span>{{ form.variety }}</span>
+          <dict-tag :options="variety" :value="form.variety"/>
         </el-form-item>
         <el-form-item label="食谱简介" prop="viewRecipeDescription">
           <span>{{ form.recipeDescription }}</span>
@@ -577,5 +573,20 @@ getList();
   width: 20px; /* 根据需要调整 */
   border: none; /* 去掉边框 */
   padding: 0;
+}
+
+.el-select {
+  width: 200px; /* 调整下拉框宽度 */
+}
+
+.custom-tooltip {
+  white-space: normal; /* 允许内容换行 */
+  max-width: 200px; /* 设置最大宽度 */
+  padding: 8px; /* 设置内边距 */
+  border-radius: 4px; /* 设置圆角 */
+  background-color: #fff; /* 设置背景颜色 */
+  border: 1px solid #ebeef5; /* 设置边框 */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 设置阴影 */
+  z-index: 3000; /* 确保提示框在最上层 */
 }
 </style>

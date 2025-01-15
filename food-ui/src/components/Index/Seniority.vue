@@ -35,8 +35,12 @@
           <div class="card-header">
             <span>{{ recipe.recipeName }}</span>
           </div>
-          <p>菜系: {{ recipe.variety }}</p>
-          <p>食谱简介: {{ recipe.recipeDescription }}</p>
+          <p style="display: inline;">菜系: <dict-tag :options="variety" :value="recipe.variety" style="display: inline;"/></p>
+          <p>
+          <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip">
+            <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+          </el-tooltip>
+          </p>
           <p>点赞数: {{ recipe.likes }}</p>
           <p>收藏数: {{ recipe.collect }}</p>
           <p>评论数: {{ recipe.review }}</p>
@@ -342,5 +346,16 @@ getList();
 .el-input__inner {
   height: 40px; /* 调整输入框高度 */
   line-height: 40px; /* 调整输入框行高 */
+}
+
+.custom-tooltip {
+  white-space: normal; /* 允许内容换行 */
+  max-width: 200px; /* 设置最大宽度 */
+  padding: 8px; /* 设置内边距 */
+  border-radius: 4px; /* 设置圆角 */
+  background-color: #fff; /* 设置背景颜色 */
+  border: 1px solid #ebeef5; /* 设置边框 */
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 设置阴影 */
+  z-index: 3000; /* 确保提示框在最上层 */
 }
 </style>

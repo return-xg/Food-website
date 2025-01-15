@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.food.recipe.domain.Recipe;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -124,5 +125,13 @@ public class LikesController extends BaseController
     public AjaxResult remove(@PathVariable Long[] likeIds)
     {
         return toAjax(likesService.deleteLikesByLikeIds(likeIds));
+    }
+
+    /**
+     * 统计一周以来点赞量最高的前三名食谱
+     */
+    @GetMapping("/threeLike")
+    public AjaxResult threeLike(){
+        return success(likesService.threeLike());
     }
 }

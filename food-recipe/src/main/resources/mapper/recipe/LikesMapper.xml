@@ -8,6 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="likeId"    column="like_id"    />
         <result property="recipeId"    column="recipe_id"    />
         <result property="userId"    column="user_id"    />
+        <result property="createTime"    column="create_time"    />
     </resultMap>
 
     <resultMap type="Recipe" id="RecipeResult">
@@ -23,7 +24,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectLikesVo">
-        select like_id, recipe_id, user_id from likes
+        select like_id, recipe_id, user_id, create_time from likes
     </sql>
 
     <select id="selectLikesList" parameterType="Likes" resultMap="LikesResult">
@@ -31,6 +32,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="recipeId != null "> and recipe_id = #{recipeId}</if>
             <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="createTime != null "> and create_time = #{createTime}</if>
         </where>
     </select>
     
@@ -76,6 +78,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             r.variety
     </select>
 
+<!--    统计一周以来点赞量最高的前三名食谱-->
+    <select id="threeLikes" resultMap="RecipeResult">
+        SELECT r.recipe_id, r.recipe_name, r.recipe_image
+        FROM recipe r
+            JOIN (
+            SELECT recipe_id
+            FROM likes
+            WHERE create_time BETWEEN #{startTime} AND #{endTime}
+            GROUP BY recipe_id
+            ORDER BY COUNT(*) DESC
+                LIMIT 3
+        ) top_liked_recipes ON r.recipe_id = top_liked_recipes.recipe_id;
+    </select>
+
     <!--    点赞-->
     <insert id="insertLikes" parameterType="Likes">
         insert into likes
@@ -83,11 +99,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="likeId != null">like_id,</if>
             <if test="recipeId != null">recipe_id,</if>
             <if test="userId != null">user_id,</if>
+            <if test="createTime != null">create_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="likeId != null">#{likeId},</if>
             <if test="recipeId != null">#{recipeId},</if>
             <if test="userId != null">#{userId},</if>
+            <if test="createTime != null">#{createTime},</if>
          </trim>
     </insert>
 

@@ -146,6 +146,11 @@ export const constantRoutes = [
         meta: { title: '用户首页', icon: 'dashboard', affix: true }
       }
     ]
+  },
+  {
+    path: '/recipe/:recipeId',
+    name: 'RecipeById',
+    component: () => import('@/views/recipe/recipe/recipeById.vue')
   }
 ]
 

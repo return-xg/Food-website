@@ -9,6 +9,14 @@ export function listLikes(query) {
   })
 }
 
+// 统计一周以来点赞量最高的前三名食谱
+export function threeLikes() {
+  return request({
+    url: '/recipe/likes/threeLike',
+    method: 'get'
+  })
+}
+
 // 查询点赞详细
 export function getLikes(likeId) {
   return request({
