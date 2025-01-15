@@ -35,6 +35,15 @@ export function updateRecipe(data) {
   })
 }
 
+// 修改审核状态
+export function updateState(data) {
+  return request({
+    url: '/recipe/recipe/state',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除食谱
 export function delRecipe(recipeId) {
   return request({

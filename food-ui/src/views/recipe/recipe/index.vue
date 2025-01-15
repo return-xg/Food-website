@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <!--    搜索-->
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="食品名称" prop="recipeName">
         <el-input
@@ -19,13 +20,23 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="审核状态" prop="state">
+        <el-select v-model="queryParams.state" placeholder="请选择审核状态" clearable>
+          <el-option
+              v-for="dict in recipe_state"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
-<!--    搜索-->
+
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
@@ -36,16 +47,16 @@
           v-hasPermi="['recipe:recipe:add']"
         >新增</el-button>
       </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['recipe:recipe:edit']"
-        >修改</el-button>
-      </el-col>
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="success"-->
+<!--          plain-->
+<!--          icon="Edit"-->
+<!--          :disabled="single"-->
+<!--          @click="handleUpdate"-->
+<!--          v-hasPermi="['recipe:recipe:edit']"-->
+<!--        >修改</el-button>-->
+<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="danger"
@@ -68,6 +79,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
+<!--    数据列表-->
     <el-table v-loading="loading" :data="recipeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="食品名称" align="center" prop="recipeName" />
@@ -85,16 +97,22 @@
       <el-table-column label="点赞数" align="center" prop="likes" />
       <el-table-column label="收藏数" align="center" prop="collect" />
       <el-table-column label="评论数" align="center" prop="review" />
+      <el-table-column label="审核状态" align="center" prop="state">
+        <template #default="scope">
+          <dict-tag :options="recipe_state" :value="scope.row.state"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button class="heart" :class="{'starred': scope.row.starred}" @click="star(scope.row)"></el-button>
-          <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">查看</el-button>
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>
+          <el-button link type="primary" icon="el-icon-more" @click="handleViewData(scope.row)">审核</el-button>
+<!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:recipe:edit']">修改</el-button>-->
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:recipe:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
+<!--    分页-->
     <pagination
       v-show="total>0"
       :total="total"
@@ -103,7 +121,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改食谱对话框 -->
+    <!-- 管理员添加食谱对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form ref="recipeRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="食品名称" prop="recipeName">
@@ -171,6 +189,16 @@
             </template>
           </el-table-column>
         </el-table>
+<!--        <el-form-item label="审核状态" prop="state">-->
+<!--          <el-select v-model="form.state" placeholder="请选择审核状态">-->
+<!--            <el-option-->
+<!--                v-for="dict in recipe_state"-->
+<!--                :key="dict.value"-->
+<!--                :label="dict.label"-->
+<!--                :value="parseInt(dict.value)"-->
+<!--            ></el-option>-->
+<!--          </el-select>-->
+<!--        </el-form-item>-->
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -180,7 +208,7 @@
       </template>
     </el-dialog>
 
-    <!-- 查看菜谱对话框 -->
+    <!-- 审核菜谱对话框 -->
     <el-dialog :title="viewTitle" v-model="viewOpen" width="600px" append-to-body>
       <el-form ref="recipeRef" :model="form" label-width="80px">
         <el-form-item label="食品名称" prop="viewRecipeName">
@@ -223,13 +251,29 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-form-item label="审核状态" prop="state">
+          <el-select v-model="form.state" placeholder="请选择审核状态">
+            <el-option
+                v-for="dict in recipe_state"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm1">确 定</el-button>
+          <el-button @click="cancel2">取 消</el-button>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
 
 <script setup name="Recipe">
-import { listRecipe, getRecipe, delRecipe, addRecipe, updateRecipe } from "@/api/recipe/recipe";
+import {listRecipe, getRecipe, delRecipe, addRecipe, updateRecipe, updateState} from "@/api/recipe/recipe";
 import {addLikes, getLikes, likeDelete, likeSelect} from "@/api/recipe/likes.js";
 
 const { proxy } = getCurrentInstance();
@@ -250,7 +294,7 @@ const total = ref(0);
 const title = ref("");
 
 const viewOpen = ref(false); // 新增对话框的显示状态
-const viewTitle = ref("查看食谱"); // 新增对话框的标题
+const viewTitle = ref("审核食谱"); // 新增对话框的标题
 
 const data = reactive({
   form: {},
@@ -288,9 +332,15 @@ async function getList() {
   }
 }
 
-// 取消按钮
+// 取消按钮1
 function cancel() {
   open.value = false;
+  reset();
+}
+
+// 取消按钮2
+function cancel2() {
+  viewOpen.value = false;
   reset();
 }
 
@@ -354,7 +404,7 @@ function handleUpdate(row) {
   });
 }
 
-/** 查看按钮操作 */
+/** 审核按钮操作 */
 function handleViewData(row) {
   const _recipeId = row.recipeId || ids.value
   getRecipe(_recipeId).then(response => {
@@ -398,6 +448,7 @@ function submitForm() {
     if (valid) {
       form.value.ingredientList = ingredientList.value;
       form.value.stepList = stepList.value;
+      form.value.state = 1;
       if (form.value.recipeId != null) {
         updateRecipe(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
@@ -411,6 +462,21 @@ function submitForm() {
           getList();
         });
       }
+    }
+  });
+}
+
+/** 审核提交按钮操作 */
+function submitForm1() {
+  proxy.$refs["recipeRef"].validate(valid => {
+    if (valid) {
+      form.value.ingredientList = ingredientList.value;
+      form.value.stepList = stepList.value;
+        updateState(form.value).then(response => {
+          proxy.$modal.msgSuccess("审核成功");
+          viewOpen.value = false;
+          getList();
+        });
     }
   });
 }
