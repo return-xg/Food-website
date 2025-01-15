@@ -47,16 +47,6 @@
           v-hasPermi="['recipe:recipe:add']"
         >新增</el-button>
       </el-col>
-<!--      <el-col :span="1.5">-->
-<!--        <el-button-->
-<!--          type="success"-->
-<!--          plain-->
-<!--          icon="Edit"-->
-<!--          :disabled="single"-->
-<!--          @click="handleUpdate"-->
-<!--          v-hasPermi="['recipe:recipe:edit']"-->
-<!--        >修改</el-button>-->
-<!--      </el-col>-->
       <el-col :span="1.5">
         <el-button
           type="danger"
