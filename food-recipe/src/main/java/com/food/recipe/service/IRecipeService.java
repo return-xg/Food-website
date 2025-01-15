@@ -44,6 +44,14 @@ public interface IRecipeService
     public int updateRecipe(Recipe recipe);
 
     /**
+     * 修改审核状态
+     *
+     * @param recipe 食谱
+     * @return 结果
+     */
+    public int updateState(Recipe recipe);
+
+    /**
      * 批量删除食谱
      * 
      * @param recipeIds 需要删除的食谱主键集合

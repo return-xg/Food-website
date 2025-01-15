@@ -62,7 +62,9 @@ public class RecipeServiceImpl implements IRecipeService
     public int insertRecipe(Recipe recipe)
     {
         recipe.setUserId(getUserId());
-        recipe.setState(0L);
+        if (recipe.getState() != 1){
+            recipe.setState(0L);
+        }
         recipe.setCreateTime(DateUtils.getNowDate());
         recipe.setLikes(0L);
         recipe.setCollect(0L);
@@ -86,6 +88,24 @@ public class RecipeServiceImpl implements IRecipeService
         recipe.setState(0L);
         recipe.setUpdateTime(DateUtils.getNowDate());
         recipeMapper.deleteStepByRecipeId(recipe.getRecipeId());
+        recipeMapper.deleteIngredientByRecipeId(recipe.getRecipeId());
+        insertIngredient(recipe);
+        insertStep(recipe);
+        return recipeMapper.updateRecipe(recipe);
+    }
+
+    /**
+     * 修改审核状态
+     *
+     * @param recipe 食谱
+     * @return 结果
+     */
+    @Transactional
+    @Override
+    public int updateState(Recipe recipe)
+    {
+        recipeMapper.deleteStepByRecipeId(recipe.getRecipeId());
+        recipeMapper.deleteIngredientByRecipeId(recipe.getRecipeId());
         insertIngredient(recipe);
         insertStep(recipe);
         return recipeMapper.updateRecipe(recipe);

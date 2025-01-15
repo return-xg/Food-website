@@ -93,6 +93,17 @@ public class RecipeController extends BaseController
     }
 
     /**
+     * 修改审核状态
+     */
+    @PreAuthorize("@ss.hasPermi('recipe:recipe:edit')")
+    @Log(title = "食谱", businessType = BusinessType.UPDATE)
+    @PutMapping("/state")
+    public AjaxResult editState(@RequestBody Recipe recipe)
+    {
+        return toAjax(recipeService.updateState(recipe));
+    }
+
+    /**
      * 删除食谱
      */
     @PreAuthorize("@ss.hasPermi('recipe:recipe:remove')")
