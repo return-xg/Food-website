@@ -91,49 +91,49 @@ export const constantRoutes = [
     component: () => import('../views/ShiPu.vue'),
   },
 // 我的界面
-//   {
-//     path: "/mine",
-//     name: "mine",
-//     redirect: "/mine/hyzx",
-//     component: () => import("../views/Mine.vue"),
-//     children: [
-//       {
-//         path: 'hyzx',
-//         name: '会员中心',
-//         component: () => import('../views/MineHy.vue'),
-//       },
-//       {
-//         path: 'cp',
-//         name: '菜谱',
-//         component: () => import('../views/MineCp.vue'),
-//       },
-//       {
-//         path: 'ht',
-//         name: '话题',
-//         component: () => import('../views/MineHt.vue'),
-//       },
-//       {
-//         path: 'rz',
-//         name: '日志',
-//         component: () => import('../views/MineRz.vue'),
-//       },
-//       {
-//         path: 'cd',
-//         name: '菜单',
-//         component: () => import('../views/MineCd.vue'),
-//       },
-//       {
-//         path: 'sc',
-//         name: '收藏',
-//         component: () => import('../views/MineSc.vue'),
-//       },
-//       {
-//         path: 'zhsz',
-//         name: '账户设置',
-//         component: () => import('../views/MineZhsz.vue'),
-//       },
-//     ]
-//   },
+  {
+    path: "/mine",
+    name: "mine",
+    redirect: "/mine/hyzx",
+    component: () => import("../views/Mine.vue"),
+    children: [
+      {
+        path: 'hyzx',
+        name: '会员中心',
+        component: () => import('../views/MineHy.vue'),
+      },
+      {
+        path: 'cp',
+        name: '菜谱',
+        component: () => import('../views/MineCp.vue'),
+      },
+      {
+        path: 'ht',
+        name: '话题',
+        component: () => import('../views/MineHt.vue'),
+      },
+      {
+        path: 'rz',
+        name: '日志',
+        component: () => import('../views/MineRz.vue'),
+      },
+      {
+        path: 'cd',
+        name: '菜单',
+        component: () => import('../views/MineCd.vue'),
+      },
+      {
+        path: 'sc',
+        name: '收藏',
+        component: () => import('../views/MineSc.vue'),
+      },
+      {
+        path: 'zhsz',
+        name: '账户设置',
+        component: () => import('../views/MineZhsz.vue'),
+      },
+    ]
+  },
   {
     path: '/common',
     hidden: true,

@@ -1,4 +1,5 @@
 import useTagsViewStore from '@/store/modules/tagsView'
+import useUserStore from '@/store/modules/user'
 import router from '@/router'
 
 export default {
@@ -37,7 +38,12 @@ export default {
         if (latestView) {
           return router.push(latestView.fullPath)
         }
-        return router.push('/');
+        // 根据用户角色设置不同的跳转路径
+        if (useUserStore().roles.includes('common')) {
+          return router.push('/common/index');
+        } else {
+          return router.push('/');
+        }
       });
     }
     return useTagsViewStore().delView(obj);

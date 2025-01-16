@@ -23,7 +23,8 @@ let initialRedirectDone = sessionStorage.getItem('initialRedirectDone') === 'tru
 router.beforeEach((to, from, next) => {
   NProgress.start()
 
-  console.log('User roles:', useUserStore().roles)
+  console.log('Current path:', to.path) // 输出当前路径
+  console.log('User roles:', useUserStore().roles)//输出用户角色
   console.log('Initial redirect done:', initialRedirectDone)
 
   if (getToken()) {
