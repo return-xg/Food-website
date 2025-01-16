@@ -3,16 +3,15 @@
     <div class="w">
       <div class="foot">
         <div class="foot1">
-          <router-link to="#">美食天下 - 让吃更美好</router-link>
-          <img src="../../assets/LoginTu/mobile.png" alt="">
+          <router-link to="#">食光趣享 - 让吃更美好</router-link>
         </div>
         <div class="foot2">
-          <router-link to="">关于我们·</router-link>
-          <router-link to="">联系我们·</router-link>
-          <router-link to="">加入我们·</router-link>
-          <router-link to="">服务声明·</router-link>
-          <router-link to="">友情链接·</router-link>
-          <router-link to="">网站地图·</router-link>
+<!--          <router-link to="">关于我们·</router-link>-->
+<!--          <router-link to="">联系我们·</router-link>-->
+<!--          <router-link to="">加入我们·</router-link>-->
+<!--          <router-link to="">服务声明·</router-link>-->
+<!--          <router-link to="">友情链接·</router-link>-->
+<!--          <router-link to="">网站地图·</router-link>-->
         </div>
         <div class="foot3">
           <span>友情链接：</span>&nbsp;

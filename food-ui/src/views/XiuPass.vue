@@ -45,17 +45,16 @@
     <div class="w">
       <div class="footer">
         <div class="foot1">
-          <span>美食天下 - 让吃更美好!</span>
-          <img src="../assets/LoginTu/mobile.png" alt="" />
+          <span>食光趣享 - 让吃更美好!</span>
         </div>
         <div class="foot2">
           <ul>
-            <li><a href="" target="_blank">关于我们·</a></li>
-            <li><a href="" target="_blank">联系我们·</a></li>
-            <li><a href="" target="_blank">加入我们·</a></li>
-            <li><a href="" target="_blank">服务声明·</a></li>
-            <li><a href="" target="_blank">友情链接·</a></li>
-            <li><a href="" target="_blank">网站地图</a></li>
+<!--            <li><a href="" target="_blank">关于我们·</a></li>-->
+<!--            <li><a href="" target="_blank">联系我们·</a></li>-->
+<!--            <li><a href="" target="_blank">加入我们·</a></li>-->
+<!--            <li><a href="" target="_blank">服务声明·</a></li>-->
+<!--            <li><a href="" target="_blank">友情链接·</a></li>-->
+<!--            <li><a href="" target="_blank">网站地图</a></li>-->
           </ul>
         </div>
         <div class="foot3">

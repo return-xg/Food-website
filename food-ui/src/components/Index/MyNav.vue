@@ -55,19 +55,6 @@
         >
       </el-col>
     </el-row>
-    <!-- 搜索框 -->
-    <div class="nav-input">
-      <el-input
-        placeholder="请输入内容"
-        v-model="input"
-        size="small"
-        @keyup.13.native="goShipu"
-      >
-        <el-button slot="append" icon="el-icon-search" @click="goShipu"
-          >搜索</el-button
-        >
-      </el-input>
-    </div>
   </div>
 </template>
 

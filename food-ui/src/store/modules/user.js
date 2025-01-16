@@ -62,6 +62,7 @@ const useUserStore = defineStore(
             this.token = ''
             this.roles = []
             this.permissions = []
+            sessionStorage.removeItem('initialRedirectDone');
             removeToken()
             resolve()
           }).catch(error => {

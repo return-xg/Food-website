@@ -17,13 +17,14 @@ const isWhiteList = (path) => {
   return whiteList.some(pattern => isPathMatch(pattern, path))
 }
 
-let initialRedirectDone = false // 新增标志位
+// 使用 sessionStorage 来持久化 initialRedirectDone 状态
+let initialRedirectDone = sessionStorage.getItem('initialRedirectDone') === 'true';
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
 
-  console.log('Current path:', to.path)
   console.log('User roles:', useUserStore().roles)
+  console.log('Initial redirect done:', initialRedirectDone)
 
   if (getToken()) {
     to.meta.title && useSettingsStore().setTitle(to.meta.title)
@@ -49,6 +50,7 @@ router.beforeEach((to, from, next) => {
             // 判断用户角色是否为common，如果是，并且是首次登录，则重定向到common/index.vue
             if (useUserStore().roles.includes('common') && !initialRedirectDone) {
               initialRedirectDone = true // 设置标志位
+              sessionStorage.setItem('initialRedirectDone', 'true'); // 持久化状态
               next({ path: '/common/index', replace: true })
             } else {
               if (to.path !== '/') {
@@ -65,10 +67,10 @@ router.beforeEach((to, from, next) => {
           })
         })
       } else {
-          if (to.path !== '/') {
-            next()
-          } else {
-            next()
+        if (to.path !== '/') {
+          next()
+        } else {
+          next()
         }
       }
     }
