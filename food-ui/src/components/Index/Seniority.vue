@@ -224,4 +224,9 @@ li {
 .likes-count {
   font-size: 12px; /* 根据需要调整字体大小 */
 }
+
+.custom-tooltip {
+  white-space: pre-wrap; /* 保留空白符并自动换行 */
+  max-width: 300px; /* 设置最大宽度以防止过长 */
+}
 </style>
