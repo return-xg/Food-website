@@ -26,32 +26,32 @@
       </el-form-item>
     </el-form>
 
-    <div class="recipe-list" v-loading="loading">
-      <el-card v-for="recipe in recipeList" :key="recipe.id" class="recipe-card">
-        <div class="image-container">
-          <image-preview :src="recipe.recipeImage" :width="200" :height="200"/>
-        </div>
-        <div class="card-content">
-          <div class="card-header">
-            <span>{{ recipe.recipeName }}</span>
+    <div id="content">
+      <ul id="jxlist" class="clearfix" v-loading="loading">
+        <li class="item" v-for="recipe in recipeList" :key="recipe.id">
+          <a class="cover">
+            <image-preview :src="recipe.recipeImage" :width="300" :height="200"/>
+          </a>
+          <div class="relative">
+            <a class="cookname text-lips">{{ recipe.recipeName }}</a>
+            <div class="info">
+              <a class="intro text-lips">
+                <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip">
+                  <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                </el-tooltip>
+              </a>
+              <div class="view-coll">
+                <a class="star">
+                  <el-icon><Star /></el-icon> <span class="likes-count">{{ recipe.likes }}</span>
+                </a>
+              </div>
+            </div>
           </div>
-          <p style="display: inline;">菜系: <dict-tag :options="variety" :value="recipe.variety" style="display: inline;"/></p>
-          <p>
-          <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip">
-            <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
-          </el-tooltip>
-          </p>
-          <p>点赞数: {{ recipe.likes }}</p>
-          <p>收藏数: {{ recipe.collect }}</p>
-          <p>评论数: {{ recipe.review }}</p>
-        </div>
-        <div class="card-footer">
-          <el-button class="heart" :class="{'starred': recipe.starred}" @click="star(recipe)"></el-button>
-          <el-button link type="primary" icon="el-icon-more" @click="handleViewData(recipe)">查看</el-button>
-        </div>
-      </el-card>
+        </li>
+      </ul>
     </div>
 
+    <!--    分页-->
     <pagination
         v-show="total>0"
         :total="total"
@@ -59,78 +59,21 @@
         v-model:limit="queryParams.pageSize"
         @pagination="getList"
     />
-
-    <!-- 查看菜谱对话框 -->
-    <el-dialog :title="viewTitle" v-model="viewOpen" width="600px" append-to-body>
-      <el-form ref="recipeRef" :model="form" label-width="80px">
-        <el-form-item label="食品名称" prop="viewRecipeName">
-          <span>{{ form.recipeName }}</span>
-        </el-form-item>
-        <el-form-item label="菜系" prop="variety">
-          <span>{{ form.variety }}</span>
-        </el-form-item>
-        <el-form-item label="食谱简介" prop="viewRecipeDescription">
-          <span>{{ form.recipeDescription }}</span>
-        </el-form-item>
-        <el-form-item label="图片" prop="viewRecipeImage">
-          <image-preview :src="form.recipeImage" :width="150" :height="150"/>
-        </el-form-item>
-        <el-divider content-position="center">食材信息</el-divider>
-        <el-table :data="ingredientList" :row-class-name="rowIngredientIndex" @selection-change="handleIngredientSelectionChange" ref="ingredient">
-          <el-table-column label="序号" align="center" prop="index" width="60"/>
-          <el-table-column label="食材名称" prop="ingredientName" width="260">
-            <template #default="scope">
-              {{ scope.row.ingredientName }}
-            </template>
-          </el-table-column>
-          <el-table-column label="食材用量" prop="ingredientQuantity" width="260">
-            <template #default="scope">
-              {{ scope.row.ingredientQuantity }}
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-divider content-position="center">步骤信息</el-divider>
-        <el-table :data="stepList" :row-class-name="rowStepIndex" @selection-change="handleStepSelectionChange" ref="step">
-          <el-table-column label="步骤" align="center" prop="index" width="60"/>
-          <el-table-column label="操作内容" prop="stepDescription" width="260">
-            <template #default="scope">
-              <div style="white-space: pre-wrap;">{{ scope.row.stepDescription }}</div>
-            </template>
-          </el-table-column>
-          <el-table-column label="图片" prop="stepImage" width="260">
-            <template #default="scope">
-              <image-preview :src="scope.row.stepImage" :width="150" :height="150"/>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-form>
-    </el-dialog>
   </div>
 </template>
 
 <script setup name="Recipe">
-import { listRecipe, getRecipe} from "@/api/recipe/recipe";
-import {addLikes, likeDelete, likeSelect} from "@/api/recipe/likes.js";
+import { listRecipe } from "@/api/recipe/recipe";
+import { likeSelect } from "@/api/recipe/likes.js";
 
 const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
 
 const recipeList = ref([]);
-const ingredientList = ref([]);
-const stepList = ref([]);
-const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
-const ids = ref([]);
-const checkedIngredient = ref([]);
-const checkedStep = ref([]);
-const single = ref(true);
-const multiple = ref(true);
 const total = ref(0);
-const title = ref("");
 
-const viewOpen = ref(false); // 新增对话框的显示状态
-const viewTitle = ref("查看食谱"); // 新增对话框的标题
 
 const data = reactive({
   form: {},
@@ -139,11 +82,6 @@ const data = reactive({
     pageSize: 10,
     recipeName: null,
     variety: null,
-  },
-  rules: {
-    recipeName: [
-      { required: true, message: "食品名称不能为空", trigger: "blur" }
-    ],
   }
 });
 
@@ -168,33 +106,6 @@ async function getList() {
   }
 }
 
-// 取消按钮
-function cancel() {
-  open.value = false;
-  reset();
-}
-
-// 表单重置
-function reset() {
-  form.value = {
-    recipeId: null,
-    userId: null,
-    recipeName: null,
-    recipeDescription: null,
-    recipeImage: null,
-    state: null,
-    createTime: null,
-    updateTime: null,
-    variety: null,
-    likes: null,
-    collect: null,
-    review: null
-  };
-  ingredientList.value = [];
-  stepList.value = [];
-  proxy.resetForm("recipeRef");
-}
-
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
@@ -207,133 +118,10 @@ function resetQuery() {
   handleQuery();
 }
 
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.recipeId);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
-}
-
-/** 查看按钮操作 */
-function handleViewData(row) {
-  const _recipeId = row.recipeId || ids.value
-  getRecipe(_recipeId).then(response => {
-    form.value = response.data;
-    ingredientList.value = response.data.ingredientList;
-    stepList.value = response.data.stepList;
-    viewOpen.value = true;
-    title.value = "查看食谱";
-  });
-}
-
-/** 点赞按钮操作 */
-function star(row) {
-  const _recipeIds = row.recipeId || ids.value;
-  const likesData = { recipeId: _recipeIds };
-
-  likeSelect(_recipeIds).then(response => {
-    // 检查用户是否已经点赞了该菜谱
-    const isLiked = response;
-
-    if (isLiked) {
-      // 如果已经点赞，则取消点赞
-      likeDelete(likesData);
-      // 移除 starred 类
-      row.starred = false;
-    } else {
-      // 如果没有点赞，则进行点赞
-      addLikes(likesData);
-      // 添加 starred 类
-      row.starred = true;
-    }
-
-    // 重新获取列表以更新点赞状态
-    getList();
-  });
-}
-
-/** 步骤序号 */
-function rowStepIndex({ row, rowIndex }) {
-  row.index = rowIndex + 1;
-}
-
-/** 食材序号 */
-function rowIngredientIndex({ row, rowIndex }) {
-  row.index = rowIndex + 1;
-}
-
-/** 复选框选中数据 */
-function handleIngredientSelectionChange(selection) {
-  checkedIngredient.value = selection.map(item => item.index)
-}
-
-/** 复选框选中数据 */
-function handleStepSelectionChange(selection) {
-  checkedStep.value = selection.map(item => item.index)
-}
-
 getList();
 </script>
 
 <style>
-/* 未点赞样式 */
-.heart {
-  background: url(../../../../public/image/starred-heart.png);
-  background-position: center; /* 可以根据需要调整 */
-  background-repeat: no-repeat;
-  background-size: contain; /* 确保图片完整显示 */
-  height: 20px; /* 根据需要调整 */
-  width: 20px; /* 根据需要调整 */
-  border: none; /* 去掉边框 */
-  padding: 0;
-}
-/* 已点赞样式 */
-.heart.starred {
-  background: url(../../../../public/image/heart.png);
-  background-position: center; /* 可以根据需要调整 */
-  background-repeat: no-repeat;
-  background-size: contain; /* 确保图片完整显示 */
-  height: 20px; /* 根据需要调整 */
-  width: 20px; /* 根据需要调整 */
-  border: none; /* 去掉边框 */
-  padding: 0;
-}
-
-.recipe-list {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 0 auto; /* 垂直居中（如果需要） */
-  padding: 20px; /* 添加左右留白 */
-  justify-content: center;
-}
-
-.recipe-card {
-  width: 250px; /* 固定宽度 */
-  height: auto; /* 自动高度 */
-  margin: 10px; /* 设置卡片之间的间距 */
-  padding: 0; /* 移除内边距 */
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden; /* 确保内容不会溢出 */
-}
-
-.image-container {
-  overflow: hidden;
-  margin-bottom: 10px; /* 图片和内容之间添加间距 */
-}
-
-.card-content {
-  padding: 10px;
-  text-align: center; /* 居中文本 */
-}
-
-.card-header {
-  font-weight: bold;
-  margin-bottom: 10px; /* 标题和其他内容之间添加间距 */
-}
-
 .el-form-item__label {
   font-size: 16px;
   color: #333;
@@ -348,14 +136,92 @@ getList();
   line-height: 40px; /* 调整输入框行高 */
 }
 
-.custom-tooltip {
-  white-space: normal; /* 允许内容换行 */
-  max-width: 200px; /* 设置最大宽度 */
-  padding: 8px; /* 设置内边距 */
-  border-radius: 4px; /* 设置圆角 */
-  background-color: #fff; /* 设置背景颜色 */
-  border: 1px solid #ebeef5; /* 设置边框 */
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); /* 设置阴影 */
-  z-index: 3000; /* 确保提示框在最上层 */
+#content {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.clearfix{
+  zoom: 1;
+}
+
+.clearfix:after {
+  clear: both;
+  content: ".";
+  display: block;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+  visibility: hidden;
+}
+
+#jxlist .item {
+  float: left;
+  width: 300px;
+  height: 255px;
+  overflow: hidden;
+  margin: 0 20px 40px 0;
+}
+
+li {
+  display: list-item;
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+}
+
+#jxlist .cover {
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  display: block;
+  background: #F9F9F9;
+}
+
+.relative {
+  position: relative;
+}
+
+#jxlist .cookname {
+  display: block;
+  font-size: 15px;
+  color: #333;
+  line-height: 15px;
+  padding: 10px 0;
+}
+
+.text-lips {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.intro {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+}
+
+.view-coll {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.star {
+  display: flex;
+  align-items: center;
+}
+
+.likes-count {
+  font-size: 12px; /* 根据需要调整字体大小 */
 }
 </style>

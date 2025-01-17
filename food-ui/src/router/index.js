@@ -90,6 +90,24 @@ export const constantRoutes = [
     name: 'shipu',
     component: () => import('../views/ShiPu.vue'),
   },
+  {
+    path: '/shipu1',
+    props: true,
+    name: 'shipu1',
+    component: () => import('../views/ShiPu1.vue'),
+  },
+  {
+    path: '/shipu2',
+    props: true,
+    name: 'shipu2',
+    component: () => import('../views/ShiPu2.vue'),
+  },
+  {
+    path: '/shipu3',
+    props: true,
+    name: 'shipu3',
+    component: () => import('../views/ShiPu3.vue'),
+  },
 // 我的界面
   {
     path: "/mine",

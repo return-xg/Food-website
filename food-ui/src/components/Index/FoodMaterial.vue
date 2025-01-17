@@ -5,14 +5,14 @@
     <div class="shiling">
       <span>时令食材</span>
       <div class="s1">
-        <router-link to="/fenlei/1">肉禽类</router-link>
-        <router-link to="/fenlei/2">果品</router-link>
-        <router-link to="/fenlei/3">水产品</router-link>
-        <router-link to="/fenlei/4">蔬菜</router-link>
-        <router-link to="/fenlei/5">药食</router-link>
-        <router-link to="/fenlei/6">米面</router-link>
-        <router-link to="/fenlei/7">豆乳</router-link>
-        <router-link to="/fenlei/8">调味品</router-link>
+<!--        <router-link to="/fenlei/1">肉禽类</router-link>-->
+<!--        <router-link to="/fenlei/2">果品</router-link>-->
+<!--        <router-link to="/fenlei/3">水产品</router-link>-->
+<!--        <router-link to="/fenlei/4">蔬菜</router-link>-->
+<!--        <router-link to="/fenlei/5">药食</router-link>-->
+<!--        <router-link to="/fenlei/6">米面</router-link>-->
+<!--        <router-link to="/fenlei/7">豆乳</router-link>-->
+<!--        <router-link to="/fenlei/8">调味品</router-link>-->
       </div>
       <hr />
       <div class="content" v-if="data">

@@ -7,7 +7,7 @@
     <!--    轮播图-->
     <my-banner />
 
-    <my-main />
+<!--    <my-main />-->
 
     <!--    今日推荐-->
     <my-food />

@@ -14,10 +14,10 @@
       <router-link to="/ShiPu1" @click.native="data = 2" :class="{ active: data == 2 }"
       >按时间发布</router-link
       >
-      <router-link to="" @click.native="data = 3" :class="{ active: data == 3 }"
+      <router-link to="/shipu2" @click.native="data = 3" :class="{ active: data == 3 }"
       >按热度</router-link
       >
-      <router-link to="" @click.native="data = 4" :class="{ active: data == 4 }"
+      <router-link to="/shipu3" @click.native="data = 4" :class="{ active: data == 4 }"
       >按人气</router-link
       >
     </div>
@@ -35,7 +35,7 @@ export default {
     return {
       mname: "",
       input: "",
-      data: 1,
+      data: 2,
     };
   },
   mounted() {
