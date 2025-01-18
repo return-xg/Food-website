@@ -162,6 +162,18 @@ public class RecipeServiceImpl implements IRecipeService
     }
 
     /**
+     * 用户查询自己发布的菜谱
+     *
+     * @param recipe
+     * @return
+     */
+    @Override
+    public List<Recipe> userRecipeList(Recipe recipe) {
+        recipe.setUserId(getUserId());
+        return recipeMapper.selectRecipeList(recipe);
+    }
+
+    /**
      * 新增步骤信息
      * 
      * @param recipe 食谱对象

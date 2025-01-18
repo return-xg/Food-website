@@ -26,6 +26,7 @@
       </el-form-item>
     </el-form>
 
+<!--    数据列表-->
     <div id="content">
       <ul id="jxlist" class="clearfix" v-loading="loading">
         <li class="item" v-for="recipe in recipeList" :key="recipe.id">

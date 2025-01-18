@@ -10,7 +10,78 @@
         <el-button size="mini" type="danger" @click.native="isShow = false">发布新菜谱</el-button>
       </el-menu>
       <div class="shuju" v-show="index == 1">
-        您还没有发布菜谱噢，快点击这里<a href="#" @click="isShow = false">发布新菜谱</a>吧！
+        <!--    搜索-->
+        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+          <el-form-item label="食谱" prop="recipeName">
+            <el-input
+                v-model="queryParams.recipeName"
+                placeholder="请输入食谱名称"
+                clearable
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="菜系" prop="variety">
+            <el-select v-model="queryParams.variety" placeholder="请选择菜系" clearable>
+              <el-option
+                  v-for="dict in variety"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+
+        <!--    数据列表-->
+        <div id="content2" style="margin-left: 0; padding-left: 0;">
+          <ul id="jxlist2" class="clearfix" v-loading="loading" style="margin-left: 0; padding-left: 0;">
+            <li class="item" v-for="recipe in recipeList" :key="recipe.id">
+              <a class="cover">
+                <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+                  <img
+                      :src="getRealSrc(recipe.recipeImage)"
+                      width="300"
+                      height="200"
+                      :alt="recipe.recipeName + ' 的图片'"
+                      @error="handleImageError"
+                      class="hover-zoom"
+                  />
+                </router-link>
+              </a>
+              <div class="relative">
+                <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+                  <a class="cookname text-lips">{{ recipe.recipeName }}</a>
+                </router-link>
+                <div class="info">
+                  <a class="intro text-lips">
+                    <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip2">
+                      <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                    </el-tooltip>
+                  </a>
+                  <div class="view-coll">
+                    <a class="star">
+                      <el-icon><Star /></el-icon> <span class="likes-count">{{ recipe.likes }}</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+
+        <!--    分页-->
+        <pagination
+            v-show="total>0"
+            :total="total"
+            v-model:page="queryParams.pageNum"
+            v-model:limit="queryParams.pageSize"
+            @pagination="getList"
+        />
       </div>
       <div class="shuju" v-show="index == 2">您没有处于待审核的菜谱！</div>
       <div class="shuju" v-show="index == 3">您没有审核未通过的菜谱！</div>
@@ -141,71 +212,141 @@
   </div>
 </template>
 
-<script>export default {
-  data() {
-    return {
-      // 成品图片参数
-      dialogImageUrl: "",
-      dialogVisible: false,
-      disabled: false,
+<script setup>
+import { ref, reactive, toRefs } from 'vue';
+import { userRecipeList } from "@/api/recipe/recipe";
+import { likeSelect } from "@/api/recipe/likes.js";
+import { isExternal } from "@/utils/validate";
 
-      index: 1,
-      isShow: true, //是否开启上传食谱
-      zhuliao: 1, //主料列表个数
-      fuliao: 1, //辅料列表个数
-      tiaoliao: 1, //调料列表个数
-      zfbz: 3, //做法步骤列表个数
+// 成品图片参数
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
+const disabled = ref(false);
 
-      ruleForm: {
-        name: "",
-        region: "",
-        cpms: "",
-        zznd: "",
-        xysj: "",
-        kouwei: "",
-        prgy: "",
-        sycj: "",
-        zhuliao: "",
-        fuliao: "",
-        tiaoliao: "",
-        zfbz: "",
-        xqm: "",
-      },
-      rules: {
-        name: [{ required: true, message: "请输入菜名", trigger: "blur" }],
-        cptp: [{ required: true, message: "请选择图片", trigger: "blur" }],
-        zznd: [{ required: true, message: "请选择", trigger: "blur" }],
-        xysj: [{ required: true, message: "请选择", trigger: "blur" }],
-        kouwei: [{ required: true, message: "请输入口味", trigger: "blur" }],
-        prgy: [{ required: true, message: "请输入", trigger: "blur" }],
-        sycj: [{ required: true, message: "请输入", trigger: "blur" }],
-        zhuliao: [{ required: true, message: "请输入", trigger: "blur" }],
-        tiaoliao: [{ required: true, message: "请输入", trigger: "blur" }],
-        fuliao: [{ required: true, message: "请输入", trigger: "blur" }],
-        zfbz: [{ required: true, message: "请输入", trigger: "blur" }],
-      },
-    };
-  },
+const index = ref(1);
+const isShow = ref(true); // 是否开启上传食谱
+const zhuliao = ref(1); // 主料列表个数
+const fuliao = ref(1); // 辅料列表个数
+const tiaoliao = ref(1); // 调料列表个数
+const zfbz = ref(3); // 做法步骤列表个数
 
-  methods: {
-    // 成品图片上传
-    handleRemove(file) {
-      console.log(file);
-    },
-    handlePictureCardPreview(file) {
-      if (file && file.url) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-      }
-    },
-    handleDownload(file) {
-      console.log(file);
-    },
-  },
+const { proxy } = getCurrentInstance();
+const { variety, recipe_state } = proxy.useDict('variety', 'recipe_state');
+
+const recipeList = ref([]);
+const loading = ref(true);
+const showSearch = ref(true);
+const total = ref(0);
+
+const ruleForm = reactive({
+  name: "",
+  region: "",
+  cpms: "",
+  zznd: "",
+  xysj: "",
+  kouwei: "",
+  prgy: "",
+  sycj: "",
+  zhuliao: "",
+  fuliao: "",
+  tiaoliao: "",
+  zfbz: "",
+  xqm: "",
+});
+
+const rules = {
+  name: [{ required: true, message: "请输入菜名", trigger: "blur" }],
+  cptp: [{ required: true, message: "请选择图片", trigger: "blur" }],
+  zznd: [{ required: true, message: "请选择", trigger: "blur" }],
+  xysj: [{ required: true, message: "请选择", trigger: "blur" }],
+  kouwei: [{ required: true, message: "请输入口味", trigger: "blur" }],
+  prgy: [{ required: true, message: "请输入", trigger: "blur" }],
+  sycj: [{ required: true, message: "请输入", trigger: "blur" }],
+  zhuliao: [{ required: true, message: "请输入", trigger: "blur" }],
+  tiaoliao: [{ required: true, message: "请输入", trigger: "blur" }],
+  fuliao: [{ required: true, message: "请输入", trigger: "blur" }],
+  zfbz: [{ required: true, message: "请输入", trigger: "blur" }],
 };
+
+// 成品图片上传
+function handleRemove(file) {
+  console.log(file);
+}
+
+function handlePictureCardPreview(file) {
+  if (file && file.url) {
+    dialogImageUrl.value = file.url;
+    dialogVisible.value = true;
+  }
+}
+
+function handleDownload(file) {
+  console.log(file);
+}
+
+const data = reactive({
+  form: {},
+  queryParams: {
+    pageNum: 1,
+    pageSize: 15,
+    recipeName: null,
+    variety: null,
+  }
+});
+
+const { queryParams, form } = toRefs(data); // 移除 rules 的解构
+
+const getRealSrc = (src) => {
+  if (!src) {
+    return "";
+  }
+  let real_src = src.split(",")[0];
+  if (isExternal(real_src)) {
+    return real_src;
+  }
+  return import.meta.env.VITE_APP_BASE_API + real_src;
+};
+
+/** 查询食谱列表 */
+async function getList() {
+  loading.value = true;
+  try {
+    const response = await userRecipeList(queryParams.value);
+    total.value = response.total;
+    const recipeIds = response.rows.map(row => row.recipeId);
+    const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
+    recipeList.value = response.rows.map((row, index) => {
+      row.starred = likesResponses[index];
+      return row;
+    });
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+/** 搜索按钮操作 */
+function handleQuery() {
+  queryParams.value.pageNum = 1;
+  getList();
+}
+
+/** 重置按钮操作 */
+function resetQuery() {
+  proxy.resetForm("queryRef");
+  handleQuery();
+}
+
+function handleImageError(event) {
+  event.target.src = '/path/to/default-image.jpg'; // 替换为默认图片路径
+}
+
+getList();
 </script>
 
-<style lang="scss" scoped>
+
+<style lang="scss" >
 .cpfb {
   .el-header {
     border-bottom: 1px solid #eeeeee;
@@ -239,6 +380,7 @@
     text-align: center;
   }
 }
+
 .el-menu {
   position: relative;
   .el-button {
@@ -248,9 +390,11 @@
     font-size: 16px;
   }
 }
+
 .el-menu-item {
   font-size: 1.2rem;
 }
+
 .shuju {
   font-size: 1.3rem;
   margin: 50px 100px;
@@ -281,4 +425,119 @@
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2) !important;
   background: #ededed !important;
 }
+
+.el-select {
+  width: 200px; /* 调整下拉框宽度 */
+}
+
+
+#content2 {
+  width: 1300px;
+  margin: 0 auto;
+}
+
+#jxlist2.clearfix {
+  zoom: 1;
+  width: 1300px;
+}
+
+#jxlist2 .clearfix:after {
+  clear: both;
+  content: ".";
+  display: block;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+  visibility: hidden;
+}
+
+#jxlist2 .item {
+  float: left;
+  width: 300px;
+  height: 255px;
+  overflow: hidden;
+  margin: 0 20px 40px 0;
+}
+
+li {
+  display: list-item;
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+}
+
+#jxlist2 .cover {
+  width: 300px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 8px;
+  display: block;
+  background: #F9F9F9;
+}
+
+.relative {
+  position: relative;
+}
+
+#jxlist2 .cookname {
+  display: block;
+  font-size: 15px;
+  color: #333;
+  line-height: 15px;
+  padding: 10px 0;
+}
+
+.text-lips {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.intro {
+  display: inline-block;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+}
+
+.info {
+  display: flex;
+  align-items: center;
+}
+
+.view-coll {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.star {
+  display: flex;
+  align-items: center;
+}
+
+.likes-count {
+  font-size: 12px; /* 根据需要调整字体大小 */
+}
+
+/* 使用 ::v-deep */
+.custom-tooltip2 {
+  white-space: pre-wrap;
+  max-width: 300px;
+}
+
+.hover-zoom {
+  transition: transform 0.3s ease; /* 添加过渡效果 */
+}
+
+.hover-zoom:hover {
+  transform: scale(1.1); /* 鼠标悬停时放大图片 */
+}
+
+.el-input__inner {
+  height: 30px; /* 调整输入框高度 */
+  line-height: 40px; /* 调整输入框行高 */
+}
 </style>
+

@@ -81,6 +81,7 @@ export default {
 
 <style lang="scss" scoped>
 .nav {
+  border-bottom: 1.5px solid #888585; /* 根据需要调整颜色和宽度 */
   margin: 0 auto;
   width: 1200px;
   display: flex;

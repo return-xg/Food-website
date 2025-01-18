@@ -132,4 +132,14 @@ public class RecipeController extends BaseController
         List<Recipe> list = recipeService.reviewRecipeList(recipe);
         return getDataTable(list);
     }
+
+    /**
+     * 用户查询发布菜谱
+     */
+    @GetMapping("/userRecipeList")
+    public TableDataInfo userRecipeList(Recipe recipe) {
+        startPage();
+        List<Recipe> list = recipeService.userRecipeList(recipe);
+        return getDataTable(list);
+    }
 }

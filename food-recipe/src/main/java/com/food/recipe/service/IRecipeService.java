@@ -82,4 +82,12 @@ public interface IRecipeService
      * @return 食谱集合
      */
     public List<Recipe> reviewRecipeList(Recipe recipe);
+
+    /**
+     * 用户查询自己发布的菜谱
+     *
+     * @param recipe
+     * @return
+     */
+    public List<Recipe> userRecipeList(Recipe recipe);
 }
