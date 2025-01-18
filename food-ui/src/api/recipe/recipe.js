@@ -9,6 +9,15 @@ export function listRecipe(query) {
   })
 }
 
+//按收藏量查询食谱列表
+export function likeRecipe(query) {
+  return request({
+    url: '/recipe/recipe/likeRecipe',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询食谱详细
 export function getRecipe(recipeId) {
   return request({

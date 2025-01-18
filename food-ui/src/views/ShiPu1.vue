@@ -11,9 +11,6 @@
       <router-link to="/ShiPu" @click.native="data = 1" :class="{ active: data == 1 }"
       >默认排序</router-link
       >
-      <router-link to="/ShiPu1" @click.native="data = 2" :class="{ active: data == 2 }"
-      >按时间发布</router-link
-      >
       <router-link to="/shipu2" @click.native="data = 3" :class="{ active: data == 3 }"
       >按热度</router-link
       >

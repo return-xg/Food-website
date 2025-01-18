@@ -30,10 +30,21 @@
       <ul id="jxlist" class="clearfix" v-loading="loading">
         <li class="item" v-for="recipe in recipeList" :key="recipe.id">
           <a class="cover">
-            <image-preview :src="recipe.recipeImage" :width="300" :height="200"/>
+            <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+            <img
+                :src="getRealSrc(recipe.recipeImage)"
+                width="300"
+                height="200"
+                :alt="recipe.recipeName + ' 的图片'"
+                @error="handleImageError"
+                class="hover-zoom"
+            />
+            </router-link>
           </a>
           <div class="relative">
+            <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
             <a class="cookname text-lips">{{ recipe.recipeName }}</a>
+            </router-link>
             <div class="info">
               <a class="intro text-lips">
                 <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip">
@@ -65,6 +76,8 @@
 <script setup name="Recipe">
 import { listRecipe } from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
+import { isExternal } from "@/utils/validate";
+
 
 const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
@@ -79,13 +92,24 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 15,
     recipeName: null,
     variety: null,
   }
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+const getRealSrc = (src) => {
+  if (!src) {
+    return "";
+  }
+  let real_src = src.split(",")[0];
+  if (isExternal(real_src)) {
+    return real_src;
+  }
+  return import.meta.env.VITE_APP_BASE_API + real_src;
+};
 
 /** 查询食谱列表 */
 async function getList() {
@@ -118,6 +142,10 @@ function resetQuery() {
   handleQuery();
 }
 
+function handleImageError(event) {
+  event.target.src = '/path/to/default-image.jpg'; // 替换为默认图片路径
+}
+
 getList();
 </script>
 
@@ -143,6 +171,7 @@ getList();
 
 .clearfix{
   zoom: 1;
+  width: 1000px;
 }
 
 .clearfix:after {
@@ -229,4 +258,13 @@ li {
   white-space: pre-wrap; /* 保留空白符并自动换行 */
   max-width: 300px; /* 设置最大宽度以防止过长 */
 }
+
+.hover-zoom {
+  transition: transform 0.3s ease; /* 添加过渡效果 */
+}
+
+.hover-zoom:hover {
+  transform: scale(1.1); /* 鼠标悬停时放大图片 */
+}
+
 </style>

@@ -1,22 +1,35 @@
 <template>
-  <div class="week-hottest">
-    <!-- <div> -->
-    <span>今日推荐</span>
-    <div class="column">
-<!--      <a>热菜</a>-->
-<!--      <a>凉菜</a>-->
-<!--      <a>主食</a>-->
-<!--      <a>小吃</a>-->
-<!--      <a>饮品</a>-->
-<!--      <a>家常食谱</a>-->
-      <router-link to="/ShiPu">食谱首页</router-link>
-    </div>
-    <!-- </div> -->
-    <hr />
-    <div id="content1">
-      <ul id="jxlist1" class="clearfix" v-loading="loading">
+  <div class="app-container">
+    <!--    搜索-->
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px" style="margin-left: 440px;">
+      <el-form-item label="食谱" prop="recipeName">
+        <el-input
+            v-model="queryParams.recipeName"
+            placeholder="请输入食谱名称"
+            clearable
+            @keyup.enter="handleQuery"
+        />
+      </el-form-item>
+      <el-form-item label="菜系" prop="variety">
+        <el-select v-model="queryParams.variety" placeholder="请选择菜系" clearable>
+          <el-option
+              v-for="dict in variety"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+      </el-form-item>
+    </el-form>
+
+    <div id="content">
+      <ul id="jxlist" class="clearfix" v-loading="loading">
         <li class="item" v-for="recipe in recipeList" :key="recipe.id">
-          <a class="cover br8">
+          <a class="cover">
             <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
               <img
                   :src="getRealSrc(recipe.recipeImage)"
@@ -34,8 +47,8 @@
             </router-link>
             <div class="info">
               <a class="intro text-lips">
-                <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip1">
-                  <span class="small-black-text">{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip">
+                  <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
                 </el-tooltip>
               </a>
               <div class="view-coll">
@@ -48,13 +61,23 @@
         </li>
       </ul>
     </div>
+
+    <!--    分页-->
+    <pagination
+        v-show="total>0"
+        :total="total"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        @pagination="getList"
+    />
   </div>
 </template>
 
 <script setup name="Recipe">
-import { listRecipe } from "@/api/recipe/recipe";
+import {likeRecipe} from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
+
 
 const { proxy } = getCurrentInstance();
 const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
@@ -69,7 +92,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 8,
+    pageSize: 15,
     recipeName: null,
     variety: null,
   }
@@ -92,7 +115,7 @@ const getRealSrc = (src) => {
 async function getList() {
   loading.value = true;
   try {
-    const response = await listRecipe(queryParams.value);
+    const response = await likeRecipe(queryParams.value);
     total.value = response.total;
     const recipeIds = response.rows.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
@@ -107,10 +130,6 @@ async function getList() {
   }
 }
 
-function handleImageError(event) {
-  event.target.src = '/path/to/default-image.jpg'; // 替换为默认图片路径
-}
-
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
@@ -123,123 +142,39 @@ function resetQuery() {
   handleQuery();
 }
 
+function handleImageError(event) {
+  event.target.src = '/path/to/default-image.jpg'; // 替换为默认图片路径
+}
+
 getList();
 </script>
 
 <style>
-.week-hottest {
-  margin: 0 auto;
-  width: 1200px;
-  position: relative;
-  user-select: none;
-
-  span:first-child {
-    text-decoration: none;
-    font-weight: 400;
-    font-size: 20px;
-    color: #130d0d;
-    border-bottom: 5px solid #130d0d;
-    padding-bottom: 3px;
-    &:hover {
-      color: #ff6767;
-    }
-  }
-  .column {
-    display: inline-block;
-    position: absolute;
-    right: 0;
-
-    a {
-      float: right;
-      margin: 0 0 0 20px;
-      font-size: 16px;
-      line-height: 30px;
-      &:hover {
-        color: #ff6767;
-      }
-    }
-  }
-
-  .content {
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    i{
-      width: 230px;
-    }
-    .card {
-      width: 230px;
-      height: 305px;
-
-      img {
-        width: 100%;
-        height: 100%;
-        border-radius: 5px;
-      }
-      &:hover {
-        div {
-          width: 230px;
-          height: 230px;
-
-          overflow: hidden;
-          text-align: center;
-
-
-          img {
-
-            width: 253px;
-            height: 253px;
-            border-radius: 5px;
-
-            position: relative;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-          }
-        }
-      }
-      div {
-        height: 230px;
-        width: 230px;
-        img {
-          width: 100%;
-          display: block;
-        }
-      }
-      .title {
-        font-size: 18px;
-        line-height: 120%;
-        padding: 8px 0 2px;
-        text-align: center;
-        display: block;
-        &:hover {
-          color: #ff6767;
-        }
-      }
-      a {
-        text-align: center;
-        display: block;
-        font-size: 12px;
-        &:hover {
-          color: #ff6767;
-        }
-      }
-    }
-  }
+.el-form-item__label {
+  font-size: 16px;
+  color: #333;
 }
 
-#content1 {
-  width: 1300px;
+.el-select {
+  width: 200px; /* 调整下拉框宽度 */
+}
+
+.el-input__inner {
+  height: 40px; /* 调整输入框高度 */
+  line-height: 40px; /* 调整输入框行高 */
+}
+
+#content {
+  width: 1000px;
   margin: 0 auto;
 }
 
-#jxlist1.clearfix{
-  width: 1200px;
+.clearfix{
   zoom: 1;
+  width: 1000px;
 }
 
-#jxlist1 .clearfix:after {
+.clearfix:after {
   clear: both;
   content: ".";
   display: block;
@@ -249,10 +184,10 @@ getList();
   visibility: hidden;
 }
 
-#jxlist1 .item {
+#jxlist .item {
   float: left;
-  width: 270px;
-  height: 270px;
+  width: 300px;
+  height: 255px;
   overflow: hidden;
   margin: 0 20px 40px 0;
 }
@@ -263,19 +198,20 @@ li {
   unicode-bidi: isolate;
 }
 
-#jxlist1 .cover {
-  width: 250px;
+#jxlist .cover {
+  width: 300px;
   height: 200px;
-  display: block;
   overflow: hidden;
-  position: relative;
+  border-radius: 8px;
+  display: block;
+  background: #F9F9F9;
 }
 
 .relative {
   position: relative;
 }
 
-#jxlist1 .cookname {
+#jxlist .cookname {
   display: block;
   font-size: 15px;
   color: #333;
@@ -318,22 +254,9 @@ li {
   font-size: 12px; /* 根据需要调整字体大小 */
 }
 
-.custom-tooltip1 {
+.custom-tooltip {
   white-space: pre-wrap; /* 保留空白符并自动换行 */
   max-width: 300px; /* 设置最大宽度以防止过长 */
-}
-
-.br8 {
-  border-radius: 8px;
-}
-
-.small-black-text {
-  color: black !important;
-  font-size: 12px !important;
-  text-decoration: none !important;
-  font-weight: normal !important;
-  border-bottom: none !important;
-  padding-bottom: 0 !important;
 }
 
 .hover-zoom {

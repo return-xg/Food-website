@@ -11,26 +11,24 @@
       <router-link to="/ShiPu" @click.native="data = 1" :class="{ active: data == 1 }"
       >默认排序</router-link
       >
-      <router-link to="/ShiPu1" @click.native="data = 2" :class="{ active: data == 2 }"
-      >按时间发布</router-link
-      >
       <router-link to="/shipu2" @click.native="data = 3" :class="{ active: data == 3 }"
-      >按热度</router-link
-      >
-      <router-link to="/shipu3" @click.native="data = 4" :class="{ active: data == 4 }"
       >按人气</router-link
       >
+      <router-link to="/shipu3" @click.native="data = 4" :class="{ active: data == 4 }"
+      >按热度</router-link
+      >
     </div>
-    <seniority :aaa="mname" />
+    <seniority2 :aaa="mname" />
   </div>
 </template>
 
 <script>
 import Seniority from "../components/Index/Seniority.vue";
 import MyHeader from "@/components/Index/MyHeader.vue";
+import Seniority2 from "@/components/Index/Seniority2.vue";
 
 export default {
-  components: {MyHeader, Seniority },
+  components: {Seniority2, MyHeader, Seniority },
   data() {
     return {
       mname: "",

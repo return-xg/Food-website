@@ -84,6 +84,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where recipe_id = #{recipe_id}
     </select>
 
+<!--    按收藏量查询食谱列表-->
+    <select id="likeRecipeList"  parameterType="Recipe" resultMap="RecipeResult">
+        <include refid="selectRecipeVo"/>
+        <where>
+            <if test="recipeName != null  and recipeName != ''"> and recipe_name like concat('%', #{recipeName}, '%')</if>
+            <if test="variety != null  and variety != ''"> and variety = #{variety}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="state != null "> and state = #{state}</if>
+        </where>
+        ORDER BY likes DESC
+    </select>
+
     <!--    新增食谱-->
     <insert id="insertRecipe" parameterType="Recipe" useGeneratedKeys="true" keyProperty="recipeId">
         insert into recipe

@@ -112,4 +112,14 @@ public class RecipeController extends BaseController
     {
         return toAjax(recipeService.deleteRecipeByRecipeIds(recipeIds));
     }
+
+    /**
+     * 按收藏量查询食谱列表
+     */
+    @GetMapping("/likeRecipe")
+    public TableDataInfo likeRecipe(Recipe recipe) {
+        startPage();
+        List<Recipe> list = recipeService.likeRecipeList(recipe);
+        return getDataTable(list);
+    }
 }

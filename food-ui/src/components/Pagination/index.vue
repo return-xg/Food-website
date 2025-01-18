@@ -33,7 +33,7 @@ const props = defineProps({
   pageSizes: {
     type: Array,
     default() {
-      return [10, 20, 30, 50]
+      return [15, 21, 30, 51]
     }
   },
   // 移动端页码按钮的数量端默认值5

@@ -13,7 +13,7 @@
     <my-food />
 
     <!--    时令食材-->
-    <food-material />
+<!--    <food-material />-->
 
     <!--    笔记-->
     <hot-note />

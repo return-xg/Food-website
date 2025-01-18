@@ -66,4 +66,11 @@ public interface IRecipeService
      * @return 结果
      */
     public int deleteRecipeByRecipeId(Long recipeId);
+
+    /**
+     * 按收藏量查询食谱列表
+     *
+     * @return 食谱集合
+     */
+    public List<Recipe> likeRecipeList(Recipe recipe);
 }

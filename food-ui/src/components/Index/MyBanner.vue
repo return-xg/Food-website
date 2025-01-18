@@ -5,7 +5,14 @@
     <el-carousel :interval="4000" type="card" height="400px">
       <el-carousel-item v-for="(recipe, index) in topLikes" :key="index">
         <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
-          <image-preview :src="recipe.recipeImage" alt="Recipe Image" style="width: 100%; height: 100%; object-fit: cover;"/>
+          <img
+              :src="getRealSrc(recipe.recipeImage)"
+              width=100%
+              height=100%
+              :alt="recipe.recipeName + ' 的图片'"
+              @error="handleImageError"
+              class="hover-zoom"
+          />
         </router-link>
       </el-carousel-item>
     </el-carousel>
@@ -15,6 +22,7 @@
 <script>
 import { reactive, toRefs, onMounted } from 'vue';
 import { threeLikes } from "@/api/recipe/likes.js";
+import { isExternal } from "@/utils/validate";
 
 export default {
   setup() {
@@ -34,10 +42,27 @@ export default {
     });
 
     return {
-      topLikes
+      topLikes,
+      getRealSrc,
+      handleImageError
     };
   }
 };
+
+const getRealSrc = (src) => {
+  if (!src) {
+    return "";
+  }
+  let real_src = src.split(",")[0];
+  if (isExternal(real_src)) {
+    return real_src;
+  }
+  return import.meta.env.VITE_APP_BASE_API + real_src;
+};
+
+function handleImageError(event) {
+  event.target.src = '/path/to/default-image.jpg'; // 替换为默认图片路径
+}
 </script>
 
 <style lang="scss" scoped>
@@ -154,5 +179,13 @@ export default {
       }
     }
   }
+}
+
+.hover-zoom {
+  transition: transform 0.3s ease; /* 添加过渡效果 */
+}
+
+.hover-zoom:hover {
+  transform: scale(1.1); /* 鼠标悬停时放大图片 */
 }
 </style>

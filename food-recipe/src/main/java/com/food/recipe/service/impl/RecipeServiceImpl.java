@@ -140,6 +140,16 @@ public class RecipeServiceImpl implements IRecipeService
     }
 
     /**
+     * 按收藏量查询食谱列表
+     *
+     * @return 食谱集合
+     */
+    @Override
+    public List<Recipe> likeRecipeList(Recipe recipe) {
+        return recipeMapper.likeRecipeList(recipe);
+    }
+
+    /**
      * 新增步骤信息
      * 
      * @param recipe 食谱对象
