@@ -5,53 +5,53 @@
       <img src="../../assets/loge.jpg" />
     </div>
     <!-- 导航选项 -->
-    <el-row class="nav-item" align="middle" type="flex">
+    <el-row class="nav-item" align="middle" type="flex" justify="end">
       <el-col :span="4">
         <router-link
-          to="/index"
-          :class="{ active: index == 1 }"
-          @click.native="index = 1"
-          >首页</router-link
+            to="/index"
+            :class="{ active: index == 1 }"
+            @click.native="index = 1"
+        >首页</router-link
         >
       </el-col>
       <el-col :span="4">
         <router-link
-          to="/shipu"
-          :class="{ active: index == 2 }"
-          @click.native="index = 2"
-          >食谱</router-link
+            to="/shipu"
+            :class="{ active: index == 2 }"
+            @click.native="index = 2"
+        >食谱</router-link
         >
       </el-col>
+      <!--      <el-col :span="4">-->
+      <!--        <router-link-->
+      <!--          to="/yuanliao"-->
+      <!--          :class="{ active: index == 3 }"-->
+      <!--          @click.native="index = 3"-->
+      <!--          >食材</router-link>-->
+      <!--        >-->
+      <!--      </el-col>-->
+      <!--      <el-col :span="4">-->
+      <!--        <router-link-->
+      <!--          to="/yingyang"-->
+      <!--          :class="{ active: index == 4 }"-->
+      <!--          @click.native="index = 4"-->
+      <!--          >健康</router-link>-->
+      <!--        >-->
+      <!--      </el-col>-->
+      <!--      <el-col :span="4">-->
+      <!--        <router-link-->
+      <!--          to="/log"-->
+      <!--          :class="{ active: index == 5 }"-->
+      <!--          @click.native="index = 5"-->
+      <!--          >专题</router-link>-->
+      <!--        >-->
+      <!--      </el-col>-->
       <el-col :span="4">
         <router-link
-          to="/yuanliao"
-          :class="{ active: index == 3 }"
-          @click.native="index = 3"
-          >食材</router-link
-        >
-      </el-col>
-      <el-col :span="4">
-        <router-link
-          to="/yingyang"
-          :class="{ active: index == 4 }"
-          @click.native="index = 4"
-          >健康</router-link
-        >
-      </el-col>
-      <el-col :span="4">
-        <router-link
-          to="/log"
-          :class="{ active: index == 5 }"
-          @click.native="index = 5"
-          >专题</router-link
-        >
-      </el-col>
-      <el-col :span="4">
-        <router-link
-          to="/mine"
-          :class="{ active: index == 6 }"
-          @click.native="index = 6"
-          >我的</router-link
+            to="/mine"
+            :class="{ active: index == 6 }"
+            @click.native="index = 6"
+        >我的</router-link
         >
       </el-col>
     </el-row>
@@ -101,6 +101,8 @@ export default {
   }
   .nav-item {
     width: 40%;
+    display: flex;
+    justify-content: flex-end; // 添加此行
     div {
       text-align: center;
       font-size: 1.3rem;

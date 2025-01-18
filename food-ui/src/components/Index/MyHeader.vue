@@ -4,12 +4,12 @@
       <div class="left-header">
         <span><router-link to="/common/index">首页</router-link></span>
         <span><router-link to="/ShiPu">食谱</router-link></span>
-        <span><a>食材</a></span>
-        <span><a>健康</a></span>
-        <span><a>专题</a></span>
-        <span><a>笔记</a></span>
-        <span><a>社区</a></span>
-        <span><a>活动</a></span>
+<!--        <span><a>食材</a></span>-->
+<!--        <span><a>健康</a></span>-->
+<!--        <span><a>专题</a></span>-->
+<!--        <span><a>笔记</a></span>-->
+<!--        <span><a>社区</a></span>-->
+<!--        <span><a>活动</a></span>-->
       </div>
 <!--      自带搜索按钮-->
 <!--      <template v-if="appStore.device !== 'mobile'">-->

@@ -74,9 +74,9 @@
 </template>
 
 <script setup name="Recipe">
-import { likeRecipe } from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
+import {reviewRecipe} from "@/api/recipe/recipe.js";
 
 
 const { proxy } = getCurrentInstance();
@@ -115,7 +115,7 @@ const getRealSrc = (src) => {
 async function getList() {
   loading.value = true;
   try {
-    const response = await likeRecipe(queryParams.value);
+    const response = await reviewRecipe(queryParams.value);
     total.value = response.total;
     const recipeIds = response.rows.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));

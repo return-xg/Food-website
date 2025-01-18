@@ -18,6 +18,15 @@ export function likeRecipe(query) {
   })
 }
 
+//按评论量查询食谱列表
+export function reviewRecipe(query) {
+  return request({
+    url: '/recipe/recipe/reviewRecipe',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询食谱详细
 export function getRecipe(recipeId) {
   return request({

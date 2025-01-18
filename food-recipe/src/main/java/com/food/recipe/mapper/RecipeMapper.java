@@ -118,4 +118,11 @@ public interface RecipeMapper
      * @return 食谱集合
      */
     public List<Recipe> likeRecipeList(Recipe recipe);
+
+    /**
+     * 按评论量查询食谱列表
+     *
+     * @return 食谱集合
+     */
+    public List<Recipe> reviewRecipeList(Recipe recipe);
 }

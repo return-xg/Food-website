@@ -122,4 +122,14 @@ public class RecipeController extends BaseController
         List<Recipe> list = recipeService.likeRecipeList(recipe);
         return getDataTable(list);
     }
+
+    /**
+     * 按评论量查询食谱列表
+     */
+    @GetMapping("/reviewRecipe")
+    public TableDataInfo reviewRecipe(Recipe recipe) {
+        startPage();
+        List<Recipe> list = recipeService.reviewRecipeList(recipe);
+        return getDataTable(list);
+    }
 }

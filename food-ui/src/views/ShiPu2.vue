@@ -23,12 +23,11 @@
 </template>
 
 <script>
-import Seniority from "../components/Index/Seniority.vue";
 import MyHeader from "@/components/Index/MyHeader.vue";
 import Seniority2 from "@/components/Index/Seniority2.vue";
 
 export default {
-  components: {Seniority2, MyHeader, Seniority },
+  components: {Seniority2, MyHeader},
   data() {
     return {
       mname: "",

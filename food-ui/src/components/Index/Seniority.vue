@@ -150,10 +150,6 @@ getList();
 </script>
 
 <style>
-.el-form-item__label {
-  font-size: 16px;
-  color: #333;
-}
 
 .el-select {
   width: 200px; /* 调整下拉框宽度 */

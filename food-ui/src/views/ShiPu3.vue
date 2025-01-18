@@ -18,16 +18,16 @@
       >按热度</router-link
       >
     </div>
-    <seniority :aaa="mname" />
+    <seniority3 :aaa="mname" />
   </div>
 </template>
 
 <script>
-import Seniority from "../components/Index/Seniority.vue";
+import Seniority3 from "@/components/Index/Seniority3.vue";
 import MyHeader from "@/components/Index/MyHeader.vue";
 
 export default {
-  components: {MyHeader, Seniority },
+  components: {MyHeader, Seniority3 },
   data() {
     return {
       mname: "",
