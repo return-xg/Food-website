@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.food.recipe.mapper.ReviewMapper">
+    
+    <resultMap type="Review" id="ReviewResult">
+        <result property="reviewId"    column="review_id"    />
+        <result property="recipeId"    column="recipe_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="review"    column="review"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectReviewVo">
+        select review_id, recipe_id, user_id, review, create_time from review
+    </sql>
+
+    <select id="selectReviewList" parameterType="Review" resultMap="ReviewResult">
+        <include refid="selectReviewVo"/>
+        <where>  
+            <if test="recipeId != null "> and recipe_id = #{recipeId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="review != null  and review != ''"> and review = #{review}</if>
+        </where>
+    </select>
+    
+    <select id="selectReviewByReviewId" parameterType="Long" resultMap="ReviewResult">
+        <include refid="selectReviewVo"/>
+        where review_id = #{reviewId}
+    </select>
+
+<!--    新增评论-->
+    <insert id="insertReview" parameterType="Review">
+        insert into review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="reviewId != null">review_id,</if>
+            <if test="recipeId != null">recipe_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="review != null">review,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="reviewId != null">#{reviewId},</if>
+            <if test="recipeId != null">#{recipeId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="review != null">#{review},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateReview" parameterType="Review">
+        update review
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recipeId != null">recipe_id = #{recipeId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="review != null">review = #{review},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where review_id = #{reviewId}
+    </update>
+
+    <delete id="deleteReviewByReviewId" parameterType="Long">
+        delete from review where review_id = #{reviewId}
+    </delete>
+
+    <delete id="deleteReviewByReviewIds" parameterType="String">
+        delete from review where review_id in 
+        <foreach item="reviewId" collection="array" open="(" separator="," close=")">
+            #{reviewId}
+        </foreach>
+    </delete>
+</mapper>

@@ -64,6 +64,19 @@
           </div>
         </div>
       </div>
+<!--      评论-->
+      <div id="comment" class="comment">
+        <div class="comment-text">
+          <h2 class="mini-title">评论</h2>
+          <div class="in-comment clearfix">
+            <div class="author-img">
+              <image-preview class="br50" alt="头像" width="30" height="30"/>
+            </div>
+            <textarea class="comm-txt left" id="commentContent"></textarea>
+            <a class="comm-btn" @click="comment">发表评论</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -73,6 +86,8 @@ import {useRoute} from 'vue-router'
 import {getRecipe, recipeByIdUser} from '@/api/recipe/recipe'
 import MyHeader from "@/components/Index/MyHeader.vue";
 import {addLikes, likeDelete, likeSelect} from "@/api/recipe/likes.js";
+import { addReview } from '@/api/recipe/review.js';
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const recipeId = route.params.recipeId
@@ -147,6 +162,34 @@ function star(row) {
     // 更新收藏按钮文本
     row.collectText = row.starred ? '已收藏' : '收藏';
   });
+}
+
+/** 评论按钮操作 */
+function comment() {
+  const commentContent = document.getElementById('commentContent').value;
+  if (commentContent.trim() === '') {
+    ElMessage.error('评论内容不能为空')
+    return;
+  }
+
+  if (commentContent.length >= 1000 ) {
+    ElMessage.error('评论内容不能超过1000字')
+    return;
+  }
+
+
+  // 获取当前食谱的 ID
+  const recipeId = route.params.recipeId;
+
+  // 调用 addReview 函数并传入食谱 ID 和评论内容
+  addReview({ recipeId, review: commentContent })
+      .then(response => {
+        ElMessage.success('评论成功');
+        // 可以在这里添加其他逻辑，比如刷新评论列表
+      })
+      .catch(error => {
+        ElMessage.error('评论失败');
+      });
 }
 </script>
 
@@ -374,4 +417,45 @@ a {
 * {
   box-sizing: border-box;
 }
+
+#comment .in-comment {
+  padding-bottom: 20px;
+  position: relative;
+}
+
+#comment .in-comment .author-img {
+  width: 30px;
+  height: 30px;
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+#comment .author-img, .author-comment {
+  float: left;
+}
+
+#comment .in-comment .comm-txt {
+  width: 648px;
+  height: 112px;
+  resize: none;
+  padding: 12px;
+  border: 1px solid #E5E3DF;
+  border-radius: 4px;
+}
+
+#comment .in-comment > .comm-btn {
+  float: right;
+  color: #FFB31A;
+  right: 0;
+  margin-top: 10px;
+  display: inline-block;
+  border-radius: 4px;
+  height: 34px;
+  width: 104px;
+  text-align: center;
+  line-height: 34px;
+  font-size: 15px;
+  border: 1px solid #FFB31A;
+}
+
 </style>
