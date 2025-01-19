@@ -142,4 +142,15 @@ public class RecipeController extends BaseController
         List<Recipe> list = recipeService.userRecipeList(recipe);
         return getDataTable(list);
     }
+
+    /**
+     * 根据食谱id查询用户信息
+     *
+     * @param recipeId
+     * @return
+     */
+    @GetMapping("/recipeByIdUser/{recipeId}")
+    public AjaxResult recipeByIdUser(@PathVariable("recipeId") Long recipeId) {
+        return success(recipeService.recipeByIdUser(recipeId));
+    }
 }

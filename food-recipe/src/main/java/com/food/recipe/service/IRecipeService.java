@@ -1,6 +1,8 @@
 package com.food.recipe.service;
 
 import java.util.List;
+
+import com.food.common.core.domain.entity.SysUser;
 import com.food.recipe.domain.Recipe;
 
 /**
@@ -90,4 +92,12 @@ public interface IRecipeService
      * @return
      */
     public List<Recipe> userRecipeList(Recipe recipe);
+
+    /**
+     * 根据食谱id查询用户信息
+     *
+     * @param recipeId
+     * @return
+     */
+    public SysUser recipeByIdUser(Long recipeId);
 }

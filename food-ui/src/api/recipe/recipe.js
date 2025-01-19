@@ -78,3 +78,11 @@ export function delRecipe(recipeId) {
     method: 'delete'
   })
 }
+
+// 根据食谱id查询用户信息
+export function recipeByIdUser(recipeId) {
+  return request({
+    url: '/recipe/recipe/recipeByIdUser/' + recipeId,
+    method: 'get'
+  })
+}

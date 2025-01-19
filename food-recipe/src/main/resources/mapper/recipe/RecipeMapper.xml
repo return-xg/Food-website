@@ -47,6 +47,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <collection property="ingredientList" ofType="Ingredient" column="recipe_id" select="selectIngredientList" />
     </resultMap>
 
+    <resultMap id="SysUserResult" type="SysUser">
+        <result property="userId"    column="user_id"/>
+        <result property="nickName"    column="nick_name"/>
+        <result property="avatar"    column="avatar"/>
+    </resultMap>
+
 <!--    查询食谱Vo-->
     <sql id="selectRecipeVo">
         select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review from recipe
@@ -106,6 +112,19 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="state != null "> and state = #{state}</if>
         </where>
         ORDER BY review DESC
+    </select>
+
+<!--    根据食谱id查询用户信息-->
+    <select id="recipeByIdUser" resultMap="SysUserResult">
+        SELECT
+            sys_user.nick_name,
+            sys_user.avatar
+        FROM
+            recipe
+                JOIN
+            sys_user ON recipe.user_id = sys_user.user_id
+        WHERE
+            recipe.recipe_id = #{recipe_id}
     </select>
 
     <!--    新增食谱-->

@@ -1,6 +1,8 @@
 package com.food.recipe.service.impl;
 
 import java.util.List;
+
+import com.food.common.core.domain.entity.SysUser;
 import com.food.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -171,6 +173,17 @@ public class RecipeServiceImpl implements IRecipeService
     public List<Recipe> userRecipeList(Recipe recipe) {
         recipe.setUserId(getUserId());
         return recipeMapper.selectRecipeList(recipe);
+    }
+
+    /**
+     * 根据食谱id查询用户信息
+     *
+     * @param recipeId
+     * @return
+     */
+    @Override
+    public SysUser recipeByIdUser(Long recipeId) {
+        return recipeMapper.recipeByIdUser(recipeId);
     }
 
     /**

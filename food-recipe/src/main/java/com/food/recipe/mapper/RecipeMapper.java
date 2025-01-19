@@ -2,6 +2,7 @@ package com.food.recipe.mapper;
 
 import java.util.List;
 
+import com.food.common.core.domain.entity.SysUser;
 import com.food.recipe.domain.Ingredient;
 import com.food.recipe.domain.Recipe;
 import com.food.recipe.domain.Step;
@@ -115,6 +116,7 @@ public interface RecipeMapper
     /**
      * 按收藏量查询食谱列表
      *
+     * @param recipe
      * @return 食谱集合
      */
     public List<Recipe> likeRecipeList(Recipe recipe);
@@ -122,7 +124,16 @@ public interface RecipeMapper
     /**
      * 按评论量查询食谱列表
      *
+     * @param recipe
      * @return 食谱集合
      */
     public List<Recipe> reviewRecipeList(Recipe recipe);
+
+    /**
+     * 根据食谱id查询用户信息
+     *
+     * @param recipeId
+     * @return
+     */
+    public SysUser recipeByIdUser(Long recipeId);
 }
