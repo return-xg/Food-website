@@ -95,115 +95,87 @@
         </el-header>
         <el-container>
           <el-aside width="75%">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleFormRef" label-width="100px" class="demo-ruleForm">
               <!-- 菜谱名称 -->
               <el-form-item label="菜谱名称" prop="name">
                 <el-input v-model="ruleForm.name" placeholder="请输菜谱名称"></el-input>
               </el-form-item>
-
-              <!-- 成品图片上传 -->
-              <el-form-item label="成品图片" prop="cptp">
-                <!-- 图片上传 -->
-                <el-upload action="#" list-type="picture-card" :auto-upload="false">
-                  <i slot="default" class="el-icon-plus"></i>
-                  <div slot="file" slot-scope="{ file }">
-                    <img
-                        v-if="file && file.url"
-                        class="el-upload-list__item-thumbnail"
-                        :src="file.url"
-                        alt=""
-                    />
-                    <span v-else class="el-upload-list__item-placeholder">无图片</span>
-                    <span class="el-upload-list__item-actions">
-                      <span
-                          class="el-upload-list__item-preview"
-                          @click="handlePictureCardPreview(file)"
-                          v-if="file && file.url"
-                      >
-                        <i class="el-icon-zoom-in"></i>
-                      </span>
-                      <span
-                          v-if="!disabled && file && file.url"
-                          class="el-upload-list__item-delete"
-                          @click="handleDownload(file)"
-                      >
-                        <i class="el-icon-download"></i>
-                      </span>
-                      <span
-                          v-if="!disabled && file && file.url"
-                          class="el-upload-list__item-delete"
-                          @click="handleRemove(file)"
-                      >
-                        <i class="el-icon-delete"></i>
-                      </span>
-                    </span>
-                  </div>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt="" />
-                </el-dialog>
+              <el-form-item label="菜系" prop="variety">
+                <el-select v-model="ruleForm.variety" placeholder="请选择菜系">
+                  <el-option
+                      v-for="dict in variety"
+                      :key="dict.value"
+                      :label="dict.label"
+                      :value="dict.value"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+              <!--              食谱简介-->
+              <el-form-item label="食谱简介" prop="recipeDescription">
+                <el-input v-model="ruleForm.recipeDescription" placeholder="请输入食谱简介" />
               </el-form-item>
 
-              <!-- 做法步骤 -->
-              <el-form-item label="做法步骤" prop="zfbz" class="zfbz">
-                <div style="display: flex; margin-bottom: 10px" v-for="i in zfbz" :key="i">
-                  <div class="zlsc-img">
-                    <el-upload action="#" list-type="picture-card" :auto-upload="false">
-                      <i slot="default" class="el-icon-plus"></i>
-                      <div slot="file" slot-scope="{ file }">
-                        <img
-                            v-if="file && file.url"
-                            class="el-upload-list__item-thumbnail"
-                            :src="file.url"
-                            alt=""
-                        />
-                        <span v-else class="el-upload-list__item-placeholder">无图片</span>
-                        <span class="el-upload-list__item-actions">
-                          <span
-                              class="el-upload-list__item-preview"
-                              @click="handlePictureCardPreview(file)"
-                              v-if="file && file.url"
-                          >
-                            <i class="el-icon-zoom-in"></i>
-                          </span>
-                          <span
-                              v-if="!disabled && file && file.url"
-                              class="el-upload-list__item-delete"
-                              @click="handleDownload(file)"
-                          >
-                            <i class="el-icon-download"></i>
-                          </span>
-                          <span
-                              v-if="!disabled && file && file.url"
-                              class="el-upload-list__item-delete"
-                              @click="handleRemove(file)"
-                          >
-                            <i class="el-icon-delete"></i>
-                          </span>
-                        </span>
+              <!-- 成品图片上传 -->
+              <el-form-item label="成品图片" prop="recipeImage">
+                <image-upload v-model="ruleForm.recipeImage" />
+              </el-form-item>
+
+                <!-- 食材 -->
+              <el-form-item label="食材" prop="ingredient">
+                <div style="width: 690px" v-for="(ingredient, index) in ingredientList" :key="index">
+                  <el-row type="flex" justify="space-between" align="middle">
+                    <el-col :span="10">
+                      <el-input
+                          v-model="ingredient.ingredientName"
+                          placeholder="请输入食材的名称"            style="width: 100%"
+                      />
+                    </el-col>
+                    <el-col :span="10">
+                      <el-input
+                          v-model="ingredient.ingredientQuantity"
+                          placeholder="请输入食材的用量"            style="width: 100%"
+                      />
+                    </el-col>
+                    <el-col :span="4">
+                      <div class="button-group">
+                        <el-button
+                            type="primary"
+                            icon="el-icon-plus"
+                            circle
+                            @click="addIngredient(index)"
+                        ></el-button>
+                        <el-button
+                            type="danger"
+                            icon="el-icon-minus"
+                            circle
+                            @click="removeIngredient(index)"
+                        ></el-button>
                       </div>
-                    </el-upload>
-                    <el-dialog :visible.sync="dialogVisible">
-                      <img width="100%" :src="dialogImageUrl" alt="" />
-                    </el-dialog>
-                  </div>
-                  <div style="width: 719px">
-                    <el-input type="textarea" :autosize="{ minRows: 6.5, maxRows: 6 }"></el-input>
-                  </div>
-                  <div class="zfbz-button">
-                    <el-button @click.native="zfbz++">添加</el-button>
-                    <el-button @click.native="zfbz--" style="margin-left: 0" :disabled="zfbz <= 3">移除</el-button>
-                  </div>
+                    </el-col>
+                  </el-row>
                 </div>
               </el-form-item>
 
-              <!-- 其他表单项保持不变 -->
-              <!-- ... -->
-
+              <!-- 做法步骤 -->
+              <el-form-item label="做法步骤" prop="steps">
+                <div style="display: flex; margin-bottom: 10px" v-for="(step, index) in steps" :key="index">
+                  <!-- 做法步骤图片 -->
+                  <div class="zlsc-img">
+                    <image-upload v-model="step.image" />
+                  </div>
+                  <div style="width: 719px">
+                    <el-input type="textarea" v-model="step.description" :autosize="{ minRows: 6.5, maxRows: 6 }"></el-input>
+                  </div>
+                  <div class="zfbz-button">
+                    <el-button @click="addStep">添加</el-button>
+                    <el-button @click="removeStep(index)" style="margin-left: 0" :disabled="steps.length <= 1">移除</el-button>
+                  </div>
+                </div>
+              </el-form-item>
             </el-form>
           </el-aside>
           <el-main>
-            <el-button type="danger">发布菜谱</el-button>
+            <el-button type="danger" @click="submitForm">发布菜谱</el-button>
             <el-button type="danger">存为草稿</el-button>
           </el-main>
         </el-container>
@@ -213,10 +185,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs } from 'vue';
+import { ref, reactive, toRefs, getCurrentInstance } from 'vue';
 import { userRecipeList } from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
+import {ElMessage} from "element-plus";
+import { addRecipe } from "@/api/recipe/recipe"; // 引入 addRecipe 函数
 
 // 成品图片参数
 const dialogImageUrl = ref("");
@@ -225,10 +199,6 @@ const disabled = ref(false);
 
 const index = ref(1);
 const isShow = ref(true); // 是否开启上传食谱
-const zhuliao = ref(1); // 主料列表个数
-const fuliao = ref(1); // 辅料列表个数
-const tiaoliao = ref(1); // 调料列表个数
-const zfbz = ref(3); // 做法步骤列表个数
 
 const { proxy } = getCurrentInstance();
 const { variety, recipe_state } = proxy.useDict('variety', 'recipe_state');
@@ -240,6 +210,8 @@ const total = ref(0);
 
 const ruleForm = reactive({
   name: "",
+  variety: "",
+  recipeDescription: "",
   region: "",
   cpms: "",
   zznd: "",
@@ -256,16 +228,8 @@ const ruleForm = reactive({
 
 const rules = {
   name: [{ required: true, message: "请输入菜名", trigger: "blur" }],
-  cptp: [{ required: true, message: "请选择图片", trigger: "blur" }],
-  zznd: [{ required: true, message: "请选择", trigger: "blur" }],
-  xysj: [{ required: true, message: "请选择", trigger: "blur" }],
-  kouwei: [{ required: true, message: "请输入口味", trigger: "blur" }],
-  prgy: [{ required: true, message: "请输入", trigger: "blur" }],
-  sycj: [{ required: true, message: "请输入", trigger: "blur" }],
-  zhuliao: [{ required: true, message: "请输入", trigger: "blur" }],
-  tiaoliao: [{ required: true, message: "请输入", trigger: "blur" }],
-  fuliao: [{ required: true, message: "请输入", trigger: "blur" }],
-  zfbz: [{ required: true, message: "请输入", trigger: "blur" }],
+  variety: [{ required: true, message: "请选择菜系", trigger: "blur" }],
+  recipeDescription: [{ required: true, message: "请输入食谱简介", trigger: "blur" }],
 };
 
 // 成品图片上传
@@ -343,7 +307,74 @@ function handleImageError(event) {
 }
 
 getList();
+
+// 步骤管理
+const steps = ref([
+  { image: '', description: '' }
+]);
+
+function addStep() {
+  steps.value = [...steps.value, { image: '', description: '' }];
+}
+
+function removeStep(index) {
+  if (steps.value.length > 1) {
+    steps.value = steps.value.filter((_, i) => i !== index);
+  } else {
+    ElMessage.error("至少需要保留一个步骤");
+  }
+}
+
+// 食材管理
+const ingredientList = ref([{ ingredientName: '', ingredientQuantity: '' }]);
+
+
+function addIngredient(index) {
+  ingredientList.value.splice(index + 1, 0, {
+    ingredientName: '',
+    ingredientQuantity: ''
+  });
+}
+
+function removeIngredient(index) {
+  if (ingredientList.value.length > 1) {
+    ingredientList.value.splice(index, 1);
+  } else {
+    ElMessage.error("至少需要保留一个食材");
+  }
+}
+
+async function submitForm() {
+  const valid = await proxy.$refs.ruleFormRef.validate();
+  if (!valid) {
+    return;
+  }
+
+  const formData = {
+    recipeName: ruleForm.name,
+    variety: ruleForm.variety,
+    recipeDescription: ruleForm.recipeDescription,
+    recipeImage: ruleForm.recipeImage,
+    steps: steps.value.map(step => ({
+      image: step.image,
+      description: step.description
+    })),
+    ingredientList: ingredientList.value,
+  };
+
+  try {
+    const response = await addRecipe(formData);
+    ElMessage.success("菜谱发布成功！");
+    proxy.resetForm("ruleForm");
+    isShow.value = true;
+  } catch (error) {
+    console.error(error);
+    ElMessage.error("菜谱发布失败，请重试！");
+  }
+}
 </script>
+
+
 
 
 <style lang="scss" >
@@ -538,6 +569,11 @@ li {
 .el-input__inner {
   height: 30px; /* 调整输入框高度 */
   line-height: 40px; /* 调整输入框行高 */
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
 }
 </style>
 

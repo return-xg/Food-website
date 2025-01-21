@@ -61,10 +61,12 @@ public class RecipeServiceImpl implements IRecipeService
      */
     @Transactional
     @Override
-    public int insertRecipe(Recipe recipe)
-    {
+    public int insertRecipe(Recipe recipe) {
         recipe.setUserId(getUserId());
-        if (recipe.getState() != 1){
+        // 检查 getState() 的返回值是否为 null
+        if (recipe.getState() == null) {
+            recipe.setState(0L);
+        } else if (recipe.getState()!= 1) {
             recipe.setState(0L);
         }
         recipe.setCreateTime(DateUtils.getNowDate());

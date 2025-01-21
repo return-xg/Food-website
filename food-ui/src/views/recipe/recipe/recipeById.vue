@@ -1,6 +1,6 @@
 <template>
   <my-header />
-  <div id="content" class="recipe-content clearfix">
+  <div id="content3" class="recipe-content clearfix">
     <div id="left" v-if="recipeDetail">
       <image-preview :src="recipeDetail.recipeImage" style="width: 690px; height: 390px; object-fit: cover;"/>
       <div class="rinfo relative">
@@ -68,10 +68,10 @@
       <div id="comment" class="comment">
         <div class="comment-text">
           <h2 class="mini-title">评论</h2>
-          <div class="in-comment clearfix">
-            <div class="author-img">
-              <image-preview class="br50" alt="头像" width="30" height="30"/>
-            </div>
+          <div class="in-comment clearfix1">
+<!--            <div class="author-img">-->
+<!--              <image-preview class="br50" alt="头像" width="30" height="30"/>-->
+<!--            </div>-->
             <textarea class="comm-txt left" id="commentContent"></textarea>
             <a class="comm-btn" @click="comment">发表评论</a>
           </div>
@@ -195,20 +195,20 @@ function comment() {
 
 <style scoped lang="scss">
 
-#content {
+#content3 {
   width: 1000px;
   margin: 0 auto;
 }
 
-#content.recipe-content {
+#content3.recipe-content {
   margin-top: 30px;
 }
 
-.clearfix {
+#content3.clearfix {
   zoom: 1;
 }
 
-.clearfix:after {
+#content3.clearfix:after {
   clear: both;
   content: ".";
   display: block;
@@ -435,7 +435,7 @@ a {
 }
 
 #comment .in-comment .comm-txt {
-  width: 648px;
+  width: 690px;
   height: 112px;
   resize: none;
   padding: 12px;
@@ -456,6 +456,21 @@ a {
   line-height: 34px;
   font-size: 15px;
   border: 1px solid #FFB31A;
+}
+
+.clearfix1{
+  zoom: 1;
+  width: 690px;
+}
+
+.clearfix1:after {
+  clear: both;
+  content: ".";
+  display: block;
+  font-size: 0;
+  height: 0;
+  line-height: 0;
+  visibility: hidden;
 }
 
 </style>
