@@ -6,7 +6,6 @@
         <el-menu-item index="1" @click.native="index = 1">我的菜谱</el-menu-item>
         <el-menu-item index="2" @click.native="index = 2">待审核</el-menu-item>
         <el-menu-item index="3" @click.native="index = 3">退稿箱</el-menu-item>
-        <el-menu-item index="4" @click.native="index = 4">草稿箱</el-menu-item>
         <el-button size="mini" type="danger" @click.native="isShow = false">发布新菜谱</el-button>
       </el-menu>
       <div class="shuju" v-show="index == 1">
@@ -36,6 +35,18 @@
           </el-form-item>
         </el-form>
 
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button
+                type="danger"
+                plain
+                icon="Delete"
+                :disabled="multiple"
+                @click="handleDelete"
+            >删除</el-button>
+          </el-col>
+        </el-row>
+
         <!--    数据列表-->
         <div id="content2" style="margin-left: 0; padding-left: 0;">
           <ul id="jxlist2" class="clearfix" v-loading="loading" style="margin-left: 0; padding-left: 0;">
@@ -57,12 +68,15 @@
                   <a class="cookname text-lips">{{ recipe.recipeName }}</a>
                 </router-link>
                 <div class="info">
-                  <a class="intro text-lips">
+                  <a class="intro text-lips" style="height: 35px">
                     <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip2">
                       <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
                     </el-tooltip>
+                    <el-checkbox v-model="selectedRecipes" :label="recipe.recipeId" @change="handleSelectionChange"></el-checkbox>
                   </a>
                   <div class="view-coll">
+                    <el-button link type="primary" icon="Edit" @click="handleUpdate(recipe)">修改</el-button>
+                    <el-button link type="primary" icon="Delete" @click="handleDelete(recipe)">删除</el-button>
                     <a class="star">
                       <el-icon><Star /></el-icon> <span class="likes-count">{{ recipe.likes }}</span>
                     </a>
@@ -85,9 +99,8 @@
       </div>
       <div class="shuju" v-show="index == 2">您没有处于待审核的菜谱！</div>
       <div class="shuju" v-show="index == 3">您没有审核未通过的菜谱！</div>
-      <div class="shuju" v-show="index == 4">您没有未提交审核的菜谱！</div>
     </div>
-    <!-- 菜谱发布 -->
+    <!-- 菜谱发布，修改界面 -->
     <div v-show="!isShow" class="cpfb">
       <el-container>
         <el-header height="35px">
@@ -140,13 +153,13 @@
                       <div class="button-group">
                         <el-button
                             type="primary"
-                            icon="el-icon-plus"
+                            icon="plus"
                             circle
                             @click="addIngredient(index)"
                         ></el-button>
                         <el-button
                             type="danger"
-                            icon="el-icon-minus"
+                            icon="minus"
                             circle
                             @click="removeIngredient(index)"
                         ></el-button>
@@ -158,17 +171,17 @@
 
               <!-- 做法步骤 -->
               <el-form-item label="做法步骤" prop="steps">
-                <div style="display: flex; margin-bottom: 10px" v-for="(step, index) in steps" :key="index">
+                <div style="display: flex; margin-bottom: 10px" v-for="(step, index) in stepList" :key="index">
                   <!-- 做法步骤图片 -->
                   <div class="zlsc-img">
-                    <image-upload v-model="step.image" />
+                    <image-upload v-model="step.stepImage" />
                   </div>
                   <div style="width: 719px">
-                    <el-input type="textarea" v-model="step.description" :autosize="{ minRows: 6.5, maxRows: 6 }"></el-input>
+                    <el-input type="textarea" v-model="step.stepDescription" :autosize="{ minRows: 6.5, maxRows: 6 }"></el-input>
                   </div>
                   <div class="zfbz-button">
                     <el-button @click="addStep">添加</el-button>
-                    <el-button @click="removeStep(index)" style="margin-left: 0" :disabled="steps.length <= 1">移除</el-button>
+                    <el-button @click="removeStep(index)" style="margin-left: 0" :disabled="stepList.length <= 1">移除</el-button>
                   </div>
                 </div>
               </el-form-item>
@@ -176,7 +189,6 @@
           </el-aside>
           <el-main>
             <el-button type="danger" @click="submitForm">发布菜谱</el-button>
-            <el-button type="danger">存为草稿</el-button>
           </el-main>
         </el-container>
       </el-container>
@@ -186,16 +198,33 @@
 
 <script setup>
 import { ref, reactive, toRefs, getCurrentInstance } from 'vue';
-import { userRecipeList } from "@/api/recipe/recipe";
+import {getRecipe, updateRecipe, userRecipeList} from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
-import {ElMessage} from "element-plus";
+import { ElMessage } from "element-plus";
 import { addRecipe } from "@/api/recipe/recipe"; // 引入 addRecipe 函数
+import { delRecipe } from "@/api/recipe/recipe"; // 引入 delRecipe 函数
 
+
+// 定义 reset 函数
+function reset() {
+  // 重置 ruleForm 表单数据
+  Object.assign(ruleForm, {
+    recipeId: null,
+    name: "",
+    variety: "",
+    recipeDescription: "",
+    recipeImage: "",
+    ingredientList: [{ ingredientName: '', ingredientQuantity: '' }],
+    stepList: [{ stepImage: '', stepDescription: '' }]
+  });
+}
 // 成品图片参数
 const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 const disabled = ref(false);
+
+const multiple = ref(true);
 
 const index = ref(1);
 const isShow = ref(true); // 是否开启上传食谱
@@ -209,21 +238,13 @@ const showSearch = ref(true);
 const total = ref(0);
 
 const ruleForm = reactive({
+  recipeId: null,
   name: "",
   variety: "",
   recipeDescription: "",
-  region: "",
-  cpms: "",
-  zznd: "",
-  xysj: "",
-  kouwei: "",
-  prgy: "",
-  sycj: "",
-  zhuliao: "",
-  fuliao: "",
-  tiaoliao: "",
-  zfbz: "",
-  xqm: "",
+  recipeImage: "",
+  ingredientList: [{ ingredientName: '', ingredientQuantity: '' }],
+  stepList: [{ stepImage: '', stepDescription: '' }]
 });
 
 const rules = {
@@ -231,22 +252,6 @@ const rules = {
   variety: [{ required: true, message: "请选择菜系", trigger: "blur" }],
   recipeDescription: [{ required: true, message: "请输入食谱简介", trigger: "blur" }],
 };
-
-// 成品图片上传
-function handleRemove(file) {
-  console.log(file);
-}
-
-function handlePictureCardPreview(file) {
-  if (file && file.url) {
-    dialogImageUrl.value = file.url;
-    dialogVisible.value = true;
-  }
-}
-
-function handleDownload(file) {
-  console.log(file);
-}
 
 const data = reactive({
   form: {},
@@ -309,17 +314,15 @@ function handleImageError(event) {
 getList();
 
 // 步骤管理
-const steps = ref([
-  { image: '', description: '' }
-]);
+const stepList = ref([{ stepImage: '', stepDescription: '' }]);
 
 function addStep() {
-  steps.value = [...steps.value, { image: '', description: '' }];
+  stepList.value = [...stepList.value, { stepImage: '', stepDescription: '' }];
 }
 
 function removeStep(index) {
-  if (steps.value.length > 1) {
-    steps.value = steps.value.filter((_, i) => i !== index);
+  if (stepList.value.length > 1) {
+    stepList.value = stepList.value.filter((_, i) => i !== index);
   } else {
     ElMessage.error("至少需要保留一个步骤");
   }
@@ -327,7 +330,6 @@ function removeStep(index) {
 
 // 食材管理
 const ingredientList = ref([{ ingredientName: '', ingredientQuantity: '' }]);
-
 
 function addIngredient(index) {
   ingredientList.value.splice(index + 1, 0, {
@@ -344,6 +346,7 @@ function removeIngredient(index) {
   }
 }
 
+/** 提交按钮 */
 async function submitForm() {
   const valid = await proxy.$refs.ruleFormRef.validate();
   if (!valid) {
@@ -355,22 +358,66 @@ async function submitForm() {
     variety: ruleForm.variety,
     recipeDescription: ruleForm.recipeDescription,
     recipeImage: ruleForm.recipeImage,
-    steps: steps.value.map(step => ({
-      image: step.image,
-      description: step.description
-    })),
-    ingredientList: ingredientList.value,
+    stepList: stepList.value,
+    ingredientList: ingredientList.value
   };
-
-  try {
-    const response = await addRecipe(formData);
-    ElMessage.success("菜谱发布成功！");
-    proxy.resetForm("ruleForm");
+  if (ruleForm.recipeId != null) {
+    formData.recipeId = ruleForm.recipeId;
+    await updateRecipe(formData);
+    getList();
+    ElMessage.success("菜谱修改成功！");
     isShow.value = true;
-  } catch (error) {
-    console.error(error);
-    ElMessage.error("菜谱发布失败，请重试！");
+  }else {
+    try {
+      const response = await addRecipe(formData);
+      getList(); // 刷新列表
+      ElMessage.success("菜谱发布成功！");
+      proxy.resetForm("ruleForm");
+      isShow.value = true;
+    } catch (error) {
+      console.error(error);
+      ElMessage.error("菜谱发布失败，请重试！");
+    }
   }
+}
+
+/** 删除按钮操作 */
+function handleDelete(recipe) {
+  const recipeId = recipe.recipeId;
+  proxy.$modal.confirm('是否确认删除食谱编号为"' + recipeId + '"的数据项？').then(function () {
+    return delRecipe(recipeId);
+  }).then(() => {
+    getList(); // 刷新列表
+    proxy.$modal.msgSuccess("删除成功");
+  }).catch((error) => {
+    console.error(error);
+    proxy.$modal.msgError("删除失败，请重试！");
+  });
+}
+
+/** 修改按钮操作 */
+function handleUpdate(recipe) {
+  reset(); // 确保 reset 函数已定义
+  const _recipeId = recipe.recipeId;
+  getRecipe(_recipeId).then(response => {
+    console.log(response); // 添加这一行，查看返回的数据
+    const data = response.data;
+    ruleForm.recipeId = _recipeId;
+    ruleForm.name = data.recipeName;
+    ruleForm.variety = data.variety;
+    ruleForm.recipeDescription = data.recipeDescription;
+    ruleForm.recipeImage = data.recipeImage;
+    ingredientList.value = data.ingredientList;
+    stepList.value = data.stepList;
+    isShow.value = false; // 切换到发布/修改界面
+  });
+}
+
+// 多选框选中数据
+function handleSelectionChange(selection) {
+  ids.value = selection.map(item => item.recipeId);
+  single.value = selection.length != 1;
+  multiple.value = !selection.length;
 }
 </script>
 
@@ -485,7 +532,7 @@ async function submitForm() {
 #jxlist2 .item {
   float: left;
   width: 300px;
-  height: 255px;
+  height: 270px;
   overflow: hidden;
   margin: 0 20px 40px 0;
 }

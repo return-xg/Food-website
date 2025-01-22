@@ -117,7 +117,7 @@
       @pagination="getList"
     />
 
-    <!-- 管理员添加食谱对话框 -->
+    <!-- 管理员添加修改食谱对话框 -->
     <el-dialog :title="title" v-model="open" width="600px" append-to-body>
       <el-form ref="recipeRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="食品名称" prop="recipeName">

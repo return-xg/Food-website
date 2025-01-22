@@ -75,7 +75,7 @@
 </template>
 
 <script setup name="Recipe">
-import { listRecipe } from "@/api/recipe/recipe";
+import {listRecipe, listRecipeState1} from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
 
@@ -116,7 +116,7 @@ const getRealSrc = (src) => {
 async function getList() {
   loading.value = true;
   try {
-    const response = await listRecipe(queryParams.value);
+    const response = await listRecipeState1(queryParams.value);
     total.value = response.total;
     const recipeIds = response.rows.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));

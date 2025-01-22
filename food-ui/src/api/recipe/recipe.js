@@ -9,6 +9,15 @@ export function listRecipe(query) {
   })
 }
 
+// 查询审核通过食谱列表
+export function listRecipeState1(query) {
+  return request({
+    url: '/recipe/recipe/listState1',
+    method: 'get',
+    params: query
+  })
+}
+
 // 用户查询发布菜谱
 export function userRecipeList(query) {
   return request({
