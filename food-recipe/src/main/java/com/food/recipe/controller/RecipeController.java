@@ -47,6 +47,18 @@ public class RecipeController extends BaseController
     }
 
     /**
+     * 查询审核通过食谱列表
+     */
+    @PreAuthorize("@ss.hasPermi('recipe:recipe:list')")
+    @GetMapping("/listState1")
+    public TableDataInfo listState1(Recipe recipe)
+    {
+        startPage();
+        List<Recipe> list = recipeService.selectRecipeListState1(recipe);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出食谱列表
      */
     @PreAuthorize("@ss.hasPermi('recipe:recipe:export')")

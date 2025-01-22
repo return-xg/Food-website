@@ -54,6 +54,19 @@ public class RecipeServiceImpl implements IRecipeService
     }
 
     /**
+     * 查询审核通过食谱列表
+     *
+     * @param recipe 食谱
+     * @return 食谱
+     */
+    @Override
+    public List<Recipe> selectRecipeListState1(Recipe recipe)
+    {
+        recipe.setState(1L);
+        return recipeMapper.selectRecipeList(recipe);
+    }
+
+    /**
      * 新增食谱
      * 
      * @param recipe 食谱

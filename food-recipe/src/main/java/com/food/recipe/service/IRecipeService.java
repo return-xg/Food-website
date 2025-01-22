@@ -30,6 +30,14 @@ public interface IRecipeService
     public List<Recipe> selectRecipeList(Recipe recipe);
 
     /**
+     * 查询审核通过食谱列表
+     *
+     * @param recipe 食谱
+     * @return 食谱集合
+     */
+    public List<Recipe> selectRecipeListState1(Recipe recipe);
+
+    /**
      * 新增食谱
      * 
      * @param recipe 食谱
