@@ -17,6 +17,14 @@ export function threeLikes() {
   })
 }
 
+// 用户查询收藏菜谱
+export function listUserId() {
+  return request({
+    url: '/recipe/likes/userId',
+    method: 'get',
+  })
+}
+
 // 查询点赞详细
 export function getLikes(likeId) {
   return request({
