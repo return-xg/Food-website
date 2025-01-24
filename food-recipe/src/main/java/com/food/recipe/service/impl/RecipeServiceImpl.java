@@ -164,6 +164,7 @@ public class RecipeServiceImpl implements IRecipeService
      */
     @Override
     public List<Recipe> likeRecipeList(Recipe recipe) {
+        recipe.setState(1L);
         return recipeMapper.likeRecipeList(recipe);
     }
 
@@ -175,6 +176,7 @@ public class RecipeServiceImpl implements IRecipeService
      */
     @Override
     public List<Recipe> reviewRecipeList(Recipe recipe) {
+        recipe.setState(1L);
         return recipeMapper.reviewRecipeList(recipe);
     }
 

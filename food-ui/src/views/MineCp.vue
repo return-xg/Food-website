@@ -3,12 +3,14 @@
     <!-- 菜谱模块 -->
     <div v-show="isShow">
       <el-menu mode="horizontal" active-text-color="#ff6767" default-active="1">
-        <el-menu-item index="1" @click.native="index = 1">我的菜谱</el-menu-item>
-        <el-menu-item index="2" @click.native="index = 2">待审核</el-menu-item>
-        <el-menu-item index="3" @click.native="index = 3">退稿箱</el-menu-item>
-        <el-button size="mini" type="danger" @click.native="isShow = false">发布新菜谱</el-button>
+        <el-menu-item index="1" @click ="index = 1">我的菜谱</el-menu-item>
+        <el-menu-item index="2" @click ="index = 2">待审核</el-menu-item>
+        <el-menu-item index="3" @click ="index = 3">退稿箱</el-menu-item>
+        <el-button size="mini" type="danger" @click="handlePublish">发布新菜谱</el-button>
       </el-menu>
-      <div class="shuju" v-show="index == 1">
+
+<!--      我的菜谱-->
+      <div class="shuju" v-show="index === 1">
         <!--    搜索-->
         <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="食谱" prop="recipeName">
@@ -35,13 +37,14 @@
           </el-form-item>
         </el-form>
 
+<!--        批量删除-->
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button
                 type="danger"
                 plain
                 icon="Delete"
-                :disabled="multiple"
+                :disabled="ids.length === 0"
                 @click="handleDelete"
             >删除</el-button>
           </el-col>
@@ -51,6 +54,7 @@
         <div id="content2" style="margin-left: 0; padding-left: 0;">
           <ul id="jxlist2" class="clearfix" v-loading="loading" style="margin-left: 0; padding-left: 0;">
             <li class="item" v-for="recipe in recipeList" :key="recipe.id">
+              <el-checkbox v-model="ids" :label="recipe.recipeId" @change="handleSelectionChange" class="hidden-label"></el-checkbox>
               <a class="cover">
                 <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
                   <img
@@ -72,7 +76,6 @@
                     <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip2">
                       <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
                     </el-tooltip>
-                    <el-checkbox v-model="selectedRecipes" :label="recipe.recipeId" @change="handleSelectionChange"></el-checkbox>
                   </a>
                   <div class="view-coll">
                     <el-button link type="primary" icon="Edit" @click="handleUpdate(recipe)">修改</el-button>
@@ -97,8 +100,190 @@
             @pagination="getList"
         />
       </div>
-      <div class="shuju" v-show="index == 2">您没有处于待审核的菜谱！</div>
-      <div class="shuju" v-show="index == 3">您没有审核未通过的菜谱！</div>
+
+<!--      待审核-->
+      <div class="shuju" v-show="index === 2">
+        <!--    搜索-->
+        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+          <el-form-item label="食谱" prop="recipeName">
+            <el-input
+                v-model="queryParams.recipeName"
+                placeholder="请输入食谱名称"
+                clearable
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="菜系" prop="variety">
+            <el-select v-model="queryParams.variety" placeholder="请选择菜系" clearable>
+              <el-option
+                  v-for="dict in variety"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+
+        <!--        批量删除-->
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button
+                type="danger"
+                plain
+                icon="Delete"
+                :disabled="ids.length === 0"
+                @click="handleDelete"
+            >删除</el-button>
+          </el-col>
+        </el-row>
+
+        <!--    数据列表-->
+        <div id="content2" style="margin-left: 0; padding-left: 0;">
+          <ul id="jxlist2" class="clearfix" v-loading="loading" style="margin-left: 0; padding-left: 0;">
+            <li class="item" v-for="recipe in recipeList" :key="recipe.id">
+              <el-checkbox v-model="ids" :label="recipe.recipeId" @change="handleSelectionChange" class="hidden-label"></el-checkbox>
+              <a class="cover">
+                <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+                  <img
+                      :src="getRealSrc(recipe.recipeImage)"
+                      width="300"
+                      height="200"
+                      :alt="recipe.recipeName + ' 的图片'"
+                      @error="handleImageError"
+                      class="hover-zoom"
+                  />
+                </router-link>
+              </a>
+              <div class="relative">
+                <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+                  <a class="cookname text-lips">{{ recipe.recipeName }}</a>
+                </router-link>
+                <div class="info">
+                  <a class="intro text-lips" style="height: 35px">
+                    <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip2">
+                      <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                    </el-tooltip>
+                  </a>
+                  <div class="view-coll">
+                    <el-button link type="primary" icon="Edit" @click="handleUpdate(recipe)">修改</el-button>
+                    <el-button link type="primary" icon="Delete" @click="handleDelete(recipe)">删除</el-button>
+                    <a class="star">
+                      <el-icon><Star /></el-icon> <span class="likes-count">{{ recipe.likes }}</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+
+        <!--    分页-->
+        <pagination
+            v-show="total>0"
+            :total="total"
+            v-model:page="queryParams.pageNum"
+            v-model:limit="queryParams.pageSize"
+            @pagination="getList"
+        />
+      </div>
+
+<!--      退稿箱-->
+      <div class="shuju" v-show="index === 3">
+        <!--    搜索-->
+        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+          <el-form-item label="食谱" prop="recipeName">
+            <el-input
+                v-model="queryParams.recipeName"
+                placeholder="请输入食谱名称"
+                clearable
+                @keyup.enter="handleQuery"
+            />
+          </el-form-item>
+          <el-form-item label="菜系" prop="variety">
+            <el-select v-model="queryParams.variety" placeholder="请选择菜系" clearable>
+              <el-option
+                  v-for="dict in variety"
+                  :key="dict.value"
+                  :label="dict.label"
+                  :value="dict.value"
+              />
+            </el-select>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+          </el-form-item>
+        </el-form>
+
+        <!--        批量删除-->
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button
+                type="danger"
+                plain
+                icon="Delete"
+                :disabled="ids.length === 0"
+                @click="handleDelete"
+            >删除</el-button>
+          </el-col>
+        </el-row>
+
+        <!--    数据列表-->
+        <div id="content2" style="margin-left: 0; padding-left: 0;">
+          <ul id="jxlist2" class="clearfix" v-loading="loading" style="margin-left: 0; padding-left: 0;">
+            <li class="item" v-for="recipe in recipeList" :key="recipe.id">
+              <el-checkbox v-model="ids" :label="recipe.recipeId" @change="handleSelectionChange" class="hidden-label"></el-checkbox>
+              <a class="cover">
+                <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+                  <img
+                      :src="getRealSrc(recipe.recipeImage)"
+                      width="300"
+                      height="200"
+                      :alt="recipe.recipeName + ' 的图片'"
+                      @error="handleImageError"
+                      class="hover-zoom"
+                  />
+                </router-link>
+              </a>
+              <div class="relative">
+                <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
+                  <a class="cookname text-lips">{{ recipe.recipeName }}</a>
+                </router-link>
+                <div class="info">
+                  <a class="intro text-lips" style="height: 35px">
+                    <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip2">
+                      <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                    </el-tooltip>
+                  </a>
+                  <div class="view-coll">
+                    <el-button link type="primary" icon="Edit" @click="handleUpdate(recipe)">修改</el-button>
+                    <el-button link type="primary" icon="Delete" @click="handleDelete(recipe)">删除</el-button>
+                    <a class="star">
+                      <el-icon><Star /></el-icon> <span class="likes-count">{{ recipe.likes }}</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+
+        <!--    分页-->
+        <pagination
+            v-show="total>0"
+            :total="total"
+            v-model:page="queryParams.pageNum"
+            v-model:limit="queryParams.pageSize"
+            @pagination="getList"
+        />
+      </div>
     </div>
     <!-- 菜谱发布，修改界面 -->
     <div v-show="!isShow" class="cpfb">
@@ -197,18 +382,16 @@
 </template>
 
 <script setup>
-import { ref, reactive, toRefs, getCurrentInstance } from 'vue';
-import {getRecipe, updateRecipe, userRecipeList} from "@/api/recipe/recipe";
+import { ref, reactive, toRefs, getCurrentInstance, watch } from 'vue';
+import { getRecipe, updateRecipe, userRecipeList } from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
 import { ElMessage } from "element-plus";
 import { addRecipe } from "@/api/recipe/recipe"; // 引入 addRecipe 函数
-import { delRecipe } from "@/api/recipe/recipe"; // 引入 delRecipe 函数
-
+import { delRecipe } from "@/api/recipe/recipe";
 
 // 定义 reset 函数
 function reset() {
-  // 重置 ruleForm 表单数据
   Object.assign(ruleForm, {
     recipeId: null,
     name: "",
@@ -219,13 +402,9 @@ function reset() {
     stepList: [{ stepImage: '', stepDescription: '' }]
   });
 }
-// 成品图片参数
-const dialogImageUrl = ref("");
-const dialogVisible = ref(false);
+
 const disabled = ref(false);
-
 const multiple = ref(true);
-
 const index = ref(1);
 const isShow = ref(true); // 是否开启上传食谱
 
@@ -236,6 +415,7 @@ const recipeList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
+const ids = ref([]);
 
 const ruleForm = reactive({
   recipeId: null,
@@ -263,7 +443,7 @@ const data = reactive({
   }
 });
 
-const { queryParams, form } = toRefs(data); // 移除 rules 的解构
+const { queryParams, form } = toRefs(data);
 
 const getRealSrc = (src) => {
   if (!src) {
@@ -280,7 +460,12 @@ const getRealSrc = (src) => {
 async function getList() {
   loading.value = true;
   try {
-    const response = await userRecipeList(queryParams.value);
+    const params = {
+      ...queryParams.value,
+      state: index.value === 2 ? 0 : (index.value === 3 ? 2 : null)
+    };
+    console.log('index:', index.value); // 移到对象字面量之外
+    const response = await userRecipeList(params);
     total.value = response.total;
     const recipeIds = response.rows.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
@@ -311,6 +496,21 @@ function handleImageError(event) {
   event.target.src = '/path/to/default-image.jpg'; // 替换为默认图片路径
 }
 
+// 监听 index 的变化
+watch(index, (newIndex) => {
+  if (newIndex === 1) {
+    // 当 index 为 1 时，获取用户所有菜谱列表
+    getList();
+  }else if (newIndex === 2) {
+    // 当 index 为 2 时，获取待审核的菜谱列表
+    getList();
+  }else if (newIndex === 3) {
+    // 当 index 为 3 时，获取被退的菜谱列表
+    getList();
+  }
+});
+
+// 初始化加载数据
 getList();
 
 // 步骤管理
@@ -367,7 +567,7 @@ async function submitForm() {
     getList();
     ElMessage.success("菜谱修改成功！");
     isShow.value = true;
-  }else {
+  } else {
     try {
       const response = await addRecipe(formData);
       getList(); // 刷新列表
@@ -383,7 +583,7 @@ async function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(recipe) {
-  const recipeId = recipe.recipeId;
+  const recipeId = recipe.recipeId || ids.value;
   proxy.$modal.confirm('是否确认删除食谱编号为"' + recipeId + '"的数据项？').then(function () {
     return delRecipe(recipeId);
   }).then(() => {
@@ -418,6 +618,17 @@ function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.recipeId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
+}
+
+function handlePublish() {
+  reset();
+  isShow.value = false;
+}
+
+// 取消按钮1
+function cancel() {
+  open.value = false;
+  reset();
 }
 </script>
 
@@ -532,7 +743,7 @@ function handleSelectionChange(selection) {
 #jxlist2 .item {
   float: left;
   width: 300px;
-  height: 270px;
+  height: 300px;
   overflow: hidden;
   margin: 0 20px 40px 0;
 }
@@ -621,6 +832,9 @@ li {
 .button-group {
   display: flex;
   justify-content: space-around;
+}
+.hidden-label .el-checkbox__label {
+  display: none;
 }
 </style>
 
