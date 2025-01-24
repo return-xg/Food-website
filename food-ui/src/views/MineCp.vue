@@ -591,7 +591,6 @@ function handleDelete(recipe) {
     proxy.$modal.msgSuccess("删除成功");
   }).catch((error) => {
     console.error(error);
-    proxy.$modal.msgError("删除失败，请重试！");
   });
 }
 
@@ -625,11 +624,6 @@ function handlePublish() {
   isShow.value = false;
 }
 
-// 取消按钮1
-function cancel() {
-  open.value = false;
-  reset();
-}
 </script>
 
 
