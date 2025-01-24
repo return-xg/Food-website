@@ -26,30 +26,30 @@
       </el-form-item>
     </el-form>
 
-<!--    数据列表-->
+    <!--    数据列表-->
     <div id="content">
       <ul id="jxlist" class="clearfix" v-loading="loading">
         <li class="item" v-for="recipe in recipeList" :key="recipe.id">
           <a class="cover">
             <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
-            <img
-                :src="getRealSrc(recipe.recipeImage)"
-                width="300"
-                height="200"
-                :alt="recipe.recipeName + ' 的图片'"
-                @error="handleImageError"
-                class="hover-zoom"
-            />
+              <img
+                  :src="getRealSrc(recipe.recipeImage)"
+                  width="300"
+                  height="200"
+                  :alt="recipe.recipeName + ' 的图片'"
+                  @error="handleImageError"
+                  class="hover-zoom"
+              />
             </router-link>
           </a>
           <div class="relative">
             <router-link :to="{ name: 'RecipeById', params: { recipeId: recipe.recipeId } }">
-            <a class="cookname text-lips">{{ recipe.recipeName }}</a>
+              <a class="cookname text-lips">{{ recipe.recipeName }}</a>
             </router-link>
             <div class="info">
               <a class="intro text-lips">
                 <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip">
-                  <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                  <span>{{ recipe.recipeDescription?.slice(0, 10) + '...' }}</span>
                 </el-tooltip>
               </a>
               <div class="view-coll">
@@ -79,15 +79,13 @@ import {listRecipe, listRecipeState1} from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
 
-
 const { proxy } = getCurrentInstance();
-const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
+const { variety, recipe_state } = proxy.useDict('variety', 'recipe_state');
 
 const recipeList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
-
 
 const data = reactive({
   form: {},
@@ -122,6 +120,8 @@ async function getList() {
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
     recipeList.value = response.rows.map((row, index) => {
       row.starred = likesResponses[index];
+      // 确保 recipeDescription 不为 null 或 undefined
+      row.recipeDescription = row.recipeDescription || '';
       return row;
     });
   } catch (error) {
@@ -151,7 +151,6 @@ getList();
 </script>
 
 <style>
-
 .el-select {
   width: 200px; /* 调整下拉框宽度 */
 }
@@ -263,5 +262,4 @@ li {
 .hover-zoom:hover {
   transform: scale(1.1); /* 鼠标悬停时放大图片 */
 }
-
 </style>

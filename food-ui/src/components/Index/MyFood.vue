@@ -3,12 +3,12 @@
     <!-- <div> -->
     <span>今日推荐</span>
     <div class="column">
-<!--      <a>热菜</a>-->
-<!--      <a>凉菜</a>-->
-<!--      <a>主食</a>-->
-<!--      <a>小吃</a>-->
-<!--      <a>饮品</a>-->
-<!--      <a>家常食谱</a>-->
+      <!-- <a>热菜</a>-->
+      <!-- <a>凉菜</a>-->
+      <!-- <a>主食</a>-->
+      <!-- <a>小吃</a>-->
+      <!-- <a>饮品</a>-->
+      <!-- <a>家常食谱</a>-->
       <router-link to="/ShiPu">食谱首页</router-link>
     </div>
     <!-- </div> -->
@@ -35,7 +35,9 @@
             <div class="info">
               <a class="intro text-lips">
                 <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip1">
-                  <span class="small-black-text">{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                  <span class="small-black-text">
+                    {{ recipe.recipeDescription ? recipe.recipeDescription.slice(0, 10) + '...' : '暂无描述' }}
+                  </span>
                 </el-tooltip>
               </a>
               <div class="view-coll">
@@ -51,19 +53,19 @@
   </div>
 </template>
 
+
 <script setup name="Recipe">
-import { listRecipe } from "@/api/recipe/recipe";
+import { likeNumList, listRecipe } from "@/api/recipe/recipe";
 import { likeSelect } from "@/api/recipe/likes.js";
 import { isExternal } from "@/utils/validate";
 
 const { proxy } = getCurrentInstance();
-const { variety,recipe_state } = proxy.useDict('variety', 'recipe_state');
+const { variety, recipe_state } = proxy.useDict('variety', 'recipe_state');
 
 const recipeList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const total = ref(0);
-
 
 const data = reactive({
   form: {},
@@ -92,16 +94,23 @@ const getRealSrc = (src) => {
 async function getList() {
   loading.value = true;
   try {
-    const response = await listRecipe(queryParams.value);
-    total.value = response.total;
-    const recipeIds = response.rows.map(row => row.recipeId);
+    const response = await likeNumList();
+    console.log('API Response:', response); // 添加日志输出
+    if (!response || !response.data) {
+      console.warn('No data or invalid response received');
+      recipeList.value = [];
+      total.value = 0;
+      return;
+    }
+    total.value = response.total || 0; // 确保 total 存在
+    const recipeIds = response.data.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
-    recipeList.value = response.rows.map((row, index) => {
+    recipeList.value = response.data.map((row, index) => {
       row.starred = likesResponses[index];
       return row;
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching data:', error);
   } finally {
     loading.value = false;
   }
@@ -125,6 +134,7 @@ function resetQuery() {
 
 getList();
 </script>
+
 
 <style>
 .week-hottest {

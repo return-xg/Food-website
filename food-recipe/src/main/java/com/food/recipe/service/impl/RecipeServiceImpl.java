@@ -84,7 +84,6 @@ public class RecipeServiceImpl implements IRecipeService
         }
         recipe.setCreateTime(DateUtils.getNowDate());
         recipe.setLikes(0L);
-        recipe.setCollect(0L);
         recipe.setReview(0L);
         int rows = recipeMapper.insertRecipe(recipe);
         insertIngredient(recipe);
@@ -201,6 +200,15 @@ public class RecipeServiceImpl implements IRecipeService
     @Override
     public SysUser recipeByIdUser(Long recipeId) {
         return recipeMapper.recipeByIdUser(recipeId);
+    }
+
+    /**
+     * 最近收藏数量最高的八个菜谱
+     * @return
+     */
+    @Override
+    public List<Recipe> likeNumList() {
+        return recipeMapper.likeNumList();
     }
 
     /**

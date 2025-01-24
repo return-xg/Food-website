@@ -8,7 +8,7 @@
     <el-row class="nav-item" align="middle" type="flex" justify="end">
       <el-col :span="4">
         <router-link
-            to="/index"
+            to="/common/index"
             :class="{ active: index == 1 }"
             @click.native="index = 1"
         >首页</router-link

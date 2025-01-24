@@ -45,6 +45,14 @@ export function reviewRecipe(query) {
   })
 }
 
+//最近收藏数量最高的八个菜谱
+export function likeNumList() {
+  return request({
+    url: '/recipe/recipe/likeNumList',
+    method: 'get',
+  })
+}
+
 // 查询食谱详细
 export function getRecipe(recipeId) {
   return request({

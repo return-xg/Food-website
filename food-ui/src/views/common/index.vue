@@ -16,7 +16,7 @@
 <!--    <food-material />-->
 
     <!--    笔记-->
-    <hot-note />
+<!--    <hot-note />-->
 
     <!--    底部-->
     <my-footer />
