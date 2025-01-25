@@ -550,4 +550,11 @@ public class SysUserServiceImpl implements ISysUserService
         }
         return successMsg.toString();
     }
+
+    @Override
+    public int userNum() {
+        return userMapper.userNum();
+    }
+
+
 }

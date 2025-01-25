@@ -253,4 +253,12 @@ public class SysUserController extends BaseController
     {
         return success(deptService.selectDeptTreeList(dept));
     }
+
+    /**
+     * 查询用户总量
+     */
+    @GetMapping("/userNum")
+    public int userNum() {
+        return userService.userNum();
+    }
 }

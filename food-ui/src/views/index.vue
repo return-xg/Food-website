@@ -1,49 +1,80 @@
 <template>
   <div>
-    <!-- 顶部导航 -->
-    <my-header />
-    <my-nav/>
-
-<!--    轮播图-->
-    <my-banner />
-
-    <my-main />
-
-<!--    今日推荐-->
-    <my-food />
-
-<!--    时令食材-->
-    <food-material />
-
-<!--    笔记-->
-    <hot-note />
-
-<!--    底部-->
-    <my-footer />
+    <el-row :gutter="20">
+      <el-col :span="6">
+        <div>
+          <el-statistic
+              group-separator=","
+              :precision="2"
+              :value="value2"
+              :title="title"
+          ></el-statistic>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div>
+          <el-statistic title="男女比">
+            <template slot="formatter">
+              456/2
+            </template>
+          </el-statistic>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div>
+          <el-statistic
+              group-separator=","
+              :precision="2"
+              decimal-separator="."
+              :value="value1"
+              :title="title"
+          >
+            <template slot="prefix">
+              <i class="el-icon-s-flag" style="color: red"></i>
+            </template>
+            <template slot="suffix">
+              <i class="el-icon-s-flag" style="color: blue"></i>
+            </template>
+          </el-statistic>
+        </div>
+      </el-col>
+      <el-col :span="6">
+        <div>
+          <el-statistic :value="like ? 521 : 520" title="Feedback">
+            <template slot="suffix">
+              <span @click="like = !like" class="like">
+                <i
+                    class="el-icon-star-on"
+                    style="color:red"
+                    v-show="!!like"
+                ></i>
+                <i class="el-icon-star-off" v-show="!like"></i>
+              </span>
+            </template>
+          </el-statistic>
+        </div>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
-import MyNav from '@/components/Index/MyNav.vue';
-import FoodMaterial from "../components/Index/FoodMaterial.vue";
-import HotNote from "../components/Index/HotNote.vue";
-import MyBanner from "../components/Index/MyBanner.vue";
-import MyFood from "../components/Index/MyFood.vue";
-import MyFooter from "../components/Index/MyFooter.vue";
-import MyHeader from "../components/Index/MyHeader.vue";
-import MyMain from "../components/Index/MyMain.vue";
 export default {
-  components: {
-    MyHeader,
-    MyMain,
-    MyFood,
-    FoodMaterial,
-    HotNote,
-    MyFooter,
-    MyBanner,
-    MyNav,
+  data() {
+    return {
+      like: true,
+      value1: 4154.564,
+      value2: 1314,
+      title: "增长人数",
+    };
   },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+.like {
+  cursor: pointer;
+  font-size: 25px;
+  display: inline-block;
+}
+</style>
