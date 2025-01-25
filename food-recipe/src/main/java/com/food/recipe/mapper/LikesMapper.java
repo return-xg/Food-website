@@ -92,5 +92,11 @@ public interface LikesMapper
      */
     public List<Recipe> listUserId(Long userId);
 
+    /**
+     * 统计一周以来点赞量最高的前三名食谱
+     * @return
+     */
     public List<Recipe> threeLikes(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+
+
 }

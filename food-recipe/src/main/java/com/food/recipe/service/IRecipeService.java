@@ -108,4 +108,10 @@ public interface IRecipeService
      * @return
      */
     public SysUser recipeByIdUser(Long recipeId);
+
+    /**
+     * 最近收藏数量最高的八个菜谱
+     * @return
+     */
+    public List<Recipe> likeNumList();
 }

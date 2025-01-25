@@ -15,7 +15,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
         <result property="variety"    column="variety"    />
         <result property="likes"    column="likes"    />
-        <result property="collect"    column="collect"    />
         <result property="review"    column="review"    />
     </resultMap>
 
@@ -55,7 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <!--    查询食谱Vo-->
     <sql id="selectRecipeVo">
-        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review from recipe
+        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, review from recipe
     </sql>
 
 <!--    查询食谱列表-->
@@ -71,7 +70,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <!--    食谱id查询食谱-->
     <select id="selectRecipeByRecipeId" parameterType="Long" resultMap="RecipeStepAndIngredientResult">
-        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, collect, review
+        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, review
         from recipe
         where recipe_id = #{recipeId}
     </select>
@@ -127,6 +126,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             recipe.recipe_id = #{recipe_id}
     </select>
 
+<!--    最近收藏数量最高的八个菜谱-->
+    <select id="likeNumList" resultMap="RecipeResult">
+        WITH recent_recipes AS (
+            SELECT recipe_id, COUNT(*) as count
+            FROM likes
+            GROUP BY recipe_id
+            ORDER BY MAX(create_time) DESC, count DESC
+            LIMIT 8
+        )
+        SELECT r.*
+        FROM recipe r
+        JOIN recent_recipes rr ON r.recipe_id = rr.recipe_id;
+    </select>
+
     <!--    新增食谱-->
     <insert id="insertRecipe" parameterType="Recipe" useGeneratedKeys="true" keyProperty="recipeId">
         insert into recipe
@@ -140,7 +153,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
             <if test="variety != null">variety,</if>
             <if test="likes != null">likes,</if>
-            <if test="collect != null">collect,</if>
             <if test="review != null">review,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -153,7 +165,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">#{updateTime},</if>
             <if test="variety != null">#{variety},</if>
             <if test="likes != null">#{likes},</if>
-            <if test="collect != null">#{collect},</if>
             <if test="review != null">#{review},</if>
          </trim>
     </insert>
@@ -171,7 +182,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="variety != null">variety = #{variety},</if>
             <if test="likes != null">likes = #{likes},</if>
-            <if test="collect != null">collect = #{collect},</if>
             <if test="review != null">review = #{review},</if>
         </trim>
         where recipe_id = #{recipeId}

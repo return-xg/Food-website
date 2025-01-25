@@ -606,8 +606,21 @@ function handleUpdate(recipe) {
     ruleForm.variety = data.variety;
     ruleForm.recipeDescription = data.recipeDescription;
     ruleForm.recipeImage = data.recipeImage;
-    ingredientList.value = data.ingredientList;
-    stepList.value = data.stepList;
+
+    // 处理食材列表
+    if (data.ingredientList && data.ingredientList.length > 0) {
+      ingredientList.value = data.ingredientList;
+    } else {
+      ingredientList.value = [{ ingredientName: '', ingredientQuantity: '' }];
+    }
+
+    // 处理步骤列表
+    if (data.stepList && data.stepList.length > 0) {
+      stepList.value = data.stepList;
+    } else {
+      stepList.value = [{ stepImage: '', stepDescription: '' }];
+    }
+
     isShow.value = false; // 切换到发布/修改界面
   });
 }
@@ -623,7 +636,6 @@ function handlePublish() {
   reset();
   isShow.value = false;
 }
-
 </script>
 
 

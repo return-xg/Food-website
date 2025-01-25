@@ -165,4 +165,13 @@ public class RecipeController extends BaseController
     public AjaxResult recipeByIdUser(@PathVariable("recipeId") Long recipeId) {
         return success(recipeService.recipeByIdUser(recipeId));
     }
+
+    /**
+     * 最近收藏数量最高的八个菜谱
+     * @return
+     */
+    @GetMapping("/likeNumList")
+    public AjaxResult likeNumList() {
+        return success(recipeService.likeNumList());
+    }
 }

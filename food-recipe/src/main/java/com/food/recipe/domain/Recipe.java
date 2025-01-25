@@ -48,9 +48,6 @@ public class Recipe extends BaseEntity
     @Excel(name = "点赞数")
     private Long likes;
 
-    /** 收藏数 */
-    @Excel(name = "收藏数")
-    private Long collect;
 
     /** 评论数 */
     @Excel(name = "评论数")
@@ -148,13 +145,6 @@ public class Recipe extends BaseEntity
         this.likes = likes;
     }
 
-    public Long getCollect() {
-        return collect;
-    }
-
-    public void setCollect(Long collect) {
-        this.collect = collect;
-    }
 
     public Long getReview() {
         return review;
@@ -178,7 +168,6 @@ public class Recipe extends BaseEntity
             .append("stepList", getStepList())
             .append("variety", getVariety())
             .append("likes", getLikes())
-            .append("collect", getCollect())
             .append("review", getReview())
             .append("ingredientList", getIngredientList())
             .toString();

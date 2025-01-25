@@ -19,7 +19,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="recipeImage"    column="recipe_image"    />
         <result property="variety"    column="variety"    />
         <result property="likes"    column="likes"    />
-        <result property="collect"    column="collect"    />
         <result property="review"    column="review"    />
     </resultMap>
 
@@ -57,14 +56,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             r.recipe_image,
             r.variety,
             r.likes,
-            r.collect,
             r.review
         FROM
             Recipe r
                 LEFT JOIN
             Likes l ON r.recipe_id = l.recipe_id
-                LEFT JOIN
-            Collect c ON r.recipe_id = c.recipe_id
                 LEFT JOIN
             Review re ON r.recipe_id = re.recipe_id
         WHERE
