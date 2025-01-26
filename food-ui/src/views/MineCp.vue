@@ -73,8 +73,8 @@
                 </router-link>
                 <div class="info">
                   <a class="intro text-lips" style="height: 35px">
-                    <el-tooltip effect="dark" :content="recipe.recipeDescription" placement="top" popper-class="custom-tooltip2">
-                      <span>{{ recipe.recipeDescription.slice(0, 10) + '...' }}</span>
+                    <el-tooltip effect="dark" :content="recipe.recipeDescription || ''" placement="top" popper-class="custom-tooltip2">
+                      <span>{{ (recipe.recipeDescription || '').slice(0, 10) + '...' }}</span>
                     </el-tooltip>
                   </a>
                   <div class="view-coll">

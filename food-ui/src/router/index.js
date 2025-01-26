@@ -113,6 +113,7 @@ export const constantRoutes = [
     path: "/mine",
     name: "mine",
     redirect: "/mine/hyzx",
+    hidden: true,  // 添加这一行
     component: () => import("../views/Mine.vue"),
     children: [
       {
