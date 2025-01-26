@@ -103,3 +103,12 @@ export function recipeByIdUser(recipeId) {
     method: 'get'
   })
 }
+
+// 根据开始时间和结束时间查询每天增长的用户数量
+export function getUserGrowthByDate(query) {
+  return request({
+    url: '/system/user/userGrowth',
+    method: 'get',
+    params: query
+  })
+}

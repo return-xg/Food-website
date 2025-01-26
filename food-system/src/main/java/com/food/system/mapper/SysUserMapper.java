@@ -1,6 +1,8 @@
 package com.food.system.mapper;
 
 import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 import com.food.common.core.domain.entity.SysUser;
 
@@ -131,4 +133,14 @@ public interface SysUserMapper
      * @return
      */
     public int userNum();
+
+    /**
+     * 根据开始时间和结束时间查询每天增长的用户数量
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return 每天增长的用户数量列表
+     */
+    List<Map<String, Object>> selectUserGrowthByDate(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
 }

@@ -146,6 +146,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		from sys_user
 	</select>
 
+<!--	根据开始时间和结束时间查询每天增长的用户数量-->
+	<select id="selectUserGrowthByDate" resultType="java.util.Map">
+		SELECT DATE_FORMAT(create_time, '%Y-%m-%d') AS date, COUNT(*) AS user_count
+		FROM sys_user
+		WHERE create_time BETWEEN #{startTime} AND #{endTime}
+		GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
+		ORDER BY DATE_FORMAT(create_time, '%Y-%m-%d')
+	</select>
+
     <insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
  		insert into sys_user(
  			<if test="userId != null and userId != 0">user_id,</if>

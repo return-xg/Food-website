@@ -2,6 +2,7 @@ package com.food.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.validation.Validator;
 import org.slf4j.Logger;
@@ -556,5 +557,15 @@ public class SysUserServiceImpl implements ISysUserService
         return userMapper.userNum();
     }
 
-
+    /**
+     * 根据开始时间和结束时间查询每天增长的用户数量
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return 每天增长的用户数量列表
+     */
+    @Override
+    public List<Map<String, Object>> getUserGrowthByDate(String startTime, String endTime) {
+        return userMapper.selectUserGrowthByDate(startTime, endTime);
+    }
 }

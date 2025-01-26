@@ -56,9 +56,27 @@
       </el-col>
     </el-row>
   </div>
+  <div>
+    <el-row :gutter="20">
+      <el-col :span="24">
+        <div>
+          <el-select style="width: 120px" v-model="timeRange" placeholder="请选择时间范围" @change="fetchUserGrowthData">
+            <el-option label="全部" value="all"></el-option>
+            <el-option label="最近半年" value="halfYear"></el-option>
+            <el-option label="最近一个月" value="oneMonth"></el-option>
+            <el-option label="最近一周" value="oneWeek"></el-option>
+          </el-select>
+        </div>
+        <div ref="chart" style="width: 100%; height: 400px;"></div>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
+import { getUserGrowthByDate } from '@/api/recipe/recipe.js';
+import * as echarts from 'echarts'; // 引入ECharts
+
 export default {
   data() {
     return {
@@ -66,8 +84,51 @@ export default {
       value1: 4154.564,
       value2: 1314,
       title: "增长人数",
+      timeRange: 'all',
+      chartInstance: null,
     };
   },
+  mounted() {
+    this.initChart();
+    this.fetchUserGrowthData();
+  },
+  methods: {
+    initChart() {
+      this.chartInstance = echarts.init(this.$refs.chart);
+    },
+    async fetchUserGrowthData() {
+      const response = await getUserGrowthByDate({ timeRange: this.timeRange });
+      if (response.code === 200) {
+        this.renderChart(response.data);
+      }
+    },
+    renderChart(data) {
+      const dates = data.map(item => item.date);
+      const userCounts = data.map(item => item.user_count);
+
+      const option = {
+        title: {
+          text: '用户增长趋势'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        xAxis: {
+          type: 'category',
+          data: dates
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: userCounts,
+          type: 'line'
+        }]
+      };
+
+      this.chartInstance.setOption(option);
+    }
+  }
 };
 </script>
 
