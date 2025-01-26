@@ -121,3 +121,27 @@ export function getRecipeCountByDate(query) {
     params: query
   })
 }
+
+//获取用户总数
+export function userNum() {
+  return request({
+    url: '/system/user/userNum',
+    method: 'get',
+  })
+}
+
+//食谱收录量
+export function recipeNum() {
+  return request({
+    url: '/recipe/recipe/recipeNum',
+    method: 'get',
+  })
+}
+
+//互动量
+export function reviewNum() {
+  return request({
+    url: '/recipe/review/reviewNum',
+    method: 'get',
+  })
+}
