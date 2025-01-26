@@ -1,6 +1,8 @@
 package com.food.recipe.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.food.common.core.domain.entity.SysUser;
 import com.food.recipe.domain.Recipe;
@@ -121,4 +123,13 @@ public interface IRecipeService
      * @return
      */
     public int recipeNum();
+
+    /**
+     * 根据开始时间和结束时间查询每天增长的state=1的食谱数量
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 每天的食谱数量列表
+     */
+    public List<Map<String, Object>> getRecipeCountByDate(LocalDateTime startTime, LocalDateTime endTime);
 }

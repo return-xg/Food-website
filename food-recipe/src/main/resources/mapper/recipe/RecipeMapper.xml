@@ -145,6 +145,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where state = 1
     </select>
 
+<!--    根据开始时间和结束时间查询每天增长的state=1的食谱数量-->
+    <select id="getRecipeCountByDate" resultType="java.util.Map">
+        SELECT DATE(create_time) as date, COUNT(*) as count
+        FROM recipe
+        WHERE state = 1
+          AND create_time BETWEEN #{startTime} AND #{endTime}
+        GROUP BY DATE(create_time)
+        ORDER BY DATE(create_time)
+    </select>
+
     <!--    新增食谱-->
     <insert id="insertRecipe" parameterType="Recipe" useGeneratedKeys="true" keyProperty="recipeId">
         insert into recipe

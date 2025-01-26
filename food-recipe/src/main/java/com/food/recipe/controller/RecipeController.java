@@ -1,17 +1,14 @@
 package com.food.recipe.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.food.common.annotation.Log;
 import com.food.common.core.controller.BaseController;
 import com.food.common.core.domain.AjaxResult;
@@ -183,5 +180,45 @@ public class RecipeController extends BaseController
     @GetMapping("/recipeNum")
     public int recipeNum() {
         return recipeService.recipeNum();
+    }
+
+    /**
+     * 根据开始时间和结束时间查询每天增长的state=1的食谱数量
+     *
+     * @param startTime 开始时间
+     * @param endTime   结束时间
+     * @return 每天的食谱数量列表
+     */
+    @GetMapping("/recipeCountByDate")
+    public AjaxResult getRecipeCountByDate(
+            @RequestParam(required = false, defaultValue = "all") String timeRange,
+            @RequestParam(required = false) LocalDateTime startTime,
+            @RequestParam(required = false) LocalDateTime endTime) {
+        if (timeRange != null) {
+            LocalDateTime now = LocalDateTime.now();
+            switch (timeRange) {
+                case "all":
+                    startTime = LocalDateTime.MIN;
+                    endTime = now;
+                    break;
+                case "halfYear":
+                    startTime = now.minusMonths(6);
+                    endTime = now;
+                    break;
+                case "oneMonth":
+                    startTime = now.minusMonths(1);
+                    endTime = now;
+                    break;
+                case "oneWeek":
+                    startTime = now.minusWeeks(1);
+                    endTime = now;
+                    break;
+                default:
+                    return AjaxResult.error("无效的时间范围参数");
+            }
+        }
+
+        List<Map<String, Object>> result = recipeService.getRecipeCountByDate(startTime, endTime);
+        return AjaxResult.success(result);
     }
 }

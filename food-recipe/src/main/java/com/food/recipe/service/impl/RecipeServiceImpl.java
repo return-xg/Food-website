@@ -1,5 +1,6 @@
 package com.food.recipe.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.food.common.core.domain.entity.SysUser;
@@ -7,6 +8,8 @@ import com.food.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Map;
+
 import com.food.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 import com.food.recipe.domain.Step;
@@ -219,6 +222,18 @@ public class RecipeServiceImpl implements IRecipeService
     @Override
     public int recipeNum() {
         return recipeMapper.recipeNum();
+    }
+
+    /**
+     * 根据开始时间和结束时间查询每天增长的state=1的食谱数量
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 每天的食谱数量列表
+     */
+    @Override
+    public List<Map<String, Object>> getRecipeCountByDate(LocalDateTime startTime, LocalDateTime endTime) {
+        return recipeMapper.getRecipeCountByDate(startTime, endTime);
     }
 
     /**

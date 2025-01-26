@@ -1,11 +1,14 @@
 package com.food.recipe.mapper;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import com.food.common.core.domain.entity.SysUser;
 import com.food.recipe.domain.Ingredient;
 import com.food.recipe.domain.Recipe;
 import com.food.recipe.domain.Step;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 食谱Mapper接口
@@ -149,4 +152,13 @@ public interface RecipeMapper
      * @return
      */
     public int recipeNum();
+
+    /**
+     * 根据开始时间和结束时间查询每天增长的state=1的食谱数量
+     *
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @return 每天的食谱数量列表
+     */
+    public List<Map<String, Object>> getRecipeCountByDate(@Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
 }

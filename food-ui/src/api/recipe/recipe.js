@@ -112,3 +112,12 @@ export function getUserGrowthByDate(query) {
     params: query
   })
 }
+
+// 根据开始时间和结束时间查询每天增长的食谱数量
+export function getRecipeCountByDate(query) {
+  return request({
+    url: '/recipe/recipe/recipeCountByDate',
+    method: 'get',
+    params: query
+  })
+}
