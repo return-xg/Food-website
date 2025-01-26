@@ -30,7 +30,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where review_id = #{reviewId}
     </select>
 
-<!--    新增评论-->
+    <select id="reviewNum" resultType="java.lang.Integer">
+        select count(*)
+        from review
+    </select>
+
+    <!--    新增评论-->
     <insert id="insertReview" parameterType="Review">
         insert into review
         <trim prefix="(" suffix=")" suffixOverrides=",">

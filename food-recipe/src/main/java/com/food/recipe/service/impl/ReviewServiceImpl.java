@@ -95,4 +95,14 @@ public class ReviewServiceImpl implements IReviewService
     {
         return reviewMapper.deleteReviewByReviewId(reviewId);
     }
+
+    /**
+     * 评论总数
+     *
+     * @return
+     */
+    @Override
+    public int reviewNum() {
+        return reviewMapper.reviewNum();
+    }
 }

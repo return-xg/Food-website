@@ -58,4 +58,11 @@ public interface ReviewMapper
      * @return 结果
      */
     public int deleteReviewByReviewIds(Long[] reviewIds);
+
+    /**
+     * 评论总数
+     *
+     * @return
+     */
+    public int reviewNum();
 }

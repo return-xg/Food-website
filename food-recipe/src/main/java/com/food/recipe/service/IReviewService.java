@@ -58,4 +58,11 @@ public interface IReviewService
      * @return 结果
      */
     public int deleteReviewByReviewId(Long reviewId);
+
+    /**
+     * 评论总数
+     *
+     * @return
+     */
+    public int reviewNum();
 }

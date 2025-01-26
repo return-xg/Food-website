@@ -101,4 +101,12 @@ public class ReviewController extends BaseController
     {
         return toAjax(reviewService.deleteReviewByReviewIds(reviewIds));
     }
+
+    /**
+     * 评论总数
+     */
+    @GetMapping("/reviewNum")
+    public int reviewNum(){
+        return reviewService.reviewNum();
+    }
 }
