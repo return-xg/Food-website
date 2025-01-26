@@ -142,4 +142,11 @@ public interface RecipeMapper
      * @return
      */
     public List<Recipe> likeNumList();
+
+    /**
+     * 审核通过所有食谱数量
+     *
+     * @return
+     */
+    public int recipeNum();
 }

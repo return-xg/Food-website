@@ -174,4 +174,14 @@ public class RecipeController extends BaseController
     public AjaxResult likeNumList() {
         return success(recipeService.likeNumList());
     }
+
+    /**
+     * 审核通过所有食谱数量
+     *
+     * @return
+     */
+    @GetMapping("/recipeNum")
+    public int recipeNum() {
+        return recipeService.recipeNum();
+    }
 }

@@ -212,6 +212,16 @@ public class RecipeServiceImpl implements IRecipeService
     }
 
     /**
+     * 审核通过所有食谱数量
+     *
+     * @return
+     */
+    @Override
+    public int recipeNum() {
+        return recipeMapper.recipeNum();
+    }
+
+    /**
      * 新增步骤信息
      * 
      * @param recipe 食谱对象

@@ -139,6 +139,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM recipe r
         JOIN recent_recipes rr ON r.recipe_id = rr.recipe_id;
     </select>
+    <select id="recipeNum" resultType="java.lang.Integer">
+        select count(*)
+        from recipe
+        where state = 1
+    </select>
 
     <!--    新增食谱-->
     <insert id="insertRecipe" parameterType="Recipe" useGeneratedKeys="true" keyProperty="recipeId">

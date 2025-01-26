@@ -81,7 +81,7 @@
       <el-table-column label="食谱简介" align="center">
         <template #default="scope">
           <el-tooltip effect="dark" :content="scope.row.recipeDescription" placement="top" popper-class="custom-tooltip">
-            <span>{{ scope.row.recipeDescription.slice(0, 10) + '...' }}</span>
+            <span>{{ scope.row.recipeDescription?.slice(0, 10) + '...' || '暂无简介' }}</span>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -286,7 +286,7 @@ const data = reactive({
   form: {},
   queryParams: {
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 15,
     recipeName: null,
     variety: null,
   },
@@ -304,6 +304,7 @@ async function getList() {
   loading.value = true;
   try {
     const response = await listRecipe(queryParams.value);
+    console.log('API Response:', response); // 打印 API 返回的数据
     total.value = response.total;
     const recipeIds = response.rows.map(row => row.recipeId);
     const likesResponses = await Promise.all(recipeIds.map(id => likeSelect(id)));
@@ -311,12 +312,15 @@ async function getList() {
       row.starred = likesResponses[index];
       return row;
     });
+    console.log('Total Recipes:', total.value); // 打印总数据量
+    console.log('Displayed Recipes:', recipeList.value.length); // 打印当前页显示的数据量
   } catch (error) {
-    console.error(error);
+    console.error('Error fetching recipes:', error);
   } finally {
     loading.value = false;
   }
 }
+
 
 // 取消按钮1
 function cancel() {
