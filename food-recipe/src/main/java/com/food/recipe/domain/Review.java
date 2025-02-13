@@ -7,9 +7,9 @@ import com.food.common.core.domain.BaseEntity;
 
 /**
  * 评论对象 review
- * 
+ *
  * @author 智慧的小国
- * @date 2025-01-19
+ * @date 2025-02-13
  */
 public class Review extends BaseEntity
 {
@@ -26,55 +26,111 @@ public class Review extends BaseEntity
     @Excel(name = "用户id")
     private Long userId;
 
+    /** 用户名称 */
+    @Excel(name = "用户名称")
+    private String nickName;
+
     /** 评论 */
     @Excel(name = "评论")
     private String review;
 
-    public void setReviewId(Long reviewId) 
+    /** 父级id */
+    @Excel(name = "父级id")
+    private Long pId;
+
+    /** 回复对象 */
+    @Excel(name = "回复对象")
+    private String target;
+
+    /** 食谱名称 */
+    @Excel(name = "食谱名称")
+    private String recipeName;
+
+    public void setReviewId(Long reviewId)
     {
         this.reviewId = reviewId;
     }
 
-    public Long getReviewId() 
+    public Long getReviewId()
     {
         return reviewId;
     }
-    public void setRecipeId(Long recipeId) 
+    public void setRecipeId(Long recipeId)
     {
         this.recipeId = recipeId;
     }
 
-    public Long getRecipeId() 
+    public Long getRecipeId()
     {
         return recipeId;
     }
-    public void setUserId(Long userId) 
+    public void setUserId(Long userId)
     {
         this.userId = userId;
     }
 
-    public Long getUserId() 
+    public Long getUserId()
     {
         return userId;
     }
-    public void setReview(String review) 
+    public void setNickName(String nickName)
+    {
+        this.nickName = nickName;
+    }
+
+    public String getNickName()
+    {
+        return nickName;
+    }
+    public void setReview(String review)
     {
         this.review = review;
     }
 
-    public String getReview() 
+    public String getReview()
     {
         return review;
+    }
+    public void setpId(Long pId)
+    {
+        this.pId = pId;
+    }
+
+    public Long getpId()
+    {
+        return pId;
+    }
+    public void setTarget(String target)
+    {
+        this.target = target;
+    }
+
+    public String getTarget()
+    {
+        return target;
+    }
+    public void setRecipeName(String recipeName)
+    {
+        this.recipeName = recipeName;
+    }
+
+    public String getRecipeName()
+    {
+        return recipeName;
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("reviewId", getReviewId())
-            .append("recipeId", getRecipeId())
-            .append("userId", getUserId())
-            .append("review", getReview())
-            .append("createTime", getCreateTime())
-            .toString();
+                .append("reviewId", getReviewId())
+                .append("recipeId", getRecipeId())
+                .append("userId", getUserId())
+                .append("nickName", getNickName())
+                .append("review", getReview())
+                .append("createTime", getCreateTime())
+                .append("pId", getpId())
+                .append("target", getTarget())
+                .append("recipeName", getRecipeName())
+                .toString();
     }
 }

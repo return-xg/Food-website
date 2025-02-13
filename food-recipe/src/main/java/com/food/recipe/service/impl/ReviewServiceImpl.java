@@ -8,7 +8,7 @@ import com.food.recipe.mapper.ReviewMapper;
 import com.food.recipe.domain.Review;
 import com.food.recipe.service.IReviewService;
 
-import static com.food.common.utils.SecurityUtils.getUserId;
+import static com.food.common.utils.SecurityUtils.*;
 
 /**
  * 评论Service业务层处理
@@ -57,6 +57,7 @@ public class ReviewServiceImpl implements IReviewService
     {
         review.setCreateTime(DateUtils.getNowDate());
         review.setUserId(getUserId());
+        review.setNickName(getNickname());
         return reviewMapper.insertReview(review);
     }
 
