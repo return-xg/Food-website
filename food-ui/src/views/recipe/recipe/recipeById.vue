@@ -69,14 +69,56 @@
         <div class="comment-text">
           <h2 class="mini-title">评论</h2>
           <div class="in-comment clearfix1">
-<!--            <div class="author-img">-->
-<!--              <image-preview class="br50" alt="头像" width="30" height="30"/>-->
-<!--            </div>-->
             <textarea class="comm-txt left" id="commentContent"></textarea>
             <a class="comm-btn" @click="comment">发表评论</a>
           </div>
         </div>
       </div>
+
+      <div id="comment" class="comment">
+        <div class="mini-title" style="margin: 10px 0; font-size: 21px; padding: 10px 0; border-bottom: 1px solid #ccc; text-align: left">评论列表</div>
+        <div style="margin: 20px 0; text-align: left">
+          <div style="padding: 10px 0;" v-for="item in reviews" :key="item.reviewId">
+            <div style="display : flex">
+              <div style="width: 80px"><el-avatar :size="50" :src="authorInfo.avatar" /></div>
+              <div style="flex: 1">
+                <div>{{ item.nickName }}</div>
+                <div style="margin-top: 10px; color: #666; max-width: 610px; overflow-wrap: break-word;">{{ item.review }}</div>
+                <div style="margin-top: 10px; color: #666">{{item.createTime}}</div>
+                <div>
+                  <el-button type="text" @click="reply(item.reviewId, item.nickName)">回复</el-button>
+                </div>
+<!--                回复列表-->
+                <div v-if="item.children.length" style="margin-left: 40px; background-color: aliceblue; padding: 25px; border-radius: 10px">
+                  <div v-for="sub in item.children" :key="sub.reviewId">
+                    <div style="padding: 5px 0; max-width: 520px; overflow-wrap: break-word;">
+                      <span style="cursor: pointer" @click="reply(sub.pId, sub.nickName)">{{ sub.nickName }}</span>
+                      <span> 回复 <span style="color: cornflowerblue">@{{ sub.target }}</span></span>
+                      <div style="margin-top: 5px;"> <!-- 添加一个 div 来换行显示评论内容 -->
+                        <span style="color: #666;">{{sub.review}}</span>
+                      </div>
+                    </div>
+                    <div style="font-size: 13px; color: #666; margin-top: 3px">{{sub.createTime}}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <el-dialog title="回复" v-model="dialogFormVisible" width="40%">
+        <el-form :model="review">
+          <el-form-item label="内容" :label-width="100">
+            <textarea v-model="review.review" placeholder="请输入回复内容" autocomplete="off" style="width: 90%"></textarea>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="saveReply">确 定</el-button>
+        </div>
+      </el-dialog>
+
     </div>
   </div>
 </template>
@@ -86,7 +128,7 @@ import {useRoute} from 'vue-router'
 import {getRecipe, recipeByIdUser} from '@/api/recipe/recipe'
 import MyHeader from "@/components/Index/MyHeader.vue";
 import {addLikes, likeDelete, likeSelect} from "@/api/recipe/likes.js";
-import { addReview } from '@/api/recipe/review.js';
+import {addReview, byRecipeId} from '@/api/recipe/review.js';
 import { ElMessage } from 'element-plus'
 
 const route = useRoute()
@@ -95,6 +137,13 @@ const recipeDetail = ref(null)
 const ingredientList = ref([]);
 const stepList = ref([]);
 const authorInfo = ref({ avatar: '', nickname: '' });
+const reviews = ref([]);
+const dialogFormVisible = ref(false);
+const review = ref({
+  pId: null,
+  target: '',
+  review: ''
+});
 
 async function fetchRecipeDetails() {
   try {
@@ -117,6 +166,11 @@ async function fetchRecipeDetails() {
     console.log('ingredientList:', ingredientList.value)
     console.log('stepList:', stepList.value)
     console.log('authorInfo:', authorInfo.value)
+
+    byRecipeId(recipeId).then(response => {
+      reviews.value = response;
+      console.log('Reviews:', reviews.value); // 添加这行调试信息
+    })
   } catch (error) {
     console.error('获取食谱详情失败', error)
   }
@@ -191,6 +245,44 @@ function comment() {
         ElMessage.error('评论失败');
       });
 }
+/** 回复按钮操作 */
+function reply(pId, target) {
+  review.value = { pId, target, review: '' }; // 清空回复内容
+  dialogFormVisible.value = true;
+  console.log('dialogFormVisible set to true:', dialogFormVisible.value);
+}
+
+/** 回复保存按钮操作 */
+function saveReply() {
+  const reviewContent = review.value.review;
+
+  if (reviewContent.trim() === '') {
+    ElMessage.error('回复内容不能为空');
+    return;
+  }
+
+  if (reviewContent.length >= 1000) {
+    ElMessage.error('回复内容不能超过1000字');
+    return;
+  }
+
+  if (review.value.pId === null || review.value.pId === undefined) {
+    ElMessage.error('回复目标ID无效');
+    return;
+  }
+
+  addReview({ recipeId, review: reviewContent, pId: review.value.pId, target: review.value.target })
+      .then(response => {
+        ElMessage.success('回复成功');
+        dialogFormVisible.value = false; // 关闭对话框
+        fetchRecipeDetails(); // 刷新评论列表
+      })
+      .catch(error => {
+        ElMessage.error('回复失败');
+      });
+}
+
+
 </script>
 
 <style scoped lang="scss">

@@ -4,6 +4,9 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.food.common.annotation.Excel;
 import com.food.common.core.domain.BaseEntity;
+import org.springframework.data.annotation.Transient;
+
+import java.util.List;
 
 /**
  * 评论对象 review
@@ -45,6 +48,10 @@ public class Review extends BaseEntity
     /** 食谱名称 */
     @Excel(name = "食谱名称")
     private String recipeName;
+
+    /** 多级评论 */
+    @Transient
+    private List<Review> children;
 
     public void setReviewId(Long reviewId)
     {
@@ -119,6 +126,14 @@ public class Review extends BaseEntity
         return recipeName;
     }
 
+    public List<Review> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<Review> children) {
+        this.children = children;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -131,6 +146,7 @@ public class Review extends BaseEntity
                 .append("pId", getpId())
                 .append("target", getTarget())
                 .append("recipeName", getRecipeName())
+                .append("children", getChildren())
                 .toString();
     }
 }

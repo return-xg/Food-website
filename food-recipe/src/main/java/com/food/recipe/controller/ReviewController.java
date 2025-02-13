@@ -1,17 +1,13 @@
 package com.food.recipe.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.food.common.annotation.Log;
 import com.food.common.core.controller.BaseController;
 import com.food.common.core.domain.AjaxResult;
@@ -108,5 +104,24 @@ public class ReviewController extends BaseController
     @GetMapping("/reviewNum")
     public int reviewNum(){
         return reviewService.reviewNum();
+    }
+
+    /**
+     * 查询食谱评论
+     * @param recipeId
+     * @return
+     */
+    @GetMapping("/byRecipeId")
+    public List<Review> list(@RequestParam Long recipeId){
+
+        List<Review> reviews = reviewService.findAllByRecipeId(recipeId);
+
+        List<Review> rootReviews = reviews.stream().filter(review -> review.getpId() == null).collect(Collectors.toList());
+        for (Review rootReview : rootReviews) {
+            rootReview.setChildren(reviews.stream().filter(review -> rootReview.getReviewId().equals(review.getpId())).collect(Collectors.toList()));
+        }
+
+
+        return rootReviews;
     }
 }

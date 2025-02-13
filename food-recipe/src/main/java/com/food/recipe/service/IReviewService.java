@@ -65,4 +65,11 @@ public interface IReviewService
      * @return
      */
     public int reviewNum();
+
+    /**
+     * 查询食谱评论
+     * @param recipeId
+     * @return
+     */
+    List<Review> findAllByRecipeId(Long recipeId);
 }

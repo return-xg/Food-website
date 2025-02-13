@@ -42,3 +42,14 @@ export function delReview(reviewId) {
     method: 'delete'
   })
 }
+
+//通过食谱id查询评论列表
+export function byRecipeId(recipeId) {
+  return request({
+    url: '/recipe/review/byRecipeId',
+    method: 'get',
+    params: {
+      recipeId
+    }
+  })
+}

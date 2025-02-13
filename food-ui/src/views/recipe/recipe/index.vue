@@ -90,8 +90,7 @@
           <image-preview :src="scope.row.recipeImage" :width="50" :height="50"/>
         </template>
       </el-table-column>
-      <el-table-column label="点赞数" align="center" prop="likes" />
-      <el-table-column label="收藏数" align="center" prop="collect" />
+      <el-table-column label="收藏数" align="center" prop="likes" />
       <el-table-column label="评论数" align="center" prop="review" />
       <el-table-column label="审核状态" align="center" prop="state">
         <template #default="scope">

@@ -2,6 +2,8 @@ package com.food.recipe.service.impl;
 
 import java.util.List;
 import com.food.common.utils.DateUtils;
+import com.food.recipe.domain.Recipe;
+import com.food.recipe.mapper.RecipeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.food.recipe.mapper.ReviewMapper;
@@ -21,6 +23,9 @@ public class ReviewServiceImpl implements IReviewService
 {
     @Autowired
     private ReviewMapper reviewMapper;
+
+    @Autowired
+    private RecipeMapper recipeMapper;
 
     /**
      * 查询评论
@@ -58,6 +63,8 @@ public class ReviewServiceImpl implements IReviewService
         review.setCreateTime(DateUtils.getNowDate());
         review.setUserId(getUserId());
         review.setNickName(getNickname());
+        Recipe recipe = recipeMapper.selectRecipeByRecipeId(review.getRecipeId());
+        review.setRecipeName(recipe.getRecipeName());
         return reviewMapper.insertReview(review);
     }
 
@@ -105,5 +112,17 @@ public class ReviewServiceImpl implements IReviewService
     @Override
     public int reviewNum() {
         return reviewMapper.reviewNum();
+    }
+
+    /**
+     * 查询食谱评论
+     * @param recipeId
+     * @return
+     */
+    @Override
+    public List<Review> findAllByRecipeId(Long recipeId) {
+        Review review = new Review();
+        review.setRecipeId(recipeId);
+        return reviewMapper.selectReviewList(review);
     }
 }
