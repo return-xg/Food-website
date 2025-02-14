@@ -65,4 +65,10 @@ public interface ReviewMapper
      * @return
      */
     public int reviewNum();
+
+    /**
+     * 更新评论数
+     * @return
+     */
+    public int updateRecipeReview();
 }

@@ -154,8 +154,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		GROUP BY DATE_FORMAT(create_time, '%Y-%m-%d')
 		ORDER BY DATE_FORMAT(create_time, '%Y-%m-%d')
 	</select>
+	<select id="getAvatar" resultType="java.lang.String">
+		SELECT
+			su.avatar
+		FROM
+			review r
+		JOIN
+			sys_user su ON r.user_id = su.user_id
+		WHERE
+			r.review_id = #{reviewId};
+	</select>
 
-    <insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
+	<insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
  		insert into sys_user(
  			<if test="userId != null and userId != 0">user_id,</if>
  			<if test="deptId != null and deptId != 0">dept_id,</if>

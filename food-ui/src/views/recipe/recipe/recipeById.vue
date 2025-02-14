@@ -1,5 +1,5 @@
 <template>
-  <my-header />
+  <my-header/>
   <div id="content3" class="recipe-content clearfix">
     <div id="left" v-if="recipeDetail">
       <image-preview :src="recipeDetail.recipeImage" style="width: 690px; height: 390px; object-fit: cover;"/>
@@ -9,7 +9,8 @@
           <span>{{ recipeDetail.likes }}</span>
           收藏
           <div class="absolute operate">
-            <a class="btn-collect" :class="{ hascoll: recipeDetail.starred }" data-status="0" @click="star(recipeDetail)">
+            <a class="btn-collect" :class="{ hascoll: recipeDetail.starred }" data-status="0"
+               @click="star(recipeDetail)">
               {{ recipeDetail.collectText }}
             </a>
           </div>
@@ -64,7 +65,7 @@
           </div>
         </div>
       </div>
-<!--      评论-->
+      <!--      评论-->
       <div id="comment" class="comment">
         <div class="comment-text">
           <h2 class="mini-title">评论</h2>
@@ -75,42 +76,76 @@
         </div>
       </div>
 
+<!--      评论列表-->
       <div id="comment" class="comment">
-        <div class="mini-title" style="margin: 10px 0; font-size: 21px; padding: 10px 0; border-bottom: 1px solid #ccc; text-align: left">评论列表</div>
+        <div class="mini-title" style="margin: 10px 0; font-size: 21px; padding: 10px 0; border-bottom: 1px solid #ccc; text-align: left">
+          评论列表
+        </div>
         <div style="margin: 20px 0; text-align: left">
           <div style="padding: 10px 0;" v-for="item in reviews" :key="item.reviewId">
             <div style="display : flex">
-              <div style="width: 80px"><el-avatar :size="50" :src="authorInfo.avatar" /></div>
+              <div style="width: 80px">
+                <image-preview class="br500" :src="item.avatar"/>
+              </div>
               <div style="flex: 1">
                 <div>{{ item.nickName }}</div>
-                <div style="margin-top: 10px; color: #666; max-width: 610px; overflow-wrap: break-word;">{{ item.review }}</div>
-                <div style="margin-top: 10px; color: #666">{{item.createTime}}</div>
+                <div style="margin-top: 10px; color: #666; max-width: 610px; overflow-wrap: break-word;">
+                  <span v-if="!item.isExpanded">{{ item.review.slice(0, 136) }}</span>
+                  <span v-else>{{ item.review }}</span>
+                </div>
+                <div v-if="item.review.length > 136" style="margin-top: 5px; cursor: pointer; color: #666;"
+                     @click="toggleReview(item)">
+                  {{ item.isExpanded ? '收起' : '...展开' }}
+                </div>
+                <div style="margin-top: 10px; color: #666">{{ item.createTime }}</div>
                 <div>
                   <el-button type="text" @click="reply(item.reviewId, item.nickName)">回复</el-button>
+                  <el-button v-if="item.userId === currentUserId" type="text" @click="confirmDelete(item.reviewId)">删除</el-button>
                 </div>
-<!--                回复列表-->
-                <div v-if="item.children.length" style="margin-left: 40px; background-color: aliceblue; padding: 25px; border-radius: 10px">
-                  <div v-for="sub in item.children" :key="sub.reviewId">
+                <!--                回复列表-->
+                <div v-if="item.children.length"
+                     style="margin-left: 40px; background-color: aliceblue; padding: 25px; border-radius: 10px">
+                  <div v-for="sub in item.children.slice(0, expandedReplies[item.reviewId] ? item.children.length : 1)"
+                       :key="sub.reviewId">
                     <div style="padding: 5px 0; max-width: 520px; overflow-wrap: break-word;">
-                      <span style="cursor: pointer" @click="reply(sub.pId, sub.nickName)">{{ sub.nickName }}</span>
-                      <span> 回复 <span style="color: cornflowerblue">@{{ sub.target }}</span></span>
-                      <div style="margin-top: 5px;"> <!-- 添加一个 div 来换行显示评论内容 -->
-                        <span style="color: #666;">{{sub.review}}</span>
+                      <span style="cursor: pointer" @click="reply(sub.pId, sub.nickName)"> {{ sub.nickName }} </span>
+                      <span> 回复 <span style="color: cornflowerblue">@{{ sub.target }} </span></span>
+                      <div style="margin-top: 5px;">
+                        <span style="color: #666;">
+                          <span v-if="!sub.isExpanded">{{ sub.review.slice(0, 116) }}</span>
+                          <span v-else>{{ sub.review }}</span>
+                        </span>
+                      </div>
+                      <div v-if="sub.review.length > 116" style="margin-top: 5px; cursor: pointer; color: #666;"
+                           @click="toggleSubReview(sub)">
+                        {{ sub.isExpanded ? '收起' : '...展开' }}
                       </div>
                     </div>
-                    <div style="font-size: 13px; color: #666; margin-top: 3px">{{sub.createTime}}</div>
+                    <div style="font-size: 13px; color: #666; margin-top: 3px">
+                      {{ sub.createTime }}
+                    </div>
+                    <div v-if="sub.userId === currentUserId" style="margin-top: 5px;">
+                      <el-button type="text" @click="confirmDelete(sub.reviewId)">删除</el-button>
+                    </div>
+                  </div>
+                  <div v-if="item.children.length > 1" style="margin-top: 10px; cursor: pointer; color: #666;"
+                       @click="toggleReplies(item.reviewId)">
+                    {{ expandedReplies[item.reviewId] ? '收起回复' : '查看所有回复' }}
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
         </div>
       </div>
 
+<!--      回复弹窗-->
       <el-dialog title="回复" v-model="dialogFormVisible" width="40%">
         <el-form :model="review">
           <el-form-item label="内容" :label-width="100">
-            <textarea v-model="review.review" placeholder="请输入回复内容" autocomplete="off" style="width: 90%"></textarea>
+            <textarea v-model="review.review" placeholder="请输入回复内容" autocomplete="off"
+                      style="width: 90%; height: 300px"></textarea>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -123,20 +158,22 @@
   </div>
 </template>
 
-<script setup>import {ref, onMounted, computed} from 'vue'
+<script setup>
+import {ref, onMounted, computed} from 'vue'
 import {useRoute} from 'vue-router'
 import {getRecipe, recipeByIdUser} from '@/api/recipe/recipe'
 import MyHeader from "@/components/Index/MyHeader.vue";
 import {addLikes, likeDelete, likeSelect} from "@/api/recipe/likes.js";
-import {addReview, byRecipeId} from '@/api/recipe/review.js';
-import { ElMessage } from 'element-plus'
+import {addReview, byRecipeId, delReview} from '@/api/recipe/review.js';
+import {ElMessage, ElMessageBox} from 'element-plus'
+import useUserStore from "@/store/modules/user.js";
 
 const route = useRoute()
 const recipeId = route.params.recipeId
 const recipeDetail = ref(null)
 const ingredientList = ref([]);
 const stepList = ref([]);
-const authorInfo = ref({ avatar: '', nickname: '' });
+const authorInfo = ref({avatar: '', nickname: ''});
 const reviews = ref([]);
 const dialogFormVisible = ref(false);
 const review = ref({
@@ -144,6 +181,31 @@ const review = ref({
   target: '',
   review: ''
 });
+const expandedReplies = ref({});
+const currentUserId = ref(null);
+
+//获取当前登录用户的ID
+function fetchCurrentUserId() {
+  currentUserId.value = useUserStore().id;
+}
+
+// 初始化展开状态
+reviews.value.forEach(item => {
+  expandedReplies.value[item.reviewId] = false;
+});
+
+function toggleReview(item) {
+  item.isExpanded = !item.isExpanded;
+}
+
+
+function toggleReplies(reviewId) {
+  expandedReplies.value[reviewId] = !expandedReplies.value[reviewId];
+}
+
+function toggleSubReview(sub) {
+  sub.isExpanded = !sub.isExpanded;
+}
 
 async function fetchRecipeDetails() {
   try {
@@ -168,7 +230,14 @@ async function fetchRecipeDetails() {
     console.log('authorInfo:', authorInfo.value)
 
     byRecipeId(recipeId).then(response => {
-      reviews.value = response;
+      reviews.value = response.map(item => ({
+        ...item,
+        isExpanded: false, // 初始状态为折叠
+        children: item.children.map(child => ({
+          ...child,
+          isExpanded: false // 初始状态为折叠
+        }))
+      }));
       console.log('Reviews:', reviews.value); // 添加这行调试信息
     })
   } catch (error) {
@@ -178,6 +247,7 @@ async function fetchRecipeDetails() {
 
 onMounted(() => {
   fetchRecipeDetails();
+  fetchCurrentUserId();
 })
 
 const pairedIngredients = computed(() => {
@@ -191,7 +261,7 @@ const pairedIngredients = computed(() => {
 /** 点赞按钮操作 */
 function star(row) {
   const _recipeIds = row.recipeId || ids.value;
-  const likesData = { recipeId: _recipeIds };
+  const likesData = {recipeId: _recipeIds};
 
   likeSelect(_recipeIds).then(response => {
     // 检查用户是否已经点赞了该菜谱
@@ -226,7 +296,7 @@ function comment() {
     return;
   }
 
-  if (commentContent.length >= 1000 ) {
+  if (commentContent.length >= 1000) {
     ElMessage.error('评论内容不能超过1000字')
     return;
   }
@@ -236,18 +306,20 @@ function comment() {
   const recipeId = route.params.recipeId;
 
   // 调用 addReview 函数并传入食谱 ID 和评论内容
-  addReview({ recipeId, review: commentContent })
+  addReview({recipeId, review: commentContent})
       .then(response => {
         ElMessage.success('评论成功');
-        // 可以在这里添加其他逻辑，比如刷新评论列表
+        // 刷新评论列表
+        fetchRecipeDetails();
       })
       .catch(error => {
         ElMessage.error('评论失败');
       });
 }
+
 /** 回复按钮操作 */
 function reply(pId, target) {
-  review.value = { pId, target, review: '' }; // 清空回复内容
+  review.value = {pId, target, review: ''}; // 清空回复内容
   dialogFormVisible.value = true;
   console.log('dialogFormVisible set to true:', dialogFormVisible.value);
 }
@@ -271,7 +343,7 @@ function saveReply() {
     return;
   }
 
-  addReview({ recipeId, review: reviewContent, pId: review.value.pId, target: review.value.target })
+  addReview({recipeId, review: reviewContent, pId: review.value.pId, target: review.value.target})
       .then(response => {
         ElMessage.success('回复成功');
         dialogFormVisible.value = false; // 关闭对话框
@@ -282,7 +354,25 @@ function saveReply() {
       });
 }
 
-
+/** 删除评论或回复 */
+function confirmDelete(reviewId) {
+  ElMessageBox.confirm('确定要删除该评论吗?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    delReview(reviewId)
+        .then(response => {
+          ElMessage.success('删除成功');
+          fetchRecipeDetails(); // 刷新评论列表
+        })
+        .catch(error => {
+          ElMessage.error('删除失败');
+        });
+  }).catch(() => {
+    // 用户取消删除操作
+  });
+}
 </script>
 
 <style scoped lang="scss">
@@ -363,6 +453,12 @@ function saveReply() {
 .br50 {
   width: 30px;
   height: 30px;
+  border-radius: 50%;
+}
+
+.br500 {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 
@@ -550,7 +646,7 @@ a {
   border: 1px solid #FFB31A;
 }
 
-.clearfix1{
+.clearfix1 {
   zoom: 1;
   width: 690px;
 }

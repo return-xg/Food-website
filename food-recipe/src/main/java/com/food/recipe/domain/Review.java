@@ -53,6 +53,10 @@ public class Review extends BaseEntity
     @Transient
     private List<Review> children;
 
+    /** 头像地址 */
+    @Transient
+    private String avatar;
+
     public void setReviewId(Long reviewId)
     {
         this.reviewId = reviewId;
@@ -134,6 +138,14 @@ public class Review extends BaseEntity
         this.children = children;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -147,6 +159,7 @@ public class Review extends BaseEntity
                 .append("target", getTarget())
                 .append("recipeName", getRecipeName())
                 .append("children", getChildren())
+                .append("avatar", getAvatar())
                 .toString();
     }
 }

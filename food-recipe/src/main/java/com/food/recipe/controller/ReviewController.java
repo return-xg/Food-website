@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.food.system.mapper.SysUserMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,9 @@ public class ReviewController extends BaseController
 {
     @Autowired
     private IReviewService reviewService;
+
+    @Autowired
+    private SysUserMapper userMapper;
 
     /**
      * 查询评论列表
@@ -119,6 +124,7 @@ public class ReviewController extends BaseController
         List<Review> rootReviews = reviews.stream().filter(review -> review.getpId() == null).collect(Collectors.toList());
         for (Review rootReview : rootReviews) {
             rootReview.setChildren(reviews.stream().filter(review -> rootReview.getReviewId().equals(review.getpId())).collect(Collectors.toList()));
+            rootReview.setAvatar(userMapper.getAvatar(rootReview.getReviewId()));
         }
 
 

@@ -65,7 +65,9 @@ public class ReviewServiceImpl implements IReviewService
         review.setNickName(getNickname());
         Recipe recipe = recipeMapper.selectRecipeByRecipeId(review.getRecipeId());
         review.setRecipeName(recipe.getRecipeName());
-        return reviewMapper.insertReview(review);
+        reviewMapper.insertReview(review);
+
+        return reviewMapper.updateRecipeReview();
     }
 
     /**
@@ -89,7 +91,9 @@ public class ReviewServiceImpl implements IReviewService
     @Override
     public int deleteReviewByReviewIds(Long[] reviewIds)
     {
-        return reviewMapper.deleteReviewByReviewIds(reviewIds);
+        reviewMapper.deleteReviewByReviewIds(reviewIds);
+
+        return reviewMapper.updateRecipeReview();
     }
 
     /**
@@ -101,7 +105,9 @@ public class ReviewServiceImpl implements IReviewService
     @Override
     public int deleteReviewByReviewId(Long reviewId)
     {
-        return reviewMapper.deleteReviewByReviewId(reviewId);
+        reviewMapper.deleteReviewByReviewId(reviewId);
+
+        return reviewMapper.updateRecipeReview();
     }
 
     /**

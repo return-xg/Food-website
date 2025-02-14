@@ -86,6 +86,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where review_id = #{reviewId}
     </update>
 
+    <!-- 更新recipe表中的review字段 -->
+    <update id="updateRecipeReview">
+        UPDATE recipe
+            LEFT JOIN (
+            SELECT recipe_id, COUNT(recipe_id) AS review_count
+            FROM review
+            GROUP BY recipe_id
+            ) AS subquery ON recipe.recipe_id = subquery.recipe_id
+            SET recipe.review = IFNULL(subquery.review_count, 0);
+    </update>
+
     <delete id="deleteReviewByReviewId" parameterType="Long">
         delete from review where review_id = #{reviewId}
     </delete>

@@ -141,6 +141,8 @@ public interface SysUserMapper
      * @param endTime   结束时间
      * @return 每天增长的用户数量列表
      */
-    List<Map<String, Object>> selectUserGrowthByDate(@Param("startTime") String startTime, @Param("endTime") String endTime);
+    public List<Map<String, Object>> selectUserGrowthByDate(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
+    public String getAvatar(Long reviewId);
 
 }
