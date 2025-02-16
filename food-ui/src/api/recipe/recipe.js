@@ -45,10 +45,18 @@ export function reviewRecipe(query) {
   })
 }
 
-//最近收藏数量最高的八个菜谱
+//最近时间内收藏数量最高的八个菜谱
 export function likeNumList() {
   return request({
     url: '/recipe/recipe/likeNumList',
+    method: 'get',
+  })
+}
+
+//最近时间内评论数量最高的八个菜谱
+export function reviewNumList() {
+  return request({
+    url: '/recipe/recipe/reviewNumList',
     method: 'get',
   })
 }

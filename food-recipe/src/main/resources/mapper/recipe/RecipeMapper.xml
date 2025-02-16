@@ -126,7 +126,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             recipe.recipe_id = #{recipe_id}
     </select>
 
-<!--    最近收藏数量最高的八个菜谱-->
+<!--    最近时间内收藏数量最高的八个菜谱-->
     <select id="likeNumList" resultMap="RecipeResult">
         WITH recent_recipes AS (
             SELECT recipe_id, COUNT(*) as count
@@ -139,6 +139,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         FROM recipe r
         JOIN recent_recipes rr ON r.recipe_id = rr.recipe_id;
     </select>
+
+    <!--    最近时间内评论数量最高的八个菜谱-->
+    <select id="reviewNumList" resultMap="RecipeResult">
+        WITH recent_recipes AS (
+            SELECT recipe_id, COUNT(*) as count
+        FROM review
+        GROUP BY recipe_id
+        ORDER BY MAX(create_time) DESC, count DESC
+            LIMIT 8
+            )
+        SELECT r.*
+        FROM recipe r
+                 JOIN recent_recipes rr ON r.recipe_id = rr.recipe_id;
+    </select>
+
     <select id="recipeNum" resultType="java.lang.Integer">
         select count(*)
         from recipe

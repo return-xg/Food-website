@@ -173,6 +173,14 @@ public class RecipeController extends BaseController
     }
 
     /**
+     * 最近评论数量最高的八个菜谱
+     */
+    @GetMapping("reviewNumList")
+    public AjaxResult reviewNumList() {
+        return success(recipeService.reviewNumList());
+    }
+
+    /**
      * 审核通过所有食谱数量
      *
      * @return

@@ -215,8 +215,17 @@ public class RecipeServiceImpl implements IRecipeService
     }
 
     /**
-     * 审核通过所有食谱数量
      *
+     * 最近评论数量最高的八个菜谱
+     * @return
+     */
+    @Override
+    public List<Recipe> reviewNumList() {
+        return recipeMapper.reviewNumList();
+    }
+
+    /**
+     * 审核通过所有食谱数量
      * @return
      */
     @Override

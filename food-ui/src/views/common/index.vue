@@ -7,16 +7,14 @@
     <!--    轮播图-->
     <my-banner />
 
-<!--    <my-main />-->
-
     <!--    今日推荐-->
     <my-food />
 
     <!--    时令食材-->
 <!--    <food-material />-->
 
-    <!--    笔记-->
-<!--    <hot-note />-->
+    <!--    每周精选-->
+    <food-week />
 
     <!--    底部-->
     <my-footer />
@@ -32,6 +30,7 @@ import MyFood from "../../components/Index/MyFood.vue";
 import MyFooter from "../../components/Index/MyFooter.vue";
 import MyHeader from "../../components/Index/MyHeader.vue";
 import MyMain from "../../components/Index/MyMain.vue";
+import FoodWeek from "@/components/Index/FoodWeek.vue";
 export default {
   components: {
     MyHeader,
@@ -42,6 +41,7 @@ export default {
     MyFooter,
     MyBanner,
     MyNav,
+    FoodWeek,
   },
 };
 </script>

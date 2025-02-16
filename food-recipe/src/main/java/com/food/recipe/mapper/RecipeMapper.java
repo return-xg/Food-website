@@ -147,6 +147,13 @@ public interface RecipeMapper
     public List<Recipe> likeNumList();
 
     /**
+     *
+     * 最近评论数量最高的八个菜谱
+     * @return
+     */
+    public List<Recipe> reviewNumList();
+
+    /**
      * 审核通过所有食谱数量
      *
      * @return
