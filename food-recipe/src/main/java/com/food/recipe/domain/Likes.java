@@ -62,4 +62,24 @@ public class Likes extends BaseEntity
             .append("userId", getUserId())
             .toString();
     }
+
+
+    private String recipeName;
+    private String nickName;
+
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
 }

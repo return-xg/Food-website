@@ -51,6 +51,18 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
+     * 查询点赞列表
+     *
+     * @param likes 点赞
+     * @return 点赞
+     */
+    @Override
+    public List<Likes> selectLikesList1(Likes likes)
+    {
+        return likesMapper.selectLikesList1(likes);
+    }
+
+    /**
      * 新增点赞
      * 
      * @param likes 点赞

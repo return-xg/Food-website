@@ -54,6 +54,18 @@ public class LikesController extends BaseController
     }
 
     /**
+     * 查询点赞列表
+     */
+    @PreAuthorize("@ss.hasPermi('recipe:likes:list')")
+    @GetMapping("/list1")
+    public TableDataInfo list1(Likes likes)
+    {
+        startPage();
+        List<Likes> list = likesService.selectLikesList1(likes);
+        return getDataTable(list);
+    }
+
+    /**
      * 导出点赞列表
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:export')")
@@ -61,7 +73,7 @@ public class LikesController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, Likes likes)
     {
-        List<Likes> list = likesService.selectLikesList(likes);
+        List<Likes> list = likesService.selectLikesList1(likes);
         ExcelUtil<Likes> util = new ExcelUtil<Likes>(Likes.class);
         util.exportExcel(response, list, "点赞数据");
     }

@@ -32,6 +32,14 @@ public interface LikesMapper
     public List<Likes> selectLikesList(Likes likes);
 
     /**
+     * 查询点赞列表1
+     *
+     * @param likes 点赞
+     * @return 点赞集合
+     */
+    public List<Likes> selectLikesList1(Likes likes);
+
+    /**
      * 新增点赞
      * 
      * @param likes 点赞
