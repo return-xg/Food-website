@@ -2,6 +2,7 @@
   <div class="navbar">
     <div class="right-menu">
       <div class="left-header">
+        <span v-if="!userRole.includes('common')"><router-link to="/index">管理员界面</router-link></span>
         <span><router-link to="/common/index">首页</router-link></span>
         <span><router-link to="/ShiPu">食谱</router-link></span>
 <!--        <span><a>食材</a></span>-->
@@ -46,6 +47,7 @@ import useSettingsStore from '@/store/modules/settings'
 const appStore = useAppStore()
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
+const userRole = userStore.roles
 
 function toggleSideBar() {
   appStore.toggleSideBar()
