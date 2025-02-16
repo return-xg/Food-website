@@ -9,6 +9,15 @@ export function listLikes(query) {
   })
 }
 
+// 查询点赞列表
+export function listLikes1(query) {
+  return request({
+    url: '/recipe/likes/list1',
+    method: 'get',
+    params: query
+  })
+}
+
 // 统计一周以来点赞量最高的前三名食谱
 export function threeLikes() {
   return request({

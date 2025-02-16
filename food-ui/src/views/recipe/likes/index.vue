@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="食谱id" prop="recipeId">
+      <el-form-item label="食谱名称" prop="recipeId">
         <el-input
-          v-model="queryParams.recipeId"
-          placeholder="请输入食谱id"
+          v-model="queryParams.recipeName"
+          placeholder="请输入食谱名称"
           clearable
           @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="用户id" prop="userId">
+      <el-form-item label="用户名称" prop="userId">
         <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户id"
+          v-model="queryParams.nickName"
+          placeholder="请输入用户名称"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -24,35 +24,6 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['recipe:likes:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['recipe:likes:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['recipe:likes:remove']"
-        >删除</el-button>
-      </el-col>
       <el-col :span="1.5">
         <el-button
           type="warning"
@@ -67,15 +38,15 @@
 
     <el-table v-loading="loading" :data="likesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="点赞id" align="center" prop="likeId" />
-      <el-table-column label="食谱id" align="center" prop="recipeId" />
-      <el-table-column label="用户id" align="center" prop="userId" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:likes:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:likes:remove']">删除</el-button>
-        </template>
-      </el-table-column>
+      <el-table-column label="食谱名称" align="center" prop="recipeName" />
+      <el-table-column label="用户名称" align="center" prop="nickName" />
+      <el-table-column label="收藏时间" align="center" prop="createTime" />
+<!--      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">-->
+<!--        <template #default="scope">-->
+<!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:likes:edit']">修改</el-button>-->
+<!--          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['recipe:likes:remove']">删除</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
 
     <pagination
@@ -104,7 +75,7 @@
 </template>
 
 <script setup name="Likes">
-import { listLikes, getLikes, delLikes, addLikes, updateLikes } from "@/api/recipe/likes";
+import {getLikes, delLikes, addLikes, updateLikes, listLikes1} from "@/api/recipe/likes";
 
 const { proxy } = getCurrentInstance();
 
@@ -124,7 +95,9 @@ const data = reactive({
     pageNum: 1,
     pageSize: 10,
     recipeId: null,
-    userId: null
+    userId: null,
+    recipeName:null,
+    nickName:null,
   },
   rules: {
     recipeId: [
@@ -138,7 +111,7 @@ const { queryParams, form, rules } = toRefs(data);
 /** 查询点赞列表 */
 function getList() {
   loading.value = true;
-  listLikes(queryParams.value).then(response => {
+  listLikes1(queryParams.value).then(response => {
     likesList.value = response.rows;
     total.value = response.total;
     loading.value = false;
@@ -156,7 +129,9 @@ function reset() {
   form.value = {
     likeId: null,
     recipeId: null,
-    userId: null
+    userId: null,
+    recipeName:null,
+    nickName:null
   };
   proxy.resetForm("likesRef");
 }

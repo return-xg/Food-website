@@ -92,6 +92,8 @@
       </el-table-column>
       <el-table-column label="收藏数" align="center" prop="likes" />
       <el-table-column label="评论数" align="center" prop="review" />
+      <el-table-column label="提交时间" align="center" prop="createTime" />
+      <el-table-column label="修改时间" align="center" prop="updateTime" />
       <el-table-column label="审核状态" align="center" prop="state">
         <template #default="scope">
           <dict-tag :options="recipe_state" :value="scope.row.state"/>
