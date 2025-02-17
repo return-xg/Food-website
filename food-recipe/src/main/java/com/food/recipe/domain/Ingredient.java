@@ -19,15 +19,14 @@ public class Ingredient extends BaseEntity
     private Long ingredientId;
 
     /** 食谱id */
-    @Excel(name = "食谱id")
     private Long recipeId;
 
     /** 存储食材的名称 */
-    @Excel(name = "存储食材的名称")
+    @Excel(name = "食材名称")
     private String ingredientName;
 
     /** 记录食材的用量 */
-    @Excel(name = "记录食材的用量")
+    @Excel(name = "食材用量")
     private String ingredientQuantity;
 
     public void setIngredientId(Long ingredientId)

@@ -19,15 +19,14 @@ public class Step extends BaseEntity
     private Long stepId;
 
     /** 食谱id */
-    @Excel(name = "食谱id")
     private Long recipeId;
 
     /** 记录步骤的顺序 */
-    @Excel(name = "记录步骤的顺序")
+    @Excel(name = "步骤顺序")
     private Long stepNumber;
 
     /** 详细描述该步骤的操作内容 */
-    @Excel(name = "详细描述该步骤的操作内容")
+    @Excel(name = "操作内容")
     private String stepDescription;
 
     /** 步骤图片 */

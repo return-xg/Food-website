@@ -1,5 +1,7 @@
 package com.food.recipe.domain;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -23,34 +25,35 @@ public class Recipe extends BaseEntity
     private Long userId;
 
     /** 食品名称 */
-    @Excel(name = "食品名称")
+    @Excel(name = "食品名称",sort = 1)
     private String recipeName;
 
     /** 食谱简介 */
-    @Excel(name = "食谱简介")
+    @Excel(name = "食谱简介",sort = 3)
     private String recipeDescription;
 
     /** 图片 */
-    @Excel(name = "图片")
+    @Excel(name = "图片",sort = 4)
     private String recipeImage;
 
     /** 审核状态 */
+    @Excel(name = "审核状态",dictType = "recipe_state",sort = 9)
     private Long state;
 
     /** 步骤信息 */
     private List<Step> stepList;
 
     /** 菜系 */
-    @Excel(name = "菜系")
+    @Excel(name = "菜系",sort = 2,dictType = "variety")
     private String variety;
 
-    /** 点赞数 */
-    @Excel(name = "点赞数")
+    /** 收藏数 */
+    @Excel(name = "收藏数",sort = 5)
     private Long likes;
 
 
     /** 评论数 */
-    @Excel(name = "评论数")
+    @Excel(name = "评论数",sort = 6)
     private Long review;
 
     /** 食材信息 */

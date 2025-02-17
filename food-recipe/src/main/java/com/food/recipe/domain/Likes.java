@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.food.common.annotation.Excel;
 import com.food.common.core.domain.BaseEntity;
+import org.springframework.data.annotation.Transient;
 
 /**
  * 点赞对象 likes
@@ -19,12 +20,20 @@ public class Likes extends BaseEntity
     private Long likeId;
 
     /** 食谱id */
-    @Excel(name = "食谱id")
     private Long recipeId;
 
     /** 用户id */
-    @Excel(name = "用户id")
     private Long userId;
+
+    /** 食谱名称 */
+    @Transient
+    @Excel(name = "食谱名称",sort = 1)
+    private String recipeName;
+
+    /** 用户名称 */
+    @Transient
+    @Excel(name = "用户名称",sort = 2)
+    private String nickName;
 
     public void setLikeId(Long likeId) 
     {
@@ -62,10 +71,6 @@ public class Likes extends BaseEntity
             .append("userId", getUserId())
             .toString();
     }
-
-
-    private String recipeName;
-    private String nickName;
 
     public String getRecipeName() {
         return recipeName;

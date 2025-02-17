@@ -22,31 +22,28 @@ public class Review extends BaseEntity
     private Long reviewId;
 
     /** 食谱id */
-    @Excel(name = "食谱id")
     private Long recipeId;
 
     /** 用户id */
-    @Excel(name = "用户id")
     private Long userId;
 
     /** 用户名称 */
-    @Excel(name = "用户名称")
+    @Excel(name = "用户名称",sort = 2)
     private String nickName;
 
     /** 评论 */
-    @Excel(name = "评论")
+    @Excel(name = "评论",sort = 4)
     private String review;
 
     /** 父级id */
-    @Excel(name = "父级id")
     private Long pId;
 
     /** 回复对象 */
-    @Excel(name = "回复对象")
+    @Excel(name = "回复对象",sort = 3)
     private String target;
 
     /** 食谱名称 */
-    @Excel(name = "食谱名称")
+    @Excel(name = "食谱名称",sort = 1)
     private String recipeName;
 
     /** 多级评论 */
