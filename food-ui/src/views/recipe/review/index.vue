@@ -117,19 +117,27 @@
 
     <el-table v-loading="loading" :data="reviewList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="评论id" align="center" prop="reviewId" />
-      <el-table-column label="食谱id" align="center" prop="recipeId" />
-      <el-table-column label="用户id" align="center" prop="userId" />
+<!--      <el-table-column label="评论id" align="center" prop="reviewId" />-->
+<!--      <el-table-column label="食谱id" align="center" prop="recipeId" />-->
+<!--      <el-table-column label="用户id" align="center" prop="userId" />-->
+      <el-table-column label="食谱名称" align="center" prop="recipeName" />
       <el-table-column label="用户名称" align="center" prop="nickName" />
-      <el-table-column label="评论" align="center" prop="review" />
+      <el-table-column label="回复对象" align="center" prop="target" />
+      <el-table-column label="评论" align="center">
+        <template #default="scope">
+          <el-tooltip effect="dark" :content="scope.row.review" placement="top" popper-class="custom-tooltip">
+            <span>{{ scope.row.review?.slice(0, 10) + '...' || '暂无评论' }}</span>
+          </el-tooltip>
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180">
         <template #default="scope">
           <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="父级id" align="center" prop="pId" />
-      <el-table-column label="回复对象" align="center" prop="target" />
-      <el-table-column label="食谱名称" align="center" prop="recipeName" />
+<!--      <el-table-column label="父级id" align="center" prop="pId" />-->
+
+
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
 <!--          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['recipe:review:edit']">修改</el-button>-->

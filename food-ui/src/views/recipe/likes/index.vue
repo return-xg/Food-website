@@ -23,18 +23,18 @@
       </el-form-item>
     </el-form>
 
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['recipe:likes:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
+<!--    <el-row :gutter="10" class="mb8">-->
+<!--      <el-col :span="1.5">-->
+<!--        <el-button-->
+<!--          type="warning"-->
+<!--          plain-->
+<!--          icon="Download"-->
+<!--          @click="handleExport"-->
+<!--          v-hasPermi="['recipe:likes:export']"-->
+<!--        >导出</el-button>-->
+<!--      </el-col>-->
+<!--      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>-->
+<!--    </el-row>-->
 
     <el-table v-loading="loading" :data="likesList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
