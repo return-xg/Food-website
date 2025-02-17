@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.food.common.annotation.Log;
 import com.food.common.core.controller.BaseController;
 import com.food.common.core.domain.AjaxResult;
-import com.food.common.core.domain.entity.SysDept;
 import com.food.common.core.domain.entity.SysRole;
 import com.food.common.core.domain.entity.SysUser;
 import com.food.common.core.domain.model.LoginUser;
@@ -27,7 +26,6 @@ import com.food.common.utils.poi.ExcelUtil;
 import com.food.framework.web.service.SysPermissionService;
 import com.food.framework.web.service.TokenService;
 import com.food.system.domain.SysUserRole;
-import com.food.system.service.ISysDeptService;
 import com.food.system.service.ISysRoleService;
 import com.food.system.service.ISysUserService;
 
@@ -51,9 +49,6 @@ public class SysRoleController extends BaseController
 
     @Autowired
     private ISysUserService userService;
-
-    @Autowired
-    private ISysDeptService deptService;
 
     @PreAuthorize("@ss.hasPermi('system:role:list')")
     @GetMapping("/list")
@@ -255,8 +250,6 @@ public class SysRoleController extends BaseController
     public AjaxResult deptTree(@PathVariable("roleId") Long roleId)
     {
         AjaxResult ajax = AjaxResult.success();
-        ajax.put("checkedKeys", deptService.selectDeptListByRoleId(roleId));
-        ajax.put("depts", deptService.selectDeptTreeList(new SysDept()));
         return ajax;
     }
 }

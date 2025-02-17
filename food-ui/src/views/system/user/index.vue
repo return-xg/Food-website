@@ -2,17 +2,6 @@
   <div class="app-container">
     <el-row :gutter="20">
       <splitpanes :horizontal="appStore.device === 'mobile'" class="default-theme">
-<!--        &lt;!&ndash;部门数据&ndash;&gt;-->
-<!--        <pane size="16">-->
-<!--          <el-col>-->
-<!--            <div class="head-container">-->
-<!--              <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />-->
-<!--            </div>-->
-<!--            <div class="head-container">-->
-<!--              <el-tree :data="deptOptions" :props="{ label: 'label', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />-->
-<!--            </div>-->
-<!--          </el-col>-->
-<!--        </pane>-->
         <!--用户数据-->
         <pane size="84">
           <el-col>
@@ -50,9 +39,9 @@
 <!--              <el-col :span="1.5">-->
 <!--                <el-button type="info" plain icon="Upload" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>-->
 <!--              </el-col>-->
-<!--              <el-col :span="1.5">-->
-<!--                <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>-->
-<!--              </el-col>-->
+              <el-col :span="1.5">
+                <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+              </el-col>
               <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
             </el-row>
 
@@ -110,11 +99,6 @@
               <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-<!--            <el-form-item label="归属部门" prop="deptId">-->
-<!--              <el-tree-select v-model="form.deptId" :data="enabledDeptOptions" :props="{ value: 'id', label: 'label', children: 'children' }" value-key="id" placeholder="请选择归属部门" check-strictly />-->
-<!--            </el-form-item>-->
-          </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
@@ -157,13 +141,6 @@
           </el-col>
         </el-row>
         <el-row>
-<!--          <el-col :span="12">-->
-<!--            <el-form-item label="岗位">-->
-<!--              <el-select v-model="form.postIds" multiple placeholder="请选择">-->
-<!--                <el-option v-for="item in postOptions" :key="item.postId" :label="item.postName" :value="item.postId" :disabled="item.status == 1"></el-option>-->
-<!--              </el-select>-->
-<!--            </el-form-item>-->
-<!--          </el-col>-->
           <el-col :span="12">
             <el-form-item label="角色">
               <el-select v-model="form.roleIds" multiple placeholder="请选择">
@@ -216,7 +193,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import useAppStore from '@/store/modules/app'
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user";
 import { Splitpanes, Pane } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 
@@ -236,8 +213,6 @@ const total = ref(0);
 const title = ref("");
 const dateRange = ref([]);
 const deptName = ref("");
-const deptOptions = ref(undefined);
-const enabledDeptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
@@ -309,26 +284,6 @@ function getList() {
   });
 };
 
-/** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then(response => {
-    deptOptions.value = response.data;
-    enabledDeptOptions.value = filterDisabledDept(JSON.parse(JSON.stringify(response.data)));
-  });
-};
-
-/** 过滤禁用的部门 */
-function filterDisabledDept(deptList) {
-  return deptList.filter(dept => {
-    if (dept.disabled) {
-      return false;
-    }
-    if (dept.children && dept.children.length) {
-      dept.children = filterDisabledDept(dept.children);
-    }
-    return true;
-  });
-};
 
 /** 节点单击事件 */
 function handleNodeClick(data) {
@@ -533,6 +488,5 @@ function submitForm() {
   });
 };
 
-getDeptTree();
 getList();
 </script>

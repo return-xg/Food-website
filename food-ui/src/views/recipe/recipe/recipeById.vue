@@ -311,6 +311,8 @@ function comment() {
         ElMessage.success('评论成功');
         // 刷新评论列表
         fetchRecipeDetails();
+        // 清空评论内容
+        document.getElementById('commentContent').value = '';
       })
       .catch(error => {
         ElMessage.error('评论失败');

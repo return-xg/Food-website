@@ -1,5 +1,5 @@
 #!/bin/sh
-# ./ry.sh start 启动 stop 停止 restart 重启 status 状态
+# ./food.sh start 启动 stop 停止 restart 重启 status 状态
 AppName=food-admin.jar
 
 # JVM参数

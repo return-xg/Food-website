@@ -22,31 +22,31 @@ public class SysUser extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 用户ID */
-    @Excel(name = "用户序号", type = Type.EXPORT, cellType = ColumnType.NUMERIC, prompt = "用户编号")
+    @Excel(name = "用户序号", type = Type.EXPORT, cellType = ColumnType.NUMERIC, prompt = "用户编号",sort = 1)
     private Long userId;
 
     /** 部门ID */
-    @Excel(name = "部门编号", type = Type.IMPORT)
+    @Excel(name = "部门编号", type = Type.IMPORT,sort = 2)
     private Long deptId;
 
     /** 用户账号 */
-    @Excel(name = "登录名称")
+    @Excel(name = "登录名称",sort = 3)
     private String userName;
 
     /** 用户昵称 */
-    @Excel(name = "用户名称")
+    @Excel(name = "用户名称",sort = 4)
     private String nickName;
 
     /** 用户邮箱 */
-    @Excel(name = "用户邮箱")
+    @Excel(name = "用户邮箱",sort = 5)
     private String email;
 
     /** 手机号码 */
-    @Excel(name = "手机号码", cellType = ColumnType.TEXT)
+    @Excel(name = "手机号码", cellType = ColumnType.TEXT,sort = 6)
     private String phonenumber;
 
     /** 用户性别 */
-    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知")
+    @Excel(name = "用户性别", readConverterExp = "0=男,1=女,2=未知",sort = 7)
     private String sex;
 
     /** 用户头像 */
@@ -56,26 +56,20 @@ public class SysUser extends BaseEntity
     private String password;
 
     /** 帐号状态（0正常 1停用） */
-    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
+    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用",sort = 8)
     private String status;
 
     /** 删除标志（0代表存在 2代表删除） */
     private String delFlag;
 
     /** 最后登录IP */
-    @Excel(name = "最后登录IP", type = Type.EXPORT)
+    @Excel(name = "最后登录IP", type = Type.EXPORT,sort = 9)
     private String loginIp;
 
     /** 最后登录时间 */
-    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
+    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT,sort = 10)
     private Date loginDate;
 
-    /** 部门对象 */
-    @Excels({
-        @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
-        @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
-    })
-    private SysDept dept;
 
     /** 角色对象 */
     private List<SysRole> roles;
@@ -247,16 +241,6 @@ public class SysUser extends BaseEntity
         this.loginDate = loginDate;
     }
 
-    public SysDept getDept()
-    {
-        return dept;
-    }
-
-    public void setDept(SysDept dept)
-    {
-        this.dept = dept;
-    }
-
     public List<SysRole> getRoles()
     {
         return roles;
@@ -318,7 +302,6 @@ public class SysUser extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
-            .append("dept", getDept())
             .toString();
     }
 }

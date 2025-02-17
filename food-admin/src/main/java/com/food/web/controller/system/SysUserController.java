@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.food.common.annotation.Log;
 import com.food.common.core.controller.BaseController;
 import com.food.common.core.domain.AjaxResult;
-import com.food.common.core.domain.entity.SysDept;
 import com.food.common.core.domain.entity.SysRole;
 import com.food.common.core.domain.entity.SysUser;
 import com.food.common.core.page.TableDataInfo;
@@ -24,8 +23,6 @@ import com.food.common.enums.BusinessType;
 import com.food.common.utils.SecurityUtils;
 import com.food.common.utils.StringUtils;
 import com.food.common.utils.poi.ExcelUtil;
-import com.food.system.service.ISysDeptService;
-import com.food.system.service.ISysPostService;
 import com.food.system.service.ISysRoleService;
 import com.food.system.service.ISysUserService;
 
@@ -43,12 +40,6 @@ public class SysUserController extends BaseController
 
     @Autowired
     private ISysRoleService roleService;
-
-    @Autowired
-    private ISysDeptService deptService;
-
-    @Autowired
-    private ISysPostService postService;
 
     /**
      * 获取用户列表
@@ -104,12 +95,10 @@ public class SysUserController extends BaseController
             userService.checkUserDataScope(userId);
             SysUser sysUser = userService.selectUserById(userId);
             ajax.put(AjaxResult.DATA_TAG, sysUser);
-            ajax.put("postIds", postService.selectPostListByUserId(userId));
             ajax.put("roleIds", sysUser.getRoles().stream().map(SysRole::getRoleId).collect(Collectors.toList()));
         }
         List<SysRole> roles = roleService.selectRoleAll();
         ajax.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
-        ajax.put("posts", postService.selectPostAll());
         return ajax;
     }
 
@@ -121,7 +110,6 @@ public class SysUserController extends BaseController
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysUser user)
     {
-        deptService.checkDeptDataScope(user.getDeptId());
         roleService.checkRoleDataScope(user.getRoleIds());
         if (!userService.checkUserNameUnique(user))
         {
@@ -150,7 +138,6 @@ public class SysUserController extends BaseController
     {
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());
-        deptService.checkDeptDataScope(user.getDeptId());
         roleService.checkRoleDataScope(user.getRoleIds());
         if (!userService.checkUserNameUnique(user))
         {
@@ -239,16 +226,6 @@ public class SysUserController extends BaseController
         roleService.checkRoleDataScope(roleIds);
         userService.insertUserAuth(userId, roleIds);
         return success();
-    }
-
-    /**
-     * 获取部门树列表
-     */
-    @PreAuthorize("@ss.hasPermi('system:user:list')")
-    @GetMapping("/deptTree")
-    public AjaxResult deptTree(SysDept dept)
-    {
-        return success(deptService.selectDeptTreeList(dept));
     }
 
     /**
