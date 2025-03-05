@@ -37,52 +37,54 @@
       </el-row>
     </div>
 
-    <div>
-      <div style="width: 3500px">
-        <!-- 用户增长图表时间选择部分 -->
-        <el-row :gutter="20">
-          <el-col :span="4" :offset="10">
-            <div>
-              <el-select style="width: 120px" v-model="userGrowthTimeRange" placeholder="请选择用户增长时间范围"
-                         @change="handleUserGrowthTimeRangeChange">
-                <el-option label="全部" value="all"></el-option>
-                <el-option label="最近半年" value="halfYear"></el-option>
-                <el-option label="最近一个月" value="oneMonth"></el-option>
-                <el-option label="最近一周" value="oneWeek"></el-option>
-              </el-select>
-            </div>
-          </el-col>
-        </el-row>
-        <!-- 图表部分 -->
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div ref="userGrowthChart" style="width: 100%; height: 400px;"></div>
-          </el-col>
-        </el-row>
-      </div>
+    <!-- 用户增长图表部分 -->
+    <div style="width: 100%">
+      <!-- 用户增长图表时间选择部分 -->
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="{span: 12, push: 12}" :md="{span: 8, push: 16}" :lg="{span: 6, push: 18}">
+          <div class="select-container">
+            <el-select v-model="userGrowthTimeRange" placeholder="请选择用户增长时间范围"
+                       @change="handleUserGrowthTimeRangeChange">
+              <el-option label="全部" value="all"></el-option>
+              <el-option label="最近半年" value="halfYear"></el-option>
+              <el-option label="最近一个月" value="oneMonth"></el-option>
+              <el-option label="最近一周" value="oneWeek"></el-option>
+            </el-select>
+          </div>
+        </el-col>
+      </el-row>
 
+      <!-- 图表部分 -->
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="24" :md="24" :lg="24">
+          <div ref="userGrowthChart" class="chart-container"></div>
+        </el-col>
+      </el-row>
+    </div>
+
+    <!-- 食谱数量图表部分 -->
+    <div style="width: 100%">
       <!-- 食谱数量图表时间选择部分 -->
-      <div style="width: 3500px">
-        <el-row :gutter="20">
-          <el-col :span="4" :offset="10">
-            <div>
-              <el-select style="width: 120px" v-model="recipeCountTimeRange" placeholder="请选择食谱数量时间范围"
-                         @change="handleRecipeCountTimeRangeChange">
-                <el-option label="全部" value="all"></el-option>
-                <el-option label="最近半年" value="halfYear"></el-option>
-                <el-option label="最近一个月" value="oneMonth"></el-option>
-                <el-option label="最近一周" value="oneWeek"></el-option>
-              </el-select>
-            </div>
-          </el-col>
-        </el-row>
-        <!-- 图表部分 -->
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div ref="recipeCountChart" style="width: 100%; height: 400px;"></div>
-          </el-col>
-        </el-row>
-      </div>
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="{span: 12, push: 12}" :md="{span: 8, push: 16}" :lg="{span: 6, push: 18}">
+          <div class="select-container">
+            <el-select v-model="recipeCountTimeRange" placeholder="请选择食谱数量时间范围"
+                       @change="handleRecipeCountTimeRangeChange">
+              <el-option label="全部" value="all"></el-option>
+              <el-option label="最近半年" value="halfYear"></el-option>
+              <el-option label="最近一个月" value="oneMonth"></el-option>
+              <el-option label="最近一周" value="oneWeek"></el-option>
+            </el-select>
+          </div>
+        </el-col>
+      </el-row>
+
+      <!-- 图表部分 -->
+      <el-row :gutter="20">
+        <el-col :xs="24" :sm="24" :md="24" :lg="24">
+          <div ref="recipeCountChart" class="chart-container"></div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -116,6 +118,13 @@ export default {
     this.fetchUserGrowthData();
     this.fetchRecipeCountData();
     this.fetchStatisticsData(); // 调用获取统计数据的方法
+
+    // 添加窗口resize事件监听
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeDestroy() {
+    // 移除窗口resize事件监听
+    window.removeEventListener('resize', this.handleResize);
   },
   methods: {
     initCharts() {
@@ -202,6 +211,14 @@ export default {
       } catch (error) {
         console.error('请求统计数据时出错:', error);
       }
+    },
+    handleResize() {
+      if (this.userGrowthChartInstance) {
+        this.userGrowthChartInstance.resize();
+      }
+      if (this.recipeCountChartInstance) {
+        this.recipeCountChartInstance.resize();
+      }
     }
   }
 };
@@ -230,5 +247,40 @@ export default {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+/* 添加响应式样式 */
+.select-container {
+  padding: 0 20px;
+  text-align: center;
+}
+
+.select-container .el-select {
+  width: 100%;
+  max-width: 240px; /* 设置最大宽度保持美观 */
+}
+
+.chart-container {
+  width: 100%;
+  height: 400px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+  .chart-container {
+    height: 300px;
+    padding: 10px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .select-container {
+    padding: 0 10px;
+  }
+  .chart-container {
+    height: 250px;
+  }
 }
 </style>
