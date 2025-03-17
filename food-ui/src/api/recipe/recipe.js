@@ -153,3 +153,11 @@ export function reviewNum() {
     method: 'get',
   })
 }
+
+//个性化推荐
+export function getRecommendations(userId) {
+  return request({
+    url: '/recipe/recipe/recommendations/' + userId,
+    method: 'get',
+  })
+}
