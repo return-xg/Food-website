@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-// 查询点赞列表
+// 查询收藏列表
 export function listLikes(query) {
   return request({
     url: '/recipe/likes/list',
@@ -9,7 +9,7 @@ export function listLikes(query) {
   })
 }
 
-// 查询点赞列表
+// 查询收藏列表
 export function listLikes1(query) {
   return request({
     url: '/recipe/likes/list1',
@@ -18,7 +18,7 @@ export function listLikes1(query) {
   })
 }
 
-// 统计一周以来点赞量最高的前三名食谱
+// 统计一周以来收藏量最高的前三名食谱
 export function threeLikes() {
   return request({
     url: '/recipe/likes/threeLike',
@@ -34,7 +34,7 @@ export function listUserId() {
   })
 }
 
-// 查询点赞详细
+// 查询收藏详细
 export function getLikes(likeId) {
   return request({
     url: '/recipe/likes/' + likeId,
@@ -42,7 +42,7 @@ export function getLikes(likeId) {
   })
 }
 
-// 新增点赞
+// 新增收藏
 export function addLikes(data) {
   return request({
     url: '/recipe/likes',
@@ -51,7 +51,7 @@ export function addLikes(data) {
   })
 }
 
-// 取消点赞
+// 取消收藏
 export function likeDelete(data) {
   return request({
     url: '/recipe/likes/likeDelete',
@@ -60,7 +60,7 @@ export function likeDelete(data) {
   })
 }
 
-// 查询用户是否已经点赞
+// 查询用户是否已经收藏
 export function likeSelect(recipeId) {
   return request({
     url: `/recipe/likes/likeSelect?recipeId=${recipeId}`,
@@ -68,7 +68,7 @@ export function likeSelect(recipeId) {
   })
 }
 
-// 修改点赞
+// 修改收藏
 export function updateLikes(data) {
   return request({
     url: '/recipe/likes',
@@ -77,7 +77,7 @@ export function updateLikes(data) {
   })
 }
 
-// 删除点赞
+// 删除收藏
 export function delLikes(likeId) {
   return request({
     url: '/recipe/likes/' + likeId,

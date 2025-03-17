@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where like_id = #{likeId}
     </select>
 
-<!--    查询是否已经点赞-->
+<!--    查询是否已经收藏-->
     <select id="likeSelect">
         select COUNT(*)
         from likes
@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             r.variety
     </select>
 
-<!--    统计一周以来点赞量最高的前三名食谱-->
+<!--    统计一周以来收藏量最高的前三名食谱-->
     <select id="threeLikes" resultMap="RecipeResult">
         SELECT r.recipe_id, r.recipe_name, r.recipe_image
         FROM recipe r
@@ -108,7 +108,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ) top_liked_recipes ON r.recipe_id = top_liked_recipes.recipe_id;
     </select>
 
-    <!--    点赞-->
+    <!--    收藏-->
     <insert id="insertLikes" parameterType="Likes">
         insert into likes
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -136,7 +136,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             SET recipe.likes = IFNULL(subquery.like_count, 0);
     </update>
 
-<!--    取消点赞-->
+<!--    取消收藏-->
     <delete id="delete">
         delete from likes where recipe_id = #{recipeId} and user_id = #{userId}
     </delete>

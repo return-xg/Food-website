@@ -18,7 +18,7 @@ import com.food.common.utils.poi.ExcelUtil;
 import com.food.common.core.page.TableDataInfo;
 
 /**
- * 点赞Controller
+ * 收藏Controller
  * 
  * @author 智慧的小国
  * @date 2025-01-10
@@ -42,7 +42,7 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 查询点赞列表
+     * 查询收藏列表
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:list')")
     @GetMapping("/list")
@@ -54,7 +54,7 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 查询点赞列表
+     * 查询收藏列表
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:list')")
     @GetMapping("/list1")
@@ -66,20 +66,20 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 导出点赞列表
+     * 导出收藏列表
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:export')")
-    @Log(title = "点赞", businessType = BusinessType.EXPORT)
+    @Log(title = "收藏", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Likes likes)
     {
         List<Likes> list = likesService.selectLikesList1(likes);
         ExcelUtil<Likes> util = new ExcelUtil<Likes>(Likes.class);
-        util.exportExcel(response, list, "点赞数据");
+        util.exportExcel(response, list, "收藏数据");
     }
 
     /**
-     * 获取点赞详细信息
+     * 获取收藏详细信息
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:query')")
     @GetMapping(value = "/{likeId}")
@@ -89,9 +89,9 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 新增点赞
+     * 新增收藏
      */
-    @Log(title = "点赞", businessType = BusinessType.INSERT)
+    @Log(title = "收藏", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Likes likes)
     {
@@ -99,9 +99,9 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 取消点赞
+     * 取消收藏
      */
-    @Log(title = "点赞", businessType = BusinessType.DELETE)
+    @Log(title = "收藏", businessType = BusinessType.DELETE)
     @DeleteMapping("/likeDelete")
     public AjaxResult delete(@RequestBody Likes likes)
     {
@@ -109,7 +109,7 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 查询用户是否已经点赞
+     * 查询用户是否已经收藏
      */
     @GetMapping("/likeSelect")
     public Boolean likeSelect(@RequestParam Long recipeId)
@@ -118,10 +118,10 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 修改点赞
+     * 修改收藏
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:edit')")
-    @Log(title = "点赞", businessType = BusinessType.UPDATE)
+    @Log(title = "收藏", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Likes likes)
     {
@@ -129,10 +129,10 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 删除点赞
+     * 删除收藏
      */
     @PreAuthorize("@ss.hasPermi('recipe:likes:remove')")
-    @Log(title = "点赞", businessType = BusinessType.DELETE)
+    @Log(title = "收藏", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{likeIds}")
     public AjaxResult remove(@PathVariable Long[] likeIds)
     {
@@ -140,7 +140,7 @@ public class LikesController extends BaseController
     }
 
     /**
-     * 统计一周以来点赞量最高的前三名食谱
+     * 统计一周以来收藏量最高的前三名食谱
      */
     @GetMapping("/threeLike")
     public AjaxResult threeLike(){

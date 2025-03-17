@@ -407,28 +407,28 @@ function handleViewData(row) {
   });
 }
 
-/** 点赞按钮操作 */
+/** 收藏按钮操作 */
 function star(row) {
   const _recipeIds = row.recipeId || ids.value;
   const likesData = { recipeId: _recipeIds };
 
   likeSelect(_recipeIds).then(response => {
-    // 检查用户是否已经点赞了该菜谱
+    // 检查用户是否已经收藏了该菜谱
     const isLiked = response;
 
     if (isLiked) {
-      // 如果已经点赞，则取消点赞
+      // 如果已经收藏，则取消收藏
       likeDelete(likesData);
       // 移除 starred 类
       row.starred = false;
     } else {
-      // 如果没有点赞，则进行点赞
+      // 如果没有收藏，则进行收藏
       addLikes(likesData);
       // 添加 starred 类
       row.starred = true;
     }
 
-    // 重新获取列表以更新点赞状态
+    // 重新获取列表以更新收藏状态
     getList();
   });
 }
@@ -557,7 +557,7 @@ getList();
 </script>
 
 <style>
-/* 未点赞样式 */
+/* 未收藏样式 */
 .heart {
   background: url(../../../../public/image/starred-heart.png);
   background-position: center; /* 可以根据需要调整 */
@@ -568,7 +568,7 @@ getList();
   border: none; /* 去掉边框 */
   padding: 0;
 }
-/* 已点赞样式 */
+/* 已收藏样式 */
 .heart.starred {
   background: url(../../../../public/image/heart.png);
   background-position: center; /* 可以根据需要调整 */

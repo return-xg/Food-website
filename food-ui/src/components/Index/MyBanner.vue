@@ -32,12 +32,12 @@ export default {
 
     const { topLikes } = toRefs(data);
 
-    // 获取点赞量最高的前三名食谱
+    // 获取收藏量最高的前三名食谱
     onMounted(() => {
       threeLikes().then(response => {
         data.topLikes = response.data; // 假设返回的数据结构为 { data: [...] }
       }).catch(error => {
-        console.error('获取点赞量最高的前三名食谱失败', error);
+        console.error('获取收藏量最高的前三名食谱失败', error);
       });
     });
 

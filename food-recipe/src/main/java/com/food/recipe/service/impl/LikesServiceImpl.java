@@ -15,7 +15,7 @@ import com.food.recipe.service.ILikesService;
 import static com.food.common.utils.SecurityUtils.getUserId;
 
 /**
- * 点赞Service业务层处理
+ * 收藏Service业务层处理
  * 
  * @author 智慧的小国
  * @date 2025-01-10
@@ -27,10 +27,10 @@ public class LikesServiceImpl implements ILikesService
     private LikesMapper likesMapper;
 
     /**
-     * 查询点赞
+     * 查询收藏
      * 
-     * @param likeId 点赞主键
-     * @return 点赞
+     * @param likeId 收藏主键
+     * @return 收藏
      */
     @Override
     public Likes selectLikesByLikeId(Long likeId)
@@ -39,10 +39,10 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 查询点赞列表
+     * 查询收藏列表
      * 
-     * @param likes 点赞
-     * @return 点赞
+     * @param likes 收藏
+     * @return 收藏
      */
     @Override
     public List<Likes> selectLikesList(Likes likes)
@@ -51,10 +51,10 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 查询点赞列表
+     * 查询收藏列表
      *
-     * @param likes 点赞
-     * @return 点赞
+     * @param likes 收藏
+     * @return 收藏
      */
     @Override
     public List<Likes> selectLikesList1(Likes likes)
@@ -63,9 +63,9 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 新增点赞
+     * 新增收藏
      * 
-     * @param likes 点赞
+     * @param likes 收藏
      * @return 结果
      */
     @Override
@@ -78,7 +78,7 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 取消点赞
+     * 取消收藏
      *
      * @param likes
      * @return
@@ -92,7 +92,7 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 查询用户是否已经点赞
+     * 查询用户是否已经收藏
      *
      * @param recipeId
      * @return
@@ -114,9 +114,9 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 修改点赞
+     * 修改收藏
      * 
-     * @param likes 点赞
+     * @param likes 收藏
      * @return 结果
      */
     @Override
@@ -126,9 +126,9 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 批量删除点赞
+     * 批量删除收藏
      * 
-     * @param likeIds 需要删除的点赞主键
+     * @param likeIds 需要删除的收藏主键
      * @return 结果
      */
     @Override
@@ -138,9 +138,9 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 删除点赞信息
+     * 删除收藏信息
      * 
-     * @param likeId 点赞主键
+     * @param likeId 收藏主键
      * @return 结果
      */
     @Override
@@ -150,7 +150,7 @@ public class LikesServiceImpl implements ILikesService
     }
 
     /**
-     * 统计一周以来点赞量最高的前三名食谱
+     * 统计一周以来收藏量最高的前三名食谱
      * @return
      */
     @Override

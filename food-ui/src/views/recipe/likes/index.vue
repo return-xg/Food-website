@@ -57,7 +57,7 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改点赞对话框 -->
+    <!-- 添加或修改收藏对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="likesRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="食谱id" prop="recipeId">
@@ -108,7 +108,7 @@ const data = reactive({
 
 const { queryParams, form, rules } = toRefs(data);
 
-/** 查询点赞列表 */
+/** 查询收藏列表 */
 function getList() {
   loading.value = true;
   listLikes1(queryParams.value).then(response => {
@@ -159,7 +159,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加点赞";
+  title.value = "添加收藏";
 }
 
 /** 修改按钮操作 */
@@ -169,7 +169,7 @@ function handleUpdate(row) {
   getLikes(_likeId).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改点赞";
+    title.value = "修改收藏";
   });
 }
 
@@ -197,7 +197,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _likeIds = row.likeId || ids.value;
-  proxy.$modal.confirm('是否确认删除点赞编号为"' + _likeIds + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除收藏编号为"' + _likeIds + '"的数据项？').then(function() {
     return delLikes(_likeIds);
   }).then(() => {
     getList();

@@ -7,7 +7,7 @@ import com.food.common.core.domain.BaseEntity;
 import org.springframework.data.annotation.Transient;
 
 /**
- * 点赞对象 likes
+ * 收藏对象 likes
  * 
  * @author 智慧的小国
  * @date 2025-01-10
@@ -16,7 +16,7 @@ public class Likes extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 点赞id */
+    /** 收藏id */
     private Long likeId;
 
     /** 食谱id */
