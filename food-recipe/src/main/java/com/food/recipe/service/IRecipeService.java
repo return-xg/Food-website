@@ -137,4 +137,11 @@ public interface IRecipeService
      * @return 每天的食谱数量列表
      */
     public List<Map<String, Object>> getRecipeCountByDate(LocalDateTime startTime, LocalDateTime endTime);
+
+    /**
+     * 个性化推荐
+     * @param targetUserId
+     * @return
+     */
+    public List<Recipe> generateRecommendations(Long targetUserId);
 }

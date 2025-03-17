@@ -229,4 +229,15 @@ public class RecipeController extends BaseController
         List<Map<String, Object>> result = recipeService.getRecipeCountByDate(startTime, endTime);
         return AjaxResult.success(result);
     }
+
+    /**
+     * 个性化推荐
+     * @param userId
+     * @return
+     */
+    @GetMapping("/recommendations/{userId}")
+    public AjaxResult getRecommendations(@PathVariable("userId") Long userId) {
+        List<Recipe> recommendations = recipeService.generateRecommendations(userId);
+        return success(recommendations);
+    }
 }

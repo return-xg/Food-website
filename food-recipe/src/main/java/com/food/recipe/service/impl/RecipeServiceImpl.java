@@ -1,10 +1,14 @@
 package com.food.recipe.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import com.food.common.core.domain.entity.SysUser;
 import com.food.common.utils.DateUtils;
+import com.food.recipe.domain.*;
+import com.food.recipe.mapper.LikesMapper;
+import com.food.recipe.mapper.ReviewMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -12,10 +16,7 @@ import java.util.Map;
 
 import com.food.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
-import com.food.recipe.domain.Step;
-import com.food.recipe.domain.Ingredient;
 import com.food.recipe.mapper.RecipeMapper;
-import com.food.recipe.domain.Recipe;
 import com.food.recipe.service.IRecipeService;
 
 import static com.food.common.utils.SecurityUtils.getUserId;
@@ -31,6 +32,10 @@ public class RecipeServiceImpl implements IRecipeService
 {
     @Autowired
     private RecipeMapper recipeMapper;
+    @Autowired
+    private LikesMapper likesMapper;
+    @Autowired
+    private ReviewMapper reviewMapper;
 
     /**
      * 查询食谱
@@ -297,5 +302,119 @@ public class RecipeServiceImpl implements IRecipeService
                 recipeMapper.batchIngredient(list);
             }
         }
+    }
+
+    // 构建用户 - 物品矩阵
+    public Map<Long, Map<Long, Integer>> buildUserItemMatrix() {
+        Map<Long, Map<Long, Integer>> userItemMatrix = new HashMap<>();
+
+        Likes l1 = new Likes();
+
+        // 获取所有用户的收藏数据
+        List<Likes> likesList = likesMapper.selectLikesList(l1);
+        for (Likes likes : likesList) {
+            Long userId = likes.getUserId();
+            Long recipeId = likes.getRecipeId();
+            userItemMatrix.computeIfAbsent(userId, k -> new HashMap<>())
+                    .merge(recipeId, 1, Integer::sum);
+        }
+
+        Review r1 = new Review();
+
+        // 获取所有用户的评论数据
+        List<Review> reviewsList = reviewMapper.selectReviewList(r1);
+        for (Review review : reviewsList) {
+            Long userId = review.getUserId();
+            Long recipeId = review.getRecipeId();
+            userItemMatrix.computeIfAbsent(userId, k -> new HashMap<>())
+                    .merge(recipeId, 1, Integer::sum);
+        }
+
+        return userItemMatrix;
+    }
+
+    // 计算余弦相似度
+    public double cosineSimilarity(Map<Long, Integer> user1, Map<Long, Integer> user2) {
+        double dotProduct = 0;
+        double normA = 0;
+        double normB = 0;
+
+        for (Map.Entry<Long, Integer> entry : user1.entrySet()) {
+            Long recipeId = entry.getKey();
+            int rating1 = entry.getValue();
+            normA += rating1 * rating1;
+            if (user2.containsKey(recipeId)) {
+                int rating2 = user2.get(recipeId);
+                dotProduct += rating1 * rating2;
+            }
+        }
+
+        for (int rating2 : user2.values()) {
+            normB += rating2 * rating2;
+        }
+
+        if (normA == 0 || normB == 0) {
+            return 0;
+        }
+
+        return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    /**
+     * 个性化推荐
+     * @param targetUserId
+     * @return
+     */
+    public List<Recipe> generateRecommendations(Long targetUserId) {
+        int topN = 5;
+        Map<Long, Map<Long, Integer>> userItemMatrix = buildUserItemMatrix();
+        Map<Long, Integer> targetUser = userItemMatrix.get(targetUserId);
+        if (targetUser == null) {
+            return new ArrayList<>();
+        }
+
+        Map<Long, Double> similarityMap = new HashMap<>();
+        for (Map.Entry<Long, Map<Long, Integer>> entry : userItemMatrix.entrySet()) {
+            Long userId = entry.getKey();
+            if (userId != targetUserId) {
+                Map<Long, Integer> otherUser = entry.getValue();
+                double similarity = cosineSimilarity(targetUser, otherUser);
+                similarityMap.put(userId, similarity);
+            }
+        }
+
+        // 按相似度排序
+        List<Map.Entry<Long, Double>> sortedSimilarities = new ArrayList<>(similarityMap.entrySet());
+        sortedSimilarities.sort(Map.Entry.<Long, Double>comparingByValue().reversed());
+
+        Map<Long, Double> recommendationScores = new HashMap<>();
+        for (int i = 0; i < Math.min(topN, sortedSimilarities.size()); i++) {
+            Long similarUserId = sortedSimilarities.get(i).getKey();
+            double similarity = sortedSimilarities.get(i).getValue();
+            Map<Long, Integer> similarUser = userItemMatrix.get(similarUserId);
+
+            for (Map.Entry<Long, Integer> entry : similarUser.entrySet()) {
+                Long recipeId = entry.getKey();
+                if (!targetUser.containsKey(recipeId)) {
+                    int rating = entry.getValue();
+                    recommendationScores.merge(recipeId, rating * similarity, Double::sum);
+                }
+            }
+        }
+
+        // 按推荐分数排序
+        List<Map.Entry<Long, Double>> sortedRecommendations = new ArrayList<>(recommendationScores.entrySet());
+        sortedRecommendations.sort(Map.Entry.<Long, Double>comparingByValue().reversed());
+
+        List<Recipe> recommendedRecipes = new ArrayList<>();
+        for (int i = 0; i < Math.min(topN, sortedRecommendations.size()); i++) {
+            Long recipeId = sortedRecommendations.get(i).getKey();
+            Recipe recipe = selectRecipeByRecipeId(recipeId);
+            if (recipe != null) {
+                recommendedRecipes.add(recipe);
+            }
+        }
+
+        return recommendedRecipes;
     }
 }
