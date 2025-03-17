@@ -24,6 +24,14 @@ public interface IRecipeService
     public Recipe selectRecipeByRecipeId(Long recipeId);
 
     /**
+     * 查询食谱2
+     *
+     * @param recipeId 食谱主键
+     * @return 食谱
+     */
+    public Recipe selectRecipeByRecipeId2(Long recipeId);
+
+    /**
      * 查询食谱列表
      * 
      * @param recipe 食谱

@@ -68,8 +68,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-<!--    食谱id查询食谱-->
+<!--    食谱id查询食谱1-->
     <select id="selectRecipeByRecipeId" parameterType="Long" resultMap="RecipeStepAndIngredientResult">
+        select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, review
+        from recipe
+        where recipe_id = #{recipeId}
+    </select>
+
+    <!--    食谱id查询食谱2-->
+    <select id="selectRecipeByRecipeId2" parameterType="Long" resultMap="RecipeResult">
         select recipe_id, user_id, recipe_name, recipe_description, recipe_image, state, create_time, update_time, variety, likes, review
         from recipe
         where recipe_id = #{recipeId}

@@ -50,6 +50,18 @@ public class RecipeServiceImpl implements IRecipeService
     }
 
     /**
+     * 查询食谱2
+     *
+     * @param recipeId 食谱主键
+     * @return 食谱
+     */
+    @Override
+    public Recipe selectRecipeByRecipeId2(Long recipeId)
+    {
+        return recipeMapper.selectRecipeByRecipeId2(recipeId);
+    }
+
+    /**
      * 查询食谱列表
      * 
      * @param recipe 食谱
@@ -316,7 +328,7 @@ public class RecipeServiceImpl implements IRecipeService
             Long userId = likes.getUserId();
             Long recipeId = likes.getRecipeId();
             userItemMatrix.computeIfAbsent(userId, k -> new HashMap<>())
-                    .merge(recipeId, 1, Integer::sum);
+                    .merge(recipeId, 3, Integer::sum);
         }
 
         Review r1 = new Review();
@@ -360,6 +372,15 @@ public class RecipeServiceImpl implements IRecipeService
         return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 
+    // 模拟获取热门食谱
+    public List<Recipe> getPopularRecipes(int topN) {
+        List<Recipe> popularRecipes = new ArrayList<>();
+        for (int i = 0; i < topN; i++) {
+            popularRecipes.add(new Recipe());
+        }
+        return popularRecipes;
+    }
+
     /**
      * 个性化推荐
      * @param targetUserId
@@ -369,8 +390,10 @@ public class RecipeServiceImpl implements IRecipeService
         int topN = 5;
         Map<Long, Map<Long, Integer>> userItemMatrix = buildUserItemMatrix();
         Map<Long, Integer> targetUser = userItemMatrix.get(targetUserId);
-        if (targetUser == null) {
-            return new ArrayList<>();
+        // 如果是新用户，返回recipeMapper.likeNumList()且只取前5条数据
+        if (targetUser == null || targetUser.isEmpty()) {
+            List<Recipe> popularRecipes = recipeMapper.likeNumList();
+            return popularRecipes.subList(0, Math.min(topN, popularRecipes.size()));
         }
 
         Map<Long, Double> similarityMap = new HashMap<>();
@@ -409,7 +432,7 @@ public class RecipeServiceImpl implements IRecipeService
         List<Recipe> recommendedRecipes = new ArrayList<>();
         for (int i = 0; i < Math.min(topN, sortedRecommendations.size()); i++) {
             Long recipeId = sortedRecommendations.get(i).getKey();
-            Recipe recipe = selectRecipeByRecipeId(recipeId);
+            Recipe recipe = selectRecipeByRecipeId2(recipeId);
             if (recipe != null) {
                 recommendedRecipes.add(recipe);
             }
