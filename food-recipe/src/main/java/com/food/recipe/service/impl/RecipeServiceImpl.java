@@ -1,10 +1,12 @@
 package com.food.recipe.service.impl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 
 import com.food.common.core.domain.entity.SysUser;
+import com.food.common.core.redis.RedisCache;
 import com.food.common.utils.DateUtils;
 import com.food.recipe.domain.*;
 import com.food.recipe.mapper.LikesMapper;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.food.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +23,8 @@ import com.food.recipe.mapper.RecipeMapper;
 import com.food.recipe.service.IRecipeService;
 
 import static com.food.common.utils.SecurityUtils.getUserId;
+
+
 
 /**
  * 食谱Service业务层处理
@@ -36,6 +41,8 @@ public class RecipeServiceImpl implements IRecipeService
     private LikesMapper likesMapper;
     @Autowired
     private ReviewMapper reviewMapper;
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询食谱
@@ -387,57 +394,66 @@ public class RecipeServiceImpl implements IRecipeService
      * @return
      */
     public List<Recipe> generateRecommendations(Long targetUserId) {
+        String redisKey = "recipe:recommendations:" + targetUserId;
+        // 先从 Redis 中获取缓存结果
+        List<Recipe> cachedRecipes = redisCache.getCacheObject(redisKey);
+        if (cachedRecipes != null) {
+            return cachedRecipes;
+        }
+
         int topN = 5;
         Map<Long, Map<Long, Integer>> userItemMatrix = buildUserItemMatrix();
         Map<Long, Integer> targetUser = userItemMatrix.get(targetUserId);
-        // 如果是新用户，返回recipeMapper.likeNumList()且只取前5条数据
+        // 如果是新用户，返回 recipeMapper.likeNumList() 且只取前 5 条数据
         if (targetUser == null || targetUser.isEmpty()) {
             List<Recipe> popularRecipes = recipeMapper.likeNumList();
-            return popularRecipes.subList(0, Math.min(topN, popularRecipes.size()));
-        }
-
-        Map<Long, Double> similarityMap = new HashMap<>();
-        for (Map.Entry<Long, Map<Long, Integer>> entry : userItemMatrix.entrySet()) {
-            Long userId = entry.getKey();
-            if (userId != targetUserId) {
-                Map<Long, Integer> otherUser = entry.getValue();
-                double similarity = cosineSimilarity(targetUser, otherUser);
-                similarityMap.put(userId, similarity);
+            cachedRecipes = popularRecipes.subList(0, Math.min(topN, popularRecipes.size()));
+        } else {
+            Map<Long, Double> similarityMap = new HashMap<>();
+            for (Map.Entry<Long, Map<Long, Integer>> entry : userItemMatrix.entrySet()) {
+                Long userId = entry.getKey();
+                if (userId != targetUserId) {
+                    Map<Long, Integer> otherUser = entry.getValue();
+                    double similarity = cosineSimilarity(targetUser, otherUser);
+                    similarityMap.put(userId, similarity);
+                }
             }
-        }
 
-        // 按相似度排序
-        List<Map.Entry<Long, Double>> sortedSimilarities = new ArrayList<>(similarityMap.entrySet());
-        sortedSimilarities.sort(Map.Entry.<Long, Double>comparingByValue().reversed());
+            // 按相似度排序
+            List<Map.Entry<Long, Double>> sortedSimilarities = new ArrayList<>(similarityMap.entrySet());
+            sortedSimilarities.sort(Map.Entry.<Long, Double>comparingByValue().reversed());
 
-        Map<Long, Double> recommendationScores = new HashMap<>();
-        for (int i = 0; i < Math.min(topN, sortedSimilarities.size()); i++) {
-            Long similarUserId = sortedSimilarities.get(i).getKey();
-            double similarity = sortedSimilarities.get(i).getValue();
-            Map<Long, Integer> similarUser = userItemMatrix.get(similarUserId);
+            Map<Long, Double> recommendationScores = new HashMap<>();
+            for (int i = 0; i < Math.min(topN, sortedSimilarities.size()); i++) {
+                Long similarUserId = sortedSimilarities.get(i).getKey();
+                double similarity = sortedSimilarities.get(i).getValue();
+                Map<Long, Integer> similarUser = userItemMatrix.get(similarUserId);
 
-            for (Map.Entry<Long, Integer> entry : similarUser.entrySet()) {
-                Long recipeId = entry.getKey();
-                if (!targetUser.containsKey(recipeId)) {
-                    int rating = entry.getValue();
-                    recommendationScores.merge(recipeId, rating * similarity, Double::sum);
+                for (Map.Entry<Long, Integer> entry : similarUser.entrySet()) {
+                    Long recipeId = entry.getKey();
+                    if (!targetUser.containsKey(recipeId)) {
+                        int rating = entry.getValue();
+                        recommendationScores.merge(recipeId, rating * similarity, Double::sum);
+                    }
+                }
+            }
+
+            // 按推荐分数排序
+            List<Map.Entry<Long, Double>> sortedRecommendations = new ArrayList<>(recommendationScores.entrySet());
+            sortedRecommendations.sort(Map.Entry.<Long, Double>comparingByValue().reversed());
+
+            cachedRecipes = new ArrayList<>();
+            for (int i = 0; i < Math.min(topN, sortedRecommendations.size()); i++) {
+                Long recipeId = sortedRecommendations.get(i).getKey();
+                Recipe recipe = selectRecipeByRecipeId2(recipeId);
+                if (recipe != null) {
+                    cachedRecipes.add(recipe);
                 }
             }
         }
 
-        // 按推荐分数排序
-        List<Map.Entry<Long, Double>> sortedRecommendations = new ArrayList<>(recommendationScores.entrySet());
-        sortedRecommendations.sort(Map.Entry.<Long, Double>comparingByValue().reversed());
-
-        List<Recipe> recommendedRecipes = new ArrayList<>();
-        for (int i = 0; i < Math.min(topN, sortedRecommendations.size()); i++) {
-            Long recipeId = sortedRecommendations.get(i).getKey();
-            Recipe recipe = selectRecipeByRecipeId2(recipeId);
-            if (recipe != null) {
-                recommendedRecipes.add(recipe);
-            }
-        }
-
-        return recommendedRecipes;
+        // 将结果存储在 Redis 中，设置过期时间为 1 小时
+        redisCache.setCacheObject(redisKey, cachedRecipes, 1, TimeUnit.HOURS);
+        return cachedRecipes;
     }
 }
